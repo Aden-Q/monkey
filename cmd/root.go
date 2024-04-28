@@ -5,8 +5,11 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"os/user"
 
+	"github.com/Aden-Q/monkey/internal/repl"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +36,15 @@ func Execute() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	fmt.Println("Hello, World!")
+	user, err := user.Current()
+	if err != nil {
+		log.Fatalf("user error: %v", err)
+	}
+
+	fmt.Printf("Hello %s! This is the Monkey programming language!\n", user.Username)
+
+	r := repl.New(repl.Config{})
+	r.Start(os.Stdin, os.Stdout)
 }
 
 func init() {
