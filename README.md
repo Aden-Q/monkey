@@ -31,6 +31,7 @@ An interpreted language written in Go
 - [ ] feat: add bitwise operators ^, |, &
 - [ ] refactor: unary operators, binary operators, ternary operators
 - [ ] feat: use Cobra to enable multiple modes when launching the REPL
+- [ ] feat: use quit(), exit(), or Ctrl-D to exit
 
 
 

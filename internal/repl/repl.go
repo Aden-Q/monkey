@@ -29,7 +29,7 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser) {
 	scanner := bufio.NewScanner(in)
 
 	for {
-		fmt.Printf(PROMPT)
+		fmt.Print(PROMPT)
 
 		scanned := scanner.Scan()
 		if !scanned {
