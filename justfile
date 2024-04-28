@@ -6,9 +6,9 @@
 @vendor:
   go mod vendor
 
-# run all tests with ginkgo
+# run all unit tests with ginkgo
 @test:
-  ginkgo run -r -cover -coverprofile=coverage.out
+  ginkgo run -r -race -cover -coverprofile=coverage.out
 
 # build a binary executable
 @build:
