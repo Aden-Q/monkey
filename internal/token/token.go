@@ -6,15 +6,24 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	// Identifiers + literals
+	// identifiers + literals
 	IDENT = "IDENT" // add, foobar, x, y, ...
 	INT   = "INT"   // 123456
 
-	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	// operators
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
+	LT       = "<"
+	GT       = ">"
 
-	// Delimiters
+	EQ     = "=="
+	NOT_EQ = "!="
+
+	// delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
 
@@ -23,19 +32,37 @@ const (
 	LBRACE = "{"
 	RBRACE = "}"
 
-	// Keywords
+	// keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 var keywordTable = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 var operatorTable = map[string]TokenType{
-	"=": ASSIGN,
-	"+": PLUS,
+	"=":  ASSIGN,
+	"+":  PLUS,
+	"-":  MINUS,
+	"!":  BANG,
+	"*":  ASTERISK,
+	"/":  SLASH,
+	"<":  LT,
+	">":  GT,
+	"==": EQ,
+	"!=": NOT_EQ,
 }
 
 var delimeterTable = map[string]TokenType{

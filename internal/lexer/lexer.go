@@ -30,7 +30,20 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 	ch := l.input[l.position]
 
 	switch ch {
-	case '=', '+', ',', ';', '(', ')', '{', '}':
+	// operators with two characters
+	case '=', '!':
+		if l.peekNextNextChar() == '=' {
+			ch := l.readChar() + l.readChar()
+			tok = token.New(token.LookupTokenType(ch), ch)
+		} else {
+			ch := l.readChar()
+			tok = token.New(token.LookupTokenType(ch), ch)
+		}
+	// operators with a single character
+	case '+', '-', '*', '/', '<', '>':
+		fallthrough
+	// delimiters
+	case ',', ';', '(', ')', '{', '}':
 		ch := l.readChar()
 		tok = token.New(token.LookupTokenType(ch), ch)
 	default:
@@ -52,10 +65,21 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 	return tok, ok
 }
 
+// hasNext checks whether there are characters remaining
 func (l *Lexer) hasNext() bool {
 	return l.position < uint32(len(l.input))
 }
 
+// peekNextNextChar looks at the next character after the next character
+func (l *Lexer) peekNextNextChar() byte {
+	if l.position+1 > uint32(len(l.input))-1 {
+		return 0
+	}
+
+	return l.input[l.position+1]
+}
+
+// readChar reads a single char at the current offset and move the ptr forward by 1
 func (l *Lexer) readChar() string {
 	if !l.hasNext() {
 		return ""
@@ -66,6 +90,7 @@ func (l *Lexer) readChar() string {
 	return l.input[l.position-1 : l.position]
 }
 
+// isLetter check whether a character is allow be to in an identifier
 func isLetter(ch byte) bool {
 	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_'
 }
@@ -90,6 +115,7 @@ func (l *Lexer) readWord() string {
 	return l.input[startPos:l.position]
 }
 
+// isLetter check whether a character is an digit
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
@@ -113,6 +139,7 @@ func (l *Lexer) readInt() string {
 	return l.input[startPos:l.position]
 }
 
+// skipWhiteSpaces skips all white spaces starting at the current position, including newline characters
 func (l *Lexer) skipWhiteSpaces() {
 	for {
 		if !l.hasNext() {
