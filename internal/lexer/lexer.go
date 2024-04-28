@@ -10,46 +10,122 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	return &Lexer{
+	l := &Lexer{
 		input: input,
 	}
+
+	// skip leaning white spaces
+	l.skipWhiteSpaces()
+
+	return l
 }
 
-func (l *Lexer) NextToken() (*token.Token, bool) {
+func (l *Lexer) NextToken() (token.Token, bool) {
 	if !l.hasNext() {
-		return nil, false
+		return token.Token{}, false
 	}
 
-	var tok *token.Token
+	var tok token.Token
 	ok := true
 
-	switch l.input[l.position] {
-	case '=':
-		tok = token.New(token.ASSIGN, "=")
-	case '+':
-		tok = token.New(token.PLUS, "+")
-	case ',':
-		tok = token.New(token.COMMA, ",")
-	case ';':
-		tok = token.New(token.SEMICOLON, ";")
-	case '(':
-		tok = token.New(token.LPAREN, "(")
-	case ')':
-		tok = token.New(token.RPAREN, ")")
-	case '{':
-		tok = token.New(token.LBRACE, "{")
-	case '}':
-		tok = token.New(token.RBRACE, "}")
+	ch := l.input[l.position]
+
+	switch ch {
+	case '=', '+', ',', ';', '(', ')', '{', '}':
+		ch := l.readChar()
+		tok = token.New(token.LookupTokenType(ch), ch)
 	default:
-		tok = token.New(token.ILLEGAL, "ILLEGAL")
-		ok = false
+		// read identifier
+		if isLetter(ch) {
+			literal := l.readWord()
+			tok = token.New(token.LookupTokenType(literal), literal)
+			ok = true
+		} else if isDigit(ch) {
+			literal := l.readInt()
+			tok = token.New(token.LookupTokenType(literal), literal)
+			ok = true
+		} else {
+			tok = token.New(token.ILLEGAL, string(ch))
+			ok = false
+		}
 	}
 
-	l.position++
+	l.skipWhiteSpaces()
 
 	return tok, ok
 }
 
 func (l *Lexer) hasNext() bool {
 	return l.position < uint32(len(l.input))
+}
+
+func (l *Lexer) readChar() string {
+	if !l.hasNext() {
+		return ""
+	}
+
+	l.position++
+
+	return l.input[l.position-1 : l.position]
+}
+
+func isLetter(ch byte) bool {
+	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_'
+}
+
+// read a word starting from the current position, and move the offset forward
+func (l *Lexer) readWord() string {
+	startPos := l.position
+
+	for {
+		if !l.hasNext() {
+			break
+		}
+
+		ch := l.input[l.position]
+		if !isLetter(ch) {
+			break
+		}
+
+		l.position++
+	}
+
+	return l.input[startPos:l.position]
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
+}
+
+func (l *Lexer) readInt() string {
+	startPos := l.position
+
+	for {
+		if !l.hasNext() {
+			break
+		}
+
+		ch := l.input[l.position]
+		if !isDigit(ch) {
+			break
+		}
+
+		l.position++
+	}
+
+	return l.input[startPos:l.position]
+}
+
+func (l *Lexer) skipWhiteSpaces() {
+	for {
+		if !l.hasNext() {
+			break
+		}
+
+		if l.input[l.position] == ' ' || l.input[l.position] == '\t' || l.input[l.position] == '\n' {
+			l.position += 1
+		} else {
+			break
+		}
+	}
 }
