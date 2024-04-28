@@ -10,6 +10,10 @@ An interpreted language written in Go
 + ginkgo (if you want to run local unit tests)
 + golangci-lint (if you want to do local linting)
 
+## Conventions
+
++ Identifiers only consist of alphabet letters or underscore
+
 ## TODOs
 
 - [ ] add Unicode support
@@ -18,6 +22,9 @@ An interpreted language written in Go
 - [ ] formatting and prettier
 - [ ] add support for basic types: boolean, float, struct, string, byte
 - [ ] add support for collection types: array, map
+- [ ] add support for function anonymous arguments
+- [ ] add support for variadic functions
+- [ ] add support for anonymous functions
 
 
 
