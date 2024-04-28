@@ -30,7 +30,11 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 	ch := l.input[l.position]
 
 	switch ch {
-	case '=', '+', ',', ';', '(', ')', '{', '}':
+	// operators
+	case '=', '+', '-', '!', '*', '/', '<', '>':
+		fallthrough
+	// delimiters
+	case ',', ';', '(', ')', '{', '}':
 		ch := l.readChar()
 		tok = token.New(token.LookupTokenType(ch), ch)
 	default:

@@ -11,8 +11,14 @@ const (
 	INT   = "INT"   // 123456
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
+	LT       = "<"
+	GT       = ">"
 
 	// Delimiters
 	COMMA     = ","
@@ -36,6 +42,12 @@ var keywordTable = map[string]TokenType{
 var operatorTable = map[string]TokenType{
 	"=": ASSIGN,
 	"+": PLUS,
+	"-": MINUS,
+	"!": BANG,
+	"*": ASTERISK,
+	"/": SLASH,
+	"<": LT,
+	">": GT,
 }
 
 var delimeterTable = map[string]TokenType{
