@@ -16,6 +16,8 @@ An interpreted language written in Go
 - [ ] add a return keyword for function
 - [ ] add line, column number when getting errors
 - [ ] formatting and prettier
+- [ ] add support for basic types: boolean, float, struct, string, byte
+- [ ] add support for collection types: array, map
 
 
 
