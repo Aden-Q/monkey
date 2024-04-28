@@ -2,7 +2,15 @@
 
 An interpreted language written in Go
 
-## TODOs:
+## Dependencies
+
++ `direnv`
++ `just` (not necessary)
++ Go 1.21+
++ ginkgo (if you want to run local unit tests)
++ golangci-lint (if you want to do local linting)
+
+## TODOs
 
 - [ ] add Unicode support
 - [ ] add a return keyword for function
