@@ -14,7 +14,7 @@
 @build:
   go build .
 
-# run the Monkey language interpreter in an interactive shell env
+# run the Monkey language interpreter in interactive mode
 @run:
   go run main.go
 
