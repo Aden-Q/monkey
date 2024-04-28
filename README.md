@@ -33,6 +33,7 @@ An interpreted language written in Go
 - [ ] feat: use Cobra to enable multiple modes when launching the REPL
 - [ ] feat: use quit(), exit(), or Ctrl-D to exit
 - [ ] ci: fix the release GHA workflow
+- [ ] feat: concurrency, Mutex, RWMutex
 
 
 
