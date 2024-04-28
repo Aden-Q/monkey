@@ -29,6 +29,7 @@ jobs:
         onlyLastTag: true
         # skip closed issues
         issues: false
+        maxIssues: 1
 
     - name: Create github release
       if: ${{ success() }}
