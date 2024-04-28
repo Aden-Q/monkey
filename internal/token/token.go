@@ -20,6 +20,9 @@ const (
 	LT       = "<"
 	GT       = ">"
 
+	EQ     = "=="
+	NOT_EQ = "!="
+
 	// delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -50,14 +53,16 @@ var keywordTable = map[string]TokenType{
 }
 
 var operatorTable = map[string]TokenType{
-	"=": ASSIGN,
-	"+": PLUS,
-	"-": MINUS,
-	"!": BANG,
-	"*": ASTERISK,
-	"/": SLASH,
-	"<": LT,
-	">": GT,
+	"=":  ASSIGN,
+	"+":  PLUS,
+	"-":  MINUS,
+	"!":  BANG,
+	"*":  ASTERISK,
+	"/":  SLASH,
+	"<":  LT,
+	">":  GT,
+	"==": EQ,
+	"!=": NOT_EQ,
 }
 
 var delimeterTable = map[string]TokenType{

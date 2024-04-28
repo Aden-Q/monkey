@@ -78,7 +78,11 @@ var _ = Describe("Lexer", func() {
 						return true
 					} else {
 						return false
-					};`
+					};
+					
+					10 == 10;
+					10 != 9;
+					`
 				expected_tokens := []token.Token{
 					{
 						Type:    token.LET,
@@ -332,6 +336,38 @@ var _ = Describe("Lexer", func() {
 					{
 						Type:    token.RBRACE,
 						Literal: "}",
+					},
+					{
+						Type:    token.SEMICOLON,
+						Literal: ";",
+					},
+					{
+						Type:    token.INT,
+						Literal: "10",
+					},
+					{
+						Type:    token.EQ,
+						Literal: "==",
+					},
+					{
+						Type:    token.INT,
+						Literal: "10",
+					},
+					{
+						Type:    token.SEMICOLON,
+						Literal: ";",
+					},
+					{
+						Type:    token.INT,
+						Literal: "10",
+					},
+					{
+						Type:    token.NOT_EQ,
+						Literal: "!=",
+					},
+					{
+						Type:    token.INT,
+						Literal: "9",
 					},
 					{
 						Type:    token.SEMICOLON,
