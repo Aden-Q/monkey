@@ -16,16 +16,17 @@ An interpreted language written in Go
 
 ## TODOs
 
-- [ ] add Unicode support
-- [ ] add a return keyword for function
-- [ ] add line, column number when getting errors
-- [ ] add support for hex notation and octal notation for integers
-- [ ] formatting and prettier
-- [ ] add support for basic types: boolean, float, struct, string, byte
-- [ ] add support for collection types: array, map
-- [ ] add support for function anonymous arguments
-- [ ] add support for variadic functions
-- [ ] add support for anonymous functions
+- [ ] feat: add Unicode support
+- [ ] feat: add a return keyword for function
+- [ ] feat: add line, column number when getting errors
+- [ ] feat: add support for hex notation and octal notation for integers
+- [ ] feat: formatting and prettier
+- [ ] feat: add support for basic types: boolean, float, struct, string, byte
+- [ ] feat: add support for collection types: array, map
+- [ ] feat: add support for function anonymous arguments
+- [ ] feat: add support for variadic functions
+- [ ] feat: add support for anonymous functions
+- [ ] refactor: unary operators, binary operators, ternary operators
 
 
 

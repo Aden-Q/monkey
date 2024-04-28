@@ -6,11 +6,11 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	// Identifiers + literals
+	// identifiers + literals
 	IDENT = "IDENT" // add, foobar, x, y, ...
 	INT   = "INT"   // 123456
 
-	// Operators
+	// operators
 	ASSIGN   = "="
 	PLUS     = "+"
 	MINUS    = "-"
@@ -20,7 +20,7 @@ const (
 	LT       = "<"
 	GT       = ">"
 
-	// Delimiters
+	// delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
 
@@ -29,14 +29,24 @@ const (
 	LBRACE = "{"
 	RBRACE = "}"
 
-	// Keywords
+	// keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 var keywordTable = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 var operatorTable = map[string]TokenType{
