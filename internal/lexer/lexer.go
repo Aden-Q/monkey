@@ -14,9 +14,6 @@ func New(input string) *Lexer {
 		input: input,
 	}
 
-	// skip leaning white spaces
-	l.skipWhiteSpaces()
-
 	return l
 }
 
@@ -24,6 +21,8 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 	if !l.hasNext() {
 		return token.Token{}, false
 	}
+
+	l.skipWhiteSpaces()
 
 	var tok token.Token
 	ok := true
@@ -49,8 +48,6 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 			ok = false
 		}
 	}
-
-	l.skipWhiteSpaces()
 
 	return tok, ok
 }
@@ -122,7 +119,8 @@ func (l *Lexer) skipWhiteSpaces() {
 			break
 		}
 
-		if l.input[l.position] == ' ' || l.input[l.position] == '\t' || l.input[l.position] == '\n' {
+		ch := l.input[l.position]
+		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' {
 			l.position += 1
 		} else {
 			break
