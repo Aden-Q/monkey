@@ -27,6 +27,8 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         onlyLastTag: true
+        # skip closed issues
+        issues: false
 
     - name: Create github release
       if: ${{ success() }}
