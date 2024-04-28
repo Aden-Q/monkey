@@ -4,6 +4,19 @@ An interpreted language written in Go
 
 ## TODOs:
 
-- [ ] Unicode support
-- [ ] the return keyword
-- [ ] trie for faster prefix matching
+- [ ] add Unicode support
+- [ ] add a return keyword for function
+- [ ] add line, column number when getting errors
+- [ ] formatting and prettier
+
+
+
+
+
+
+
+
+
+## License
+
+[MIT License](./LICENSE)
