@@ -34,6 +34,7 @@ An interpreted language written in Go
 - [ ] feat: use quit(), exit(), or Ctrl-D to exit
 - [ ] ci: fix the release GHA workflow
 - [ ] feat: concurrency, Mutex, RWMutex
+- [ ] feat: add support for comments
 
 
 
