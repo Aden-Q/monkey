@@ -7,12 +7,14 @@ import (
 var _ Lexer = (*lexer)(nil)
 
 type Lexer interface {
-	Read(input string) int
+	// Read reads the input text and stores into the buffer
+	Read(text string) int
+	// NextToken reads the next token starting at the current offset and move the ptr forward
 	NextToken() (token.Token, bool)
 }
 
 type lexer struct {
-	input    string
+	buf      string
 	position uint32 // current position index in input
 }
 
@@ -20,11 +22,11 @@ func New() Lexer {
 	return &lexer{}
 }
 
-func (l *lexer) Read(input string) int {
-	l.input = input
+func (l *lexer) Read(text string) int {
+	l.buf = text
 	l.position = 0
 
-	return len(input)
+	return len(text)
 }
 
 func (l *lexer) NextToken() (token.Token, bool) {
@@ -37,7 +39,7 @@ func (l *lexer) NextToken() (token.Token, bool) {
 	var tok token.Token
 	ok := true
 
-	ch := l.input[l.position]
+	ch := l.buf[l.position]
 
 	switch ch {
 	// operators with two characters
@@ -77,16 +79,16 @@ func (l *lexer) NextToken() (token.Token, bool) {
 
 // hasNext checks whether there are characters remaining
 func (l *lexer) hasNext() bool {
-	return l.position < uint32(len(l.input))
+	return l.position < uint32(len(l.buf))
 }
 
 // peekNextNextChar looks at the next character after the next character
 func (l *lexer) peekNextNextChar() byte {
-	if l.position+1 > uint32(len(l.input))-1 {
+	if l.position+1 > uint32(len(l.buf))-1 {
 		return 0
 	}
 
-	return l.input[l.position+1]
+	return l.buf[l.position+1]
 }
 
 // readChar reads a single char at the current offset and move the ptr forward by 1
@@ -97,7 +99,7 @@ func (l *lexer) readChar() string {
 
 	l.position++
 
-	return l.input[l.position-1 : l.position]
+	return l.buf[l.position-1 : l.position]
 }
 
 // isLetter check whether a character is allow be to in an identifier
@@ -114,7 +116,7 @@ func (l *lexer) readWord() string {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if !isLetter(ch) {
 			break
 		}
@@ -122,7 +124,7 @@ func (l *lexer) readWord() string {
 		l.position++
 	}
 
-	return l.input[startPos:l.position]
+	return l.buf[startPos:l.position]
 }
 
 // isLetter check whether a character is an digit
@@ -138,7 +140,7 @@ func (l *lexer) readInt() string {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if !isDigit(ch) {
 			break
 		}
@@ -146,7 +148,7 @@ func (l *lexer) readInt() string {
 		l.position++
 	}
 
-	return l.input[startPos:l.position]
+	return l.buf[startPos:l.position]
 }
 
 // skipWhiteSpaces skips all white spaces starting at the current position, including newline characters
@@ -156,7 +158,7 @@ func (l *lexer) skipWhiteSpaces() {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' {
 			l.position += 1
 		} else {
