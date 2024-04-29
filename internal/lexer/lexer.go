@@ -9,12 +9,17 @@ type Lexer struct {
 	position uint32 // current position index in input
 }
 
-func New(input string) *Lexer {
-	l := &Lexer{
-		input: input,
-	}
+func New() *Lexer {
+	l := &Lexer{}
 
 	return l
+}
+
+func (l *Lexer) Read(input string) int {
+	l.input = input
+	l.position = 0
+
+	return len(input)
 }
 
 func (l *Lexer) NextToken() (token.Token, bool) {

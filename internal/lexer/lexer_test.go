@@ -9,6 +9,11 @@ import (
 )
 
 var _ = Describe("Lexer", func() {
+	var l *lexer.Lexer
+
+	BeforeEach(func() {
+		l = lexer.New()
+	})
 
 	Describe("NextToken test", func() {
 		Context("simple lexing test", func() {
@@ -49,7 +54,7 @@ var _ = Describe("Lexer", func() {
 					},
 				}
 
-				l := lexer.New(input)
+				Expect(l.Read(input)).To(Equal(len(input)))
 
 				for _, expected_token := range expected_tokens {
 					token, ok := l.NextToken()
@@ -375,7 +380,7 @@ var _ = Describe("Lexer", func() {
 					},
 				}
 
-				l := lexer.New(input)
+				Expect(l.Read(input)).To(Equal(len(input)))
 
 				for _, expected_token := range expected_tokens {
 					token, ok := l.NextToken()
