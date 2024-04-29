@@ -16,8 +16,8 @@ var _ = Describe("Lexer", func() {
 	})
 
 	Describe("Read", func() {
-		Context("can read text", func() {
-			It("should equal", func() {
+		Context("simple text", func() {
+			It("can read simple text", func() {
 				input := `something`
 
 				Expect(l.Read(input)).To(Equal(len(input)))
@@ -26,8 +26,8 @@ var _ = Describe("Lexer", func() {
 	})
 
 	Describe("NextToken", func() {
-		Context("can parse tokens", func() {
-			It("should equal", func() {
+		Context("a single line", func() {
+			It("can parse simple text", func() {
 				input := `=+(){},;`
 				expected_tokens := []token.Token{
 					{
@@ -74,8 +74,8 @@ var _ = Describe("Lexer", func() {
 			})
 		})
 
-		Context("complex lexing test", func() {
-			It("should equal", func() {
+		Context("code snippet", func() {
+			It("can parse complex text", func() {
 				input :=
 					`let five = 5;
 					let ten = 10;
