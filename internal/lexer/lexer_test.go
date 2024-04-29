@@ -15,8 +15,18 @@ var _ = Describe("Lexer", func() {
 		l = lexer.New()
 	})
 
-	Describe("NextToken test", func() {
-		Context("simple lexing test", func() {
+	Describe("Read", func() {
+		Context("can read text", func() {
+			It("should equal", func() {
+				input := `something`
+
+				Expect(l.Read(input)).To(Equal(len(input)))
+			})
+		})
+	})
+
+	Describe("NextToken", func() {
+		Context("can parse tokens", func() {
 			It("should equal", func() {
 				input := `=+(){},;`
 				expected_tokens := []token.Token{
