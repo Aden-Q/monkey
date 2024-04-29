@@ -4,25 +4,30 @@ import (
 	"github.com/Aden-Q/monkey/internal/token"
 )
 
-type Lexer struct {
+var _ Lexer = (*lexer)(nil)
+
+type Lexer interface {
+	Read(input string) int
+	NextToken() (token.Token, bool)
+}
+
+type lexer struct {
 	input    string
 	position uint32 // current position index in input
 }
 
-func New() *Lexer {
-	l := &Lexer{}
-
-	return l
+func New() Lexer {
+	return &lexer{}
 }
 
-func (l *Lexer) Read(input string) int {
+func (l *lexer) Read(input string) int {
 	l.input = input
 	l.position = 0
 
 	return len(input)
 }
 
-func (l *Lexer) NextToken() (token.Token, bool) {
+func (l *lexer) NextToken() (token.Token, bool) {
 	if !l.hasNext() {
 		return token.Token{}, false
 	}
@@ -71,12 +76,12 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 }
 
 // hasNext checks whether there are characters remaining
-func (l *Lexer) hasNext() bool {
+func (l *lexer) hasNext() bool {
 	return l.position < uint32(len(l.input))
 }
 
 // peekNextNextChar looks at the next character after the next character
-func (l *Lexer) peekNextNextChar() byte {
+func (l *lexer) peekNextNextChar() byte {
 	if l.position+1 > uint32(len(l.input))-1 {
 		return 0
 	}
@@ -85,7 +90,7 @@ func (l *Lexer) peekNextNextChar() byte {
 }
 
 // readChar reads a single char at the current offset and move the ptr forward by 1
-func (l *Lexer) readChar() string {
+func (l *lexer) readChar() string {
 	if !l.hasNext() {
 		return ""
 	}
@@ -101,7 +106,7 @@ func isLetter(ch byte) bool {
 }
 
 // read a word starting from the current position, and move the offset forward
-func (l *Lexer) readWord() string {
+func (l *lexer) readWord() string {
 	startPos := l.position
 
 	for {
@@ -125,7 +130,7 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-func (l *Lexer) readInt() string {
+func (l *lexer) readInt() string {
 	startPos := l.position
 
 	for {
@@ -145,7 +150,7 @@ func (l *Lexer) readInt() string {
 }
 
 // skipWhiteSpaces skips all white spaces starting at the current position, including newline characters
-func (l *Lexer) skipWhiteSpaces() {
+func (l *lexer) skipWhiteSpaces() {
 	for {
 		if !l.hasNext() {
 			break

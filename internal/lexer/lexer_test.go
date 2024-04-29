@@ -9,7 +9,7 @@ import (
 )
 
 var _ = Describe("Lexer", func() {
-	var l *lexer.Lexer
+	var l lexer.Lexer
 
 	BeforeEach(func() {
 		l = lexer.New()

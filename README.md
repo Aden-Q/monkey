@@ -14,6 +14,13 @@ An interpreted language written in Go
 
 + Identifiers only consist of alphabet letters or underscore
 
+## Components
+
++ Token set
++ Lexer
++ Abstract Syntax Tree (AST)
++ Pratt parser
+
 ## TODOs
 
 - [ ] feat: add Unicode support
