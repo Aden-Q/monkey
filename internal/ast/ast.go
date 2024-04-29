@@ -18,6 +18,12 @@ type Statement interface {
 	statementNode()
 }
 
+func (s *statement) statementNode() {}
+
+func (s *statement) TokenLiteral() string {
+	return s.token.Literal
+}
+
 // Expression node is a node that produces a value
 type Expression interface {
 	Node
@@ -26,12 +32,6 @@ type Expression interface {
 
 type statement struct {
 	token token.Token
-}
-
-func (s *statement) statementNode() {}
-
-func (s *statement) TokenLiteral() string {
-	return s.token.Literal
 }
 
 // Program is a representation of the AST
@@ -59,8 +59,15 @@ func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
 
+// LetStatement represents the let statement
 type LetStatement struct {
 	statement
 	Name  *Identifier
+	Value Expression
+}
+
+// ReturnStatement represents the return statement
+type ReturnStatement struct {
+	statement
 	Value Expression
 }
