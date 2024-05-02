@@ -1,6 +1,6 @@
-# Monkey
+# [WIP] Monkey
 
-An interpreted language written in Go
+Monkey is an interpreted language written in Go. *This project is still under development.*
 
 ## Dependencies
 
@@ -8,7 +8,7 @@ An interpreted language written in Go
 + `just` (not necessary)
 + Go 1.21+
 + ginkgo (if you want to run local unit tests)
-+ golangci-lint (if you want to do local linting)
++ golangci-lint (if you want to do local lint)
 
 ## Conventions
 
@@ -23,14 +23,12 @@ An interpreted language written in Go
 
 ## TODOs
 
-- [ ] feat: add Unicode support
-- [x] feat: add a return keyword for function
-- [ ] feat: add line, column number when getting errors
-- [ ] feat: add support for hex notation and octal notation for integers
-- [ ] feat: formatting and prettier
-- [ ] feat: add support for basic types: boolean, float, struct, string, byte
-- [ ] feat: add support for collection types: array, map
-- [ ] feat: add support for function anonymous arguments
+- [ ] feat: Unicode
+- [ ] feat: parsing line, column number for better visibility
+- [ ] feat: hexical notation and octal notation for integers
+- [ ] feat: formatting and prettier in REPL
+- [ ] feat: support for multiple types: boolean, float, struct, string, byte, etc
+- [ ] feat: support for collection types: array, map, set
 - [ ] feat: add support for variadic functions
 - [ ] feat: add support for anonymous functions
 - [ ] feat: add <=, >= operators
@@ -38,14 +36,9 @@ An interpreted language written in Go
 - [ ] feat: add bitwise operators ^, |, &
 - [ ] refactor: unary operators, binary operators, ternary operators
 - [ ] feat: use Cobra to enable multiple modes when launching the REPL
-- [ ] feat: use quit(), exit(), or Ctrl-D to exit
-- [ ] ci: fix the release GHA workflow
-- [ ] feat: concurrency, Mutex, RWMutex
-- [ ] feat: add support for comments
-
-
-
-
+- [ ] feat: use quit(), exit(), or Ctrl-D to exit elegantly
+- [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
+- [ ] feat: support for comments
 
 
 
