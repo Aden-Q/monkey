@@ -9,27 +9,27 @@ import (
 )
 
 var _ = Describe("Lexer", func() {
-	var l lexer.Lexer
+	var (
+		text string
+		l    lexer.Lexer
+	)
 
 	BeforeEach(func() {
 		l = lexer.New()
 	})
 
-	Describe("Read", func() {
-		Context("simple text", func() {
+	Describe("Lexer", func() {
+		Context("Read", func() {
 			It("can read simple text", func() {
-				text := `something`
-
+				text = `something`
 				Expect(l.Read(text)).To(Equal(len(text)))
 			})
 		})
-	})
 
-	Describe("NextToken", func() {
-		Context("a single line", func() {
+		Context("NextToken", func() {
 			It("can parse simple text", func() {
-				text := `=+(){},;`
-				expected_tokens := []token.Token{
+				text = `=+(){},;`
+				expectedTokens := []token.Token{
 					{
 						Type:    token.ASSIGN,
 						Literal: "=",
@@ -66,17 +66,16 @@ var _ = Describe("Lexer", func() {
 
 				Expect(l.Read(text)).To(Equal(len(text)))
 
-				for _, expected_token := range expected_tokens {
-					token, ok := l.NextToken()
-					Expect(ok).To(Equal(true))
-					Expect(token).To(Equal(expected_token))
+				for _, expectedToken := range expectedTokens {
+					token := l.NextToken()
+					Expect(token).To(Equal(expectedToken))
 				}
 			})
 		})
 
 		Context("code snippet", func() {
 			It("can parse complex text", func() {
-				text :=
+				text =
 					`let five = 5;
 					let ten = 10;
 
@@ -98,7 +97,7 @@ var _ = Describe("Lexer", func() {
 					10 == 10;
 					10 != 9;
 					`
-				expected_tokens := []token.Token{
+				expectedTokens := []token.Token{
 					{
 						Type:    token.LET,
 						Literal: "let",
@@ -388,14 +387,17 @@ var _ = Describe("Lexer", func() {
 						Type:    token.SEMICOLON,
 						Literal: ";",
 					},
+					{
+						Type:    token.EOF,
+						Literal: "eof",
+					},
 				}
 
 				Expect(l.Read(text)).To(Equal(len(text)))
 
-				for _, expected_token := range expected_tokens {
-					token, ok := l.NextToken()
-					Expect(ok).To(Equal(true))
-					Expect(token).To(Equal(expected_token))
+				for _, expectedToken := range expectedTokens {
+					token := l.NextToken()
+					Expect(token).To(Equal(expectedToken))
 				}
 			})
 		})

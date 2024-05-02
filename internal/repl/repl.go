@@ -40,7 +40,7 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser) {
 		line := scanner.Text()
 		l.Read(line)
 
-		for tok, ok := l.NextToken(); ok && tok.Type != token.EOF; tok, ok = l.NextToken() {
+		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
 			fmt.Printf("%+v\n", tok)
 		}
 	}

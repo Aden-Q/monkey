@@ -10,7 +10,7 @@ type Lexer interface {
 	// Read reads the input text and stores into the buffer
 	Read(text string) int
 	// NextToken reads the next token starting at the current offset and move the ptr forward
-	NextToken() (token.Token, bool)
+	NextToken() token.Token
 }
 
 type lexer struct {
@@ -29,16 +29,17 @@ func (l *lexer) Read(text string) int {
 	return len(text)
 }
 
-func (l *lexer) NextToken() (token.Token, bool) {
-	if !l.hasNext() {
-		return token.Token{}, false
-	}
-
+func (l *lexer) NextToken() token.Token {
 	l.skipWhiteSpaces()
 
-	var tok token.Token
-	ok := true
+	if !l.hasNext() {
+		return token.Token{
+			Type:    token.EOF,
+			Literal: "eof",
+		}
+	}
 
+	var tok token.Token
 	ch := l.buf[l.position]
 
 	switch ch {
@@ -63,18 +64,15 @@ func (l *lexer) NextToken() (token.Token, bool) {
 		if isLetter(ch) {
 			literal := l.readWord()
 			tok = token.New(token.LookupTokenType(literal), literal)
-			ok = true
 		} else if isDigit(ch) {
 			literal := l.readInt()
 			tok = token.New(token.LookupTokenType(literal), literal)
-			ok = true
 		} else {
 			tok = token.New(token.ILLEGAL, string(ch))
-			ok = false
 		}
 	}
 
-	return tok, ok
+	return tok
 }
 
 // hasNext checks whether there are characters remaining
