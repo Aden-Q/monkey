@@ -4,30 +4,43 @@ import (
 	"github.com/Aden-Q/monkey/internal/token"
 )
 
-type Lexer struct {
-	input    string
+var _ Lexer = (*lexer)(nil)
+
+type Lexer interface {
+	// Read reads the input text and stores into the buffer
+	Read(text string) int
+	// NextToken reads the next token starting at the current offset and move the ptr forward
+	NextToken() token.Token
+}
+
+type lexer struct {
+	buf      string
 	position uint32 // current position index in input
 }
 
-func New(input string) *Lexer {
-	l := &Lexer{
-		input: input,
-	}
-
-	return l
+func New() Lexer {
+	return &lexer{}
 }
 
-func (l *Lexer) NextToken() (token.Token, bool) {
-	if !l.hasNext() {
-		return token.Token{}, false
-	}
+func (l *lexer) Read(text string) int {
+	l.buf = text
+	l.position = 0
 
+	return len(text)
+}
+
+func (l *lexer) NextToken() token.Token {
 	l.skipWhiteSpaces()
 
-	var tok token.Token
-	ok := true
+	if !l.hasNext() {
+		return token.Token{
+			Type:    token.EOF,
+			Literal: "eof",
+		}
+	}
 
-	ch := l.input[l.position]
+	var tok token.Token
+	ch := l.buf[l.position]
 
 	switch ch {
 	// operators with two characters
@@ -51,43 +64,40 @@ func (l *Lexer) NextToken() (token.Token, bool) {
 		if isLetter(ch) {
 			literal := l.readWord()
 			tok = token.New(token.LookupTokenType(literal), literal)
-			ok = true
 		} else if isDigit(ch) {
 			literal := l.readInt()
 			tok = token.New(token.LookupTokenType(literal), literal)
-			ok = true
 		} else {
 			tok = token.New(token.ILLEGAL, string(ch))
-			ok = false
 		}
 	}
 
-	return tok, ok
+	return tok
 }
 
 // hasNext checks whether there are characters remaining
-func (l *Lexer) hasNext() bool {
-	return l.position < uint32(len(l.input))
+func (l *lexer) hasNext() bool {
+	return l.position < uint32(len(l.buf))
 }
 
 // peekNextNextChar looks at the next character after the next character
-func (l *Lexer) peekNextNextChar() byte {
-	if l.position+1 > uint32(len(l.input))-1 {
+func (l *lexer) peekNextNextChar() byte {
+	if l.position+1 > uint32(len(l.buf))-1 {
 		return 0
 	}
 
-	return l.input[l.position+1]
+	return l.buf[l.position+1]
 }
 
 // readChar reads a single char at the current offset and move the ptr forward by 1
-func (l *Lexer) readChar() string {
+func (l *lexer) readChar() string {
 	if !l.hasNext() {
 		return ""
 	}
 
 	l.position++
 
-	return l.input[l.position-1 : l.position]
+	return l.buf[l.position-1 : l.position]
 }
 
 // isLetter check whether a character is allow be to in an identifier
@@ -96,7 +106,7 @@ func isLetter(ch byte) bool {
 }
 
 // read a word starting from the current position, and move the offset forward
-func (l *Lexer) readWord() string {
+func (l *lexer) readWord() string {
 	startPos := l.position
 
 	for {
@@ -104,7 +114,7 @@ func (l *Lexer) readWord() string {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if !isLetter(ch) {
 			break
 		}
@@ -112,7 +122,7 @@ func (l *Lexer) readWord() string {
 		l.position++
 	}
 
-	return l.input[startPos:l.position]
+	return l.buf[startPos:l.position]
 }
 
 // isLetter check whether a character is an digit
@@ -120,7 +130,7 @@ func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
 
-func (l *Lexer) readInt() string {
+func (l *lexer) readInt() string {
 	startPos := l.position
 
 	for {
@@ -128,7 +138,7 @@ func (l *Lexer) readInt() string {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if !isDigit(ch) {
 			break
 		}
@@ -136,17 +146,17 @@ func (l *Lexer) readInt() string {
 		l.position++
 	}
 
-	return l.input[startPos:l.position]
+	return l.buf[startPos:l.position]
 }
 
 // skipWhiteSpaces skips all white spaces starting at the current position, including newline characters
-func (l *Lexer) skipWhiteSpaces() {
+func (l *lexer) skipWhiteSpaces() {
 	for {
 		if !l.hasNext() {
 			break
 		}
 
-		ch := l.input[l.position]
+		ch := l.buf[l.position]
 		if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' {
 			l.position += 1
 		} else {

@@ -12,7 +12,7 @@
 
 # build a binary executable
 @build:
-  go build .
+  go build -gcflags='-m=2' .
 
 # run the Monkey language interpreter in interactive mode
 @run:

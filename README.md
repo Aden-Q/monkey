@@ -14,6 +14,13 @@ An interpreted language written in Go
 
 + Identifiers only consist of alphabet letters or underscore
 
+## Components
+
++ Token set
++ Lexer
++ Abstract Syntax Tree (AST)
++ Pratt parser
+
 ## TODOs
 
 - [ ] feat: add Unicode support
@@ -32,6 +39,9 @@ An interpreted language written in Go
 - [ ] refactor: unary operators, binary operators, ternary operators
 - [ ] feat: use Cobra to enable multiple modes when launching the REPL
 - [ ] feat: use quit(), exit(), or Ctrl-D to exit
+- [ ] ci: fix the release GHA workflow
+- [ ] feat: concurrency, Mutex, RWMutex
+- [ ] feat: add support for comments
 
 
 
