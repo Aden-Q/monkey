@@ -39,6 +39,8 @@ func (p *Program) TokenLiteral() string {
 	return p.Statements[0].TokenLiteral()
 }
 
+// Identifier implements the Expression interface because an identifier object
+// can the right value of a statement, meaning that it can evaluate to some value, after it's assgined
 type Identifier struct {
 	// the identifier token
 	Token token.Token
