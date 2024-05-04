@@ -56,13 +56,17 @@ func (p *Program) String() string {
 	return builder.String()
 }
 
+func NewProgram(statements ...Statement) *Program {
+	return &Program{
+		Statements: statements,
+	}
+}
+
 // Identifier implements the Expression interface because an identifier object
 // can the right value of a statement, meaning that it can evaluate to some value, after it's assgined
 type Identifier struct {
 	// the identifier token
 	Token token.Token
-	// associated value of this identifier, represented as a string for now
-	Value string
 }
 
 func (i *Identifier) expressionNode() {}
@@ -72,13 +76,12 @@ func (i *Identifier) TokenLiteral() string {
 }
 
 func (i *Identifier) String() string {
-	return i.Value
+	return i.Token.Literal
 }
 
-func NewIdentifier(literal string, value string) *Identifier {
+func NewIdentifier(literal string) *Identifier {
 	return &Identifier{
 		Token: token.New(token.IDENT, literal),
-		Value: value,
 	}
 }
 
