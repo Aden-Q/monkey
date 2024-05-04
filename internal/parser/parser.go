@@ -9,11 +9,26 @@ import (
 	"github.com/Aden-Q/monkey/internal/lexer"
 )
 
+const (
+	LOWEST      = iota
+	EQUALS      // ==
+	LESSGREATER // >, >=, <, <=
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	CALL        // fn(X)
+)
+
 // interface compliance check
 var _ Parser = (*parser)(nil)
 
 var (
 	ErrUnexpectedTokenType = errors.New("unexpected token type")
+)
+
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
 )
 
 // a Pratt Parser interface
@@ -30,12 +45,26 @@ type parser struct {
 	// the current parsing progress, the object is stateful
 	curToken  token.Token
 	peekToken token.Token
+
+	// parse functions for expressions
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(l lexer.Lexer) Parser {
-	return &parser{
-		l: l,
+	p := &parser{
+		l:              l,
+		prefixParseFns: make(map[token.TokenType]prefixParseFn, 0),
+		infixParseFns:  make(map[token.TokenType]infixParseFn, 0),
 	}
+
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
+
+	return p
+}
+
+func (p *parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
 }
 
 // TODO: implement it to parse the whole program into a AST
@@ -50,6 +79,7 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 	p.nextToken()
 	p.nextToken()
 
+	// in each iteration of the for loop here, we parse a single statement separated by a semicolon ;
 	for p.curToken.Type != token.EOF {
 		// parse a single statement every time
 		stmt, err := p.parseStatment()
@@ -61,6 +91,7 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 			program.Statements = append(program.Statements, stmt)
 		}
 
+		// move to the start of the next statement
 		p.nextToken()
 	}
 
@@ -71,14 +102,24 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 func (p *parser) parseStatment() (ast.Statement, error) {
 	// TODO: check how to propagate errors when the current token is not a statement indicator
 	// make sure not to produce duplicate errors for the same statement
+	var stmt ast.Statement
+	var err error
+
 	switch p.curToken.Type {
 	case token.LET:
-		return p.parseLetStatement()
+		stmt, err = p.parseLetStatement()
 	case token.RETURN:
-		return p.parseReturnStatement()
+		stmt, err = p.parseReturnStatement()
 	default:
-		return p.parseExpressionStatement()
+		stmt, err = p.parseExpressionStatement()
 	}
+
+	// move to the end of the current statement, indicated by a semicolon;
+	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
+		p.nextToken()
+	}
+
+	return stmt, err
 }
 
 // parseLetStatement parses a single let statement
@@ -98,38 +139,34 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 		return nil, ErrUnexpectedTokenType
 	}
 
-	identifier := p.curToken
+	tok := p.curToken
 
-	// move forward
+	// move forward to make p.curToekn be the first token of the expression
+	p.nextToken()
 	p.nextToken()
 
-	// parse the expression after the '=' token
-	e, err := p.parseExpression()
-	if err != nil {
-		return nil, err
-	}
+	// TODO: parse the expression after the return token
+	exp, _ := p.parseExpression(LOWEST)
 
 	return ast.NewLetStatement(&ast.Identifier{
-		Token: identifier,
-	}, e), nil
+		Token: tok,
+	}, exp), nil
 }
 
 // parseReturnStatement parses a single return statement
 func (p *parser) parseReturnStatement() (ast.Statement, error) {
-	// move forward
+	// move forward to make p.curToekn be the first token of the expression
 	p.nextToken()
 
-	e, err := p.parseExpression()
-	if err != nil {
-		return nil, err
-	}
+	// TODO: parse the expression after the return token
+	exp, _ := p.parseExpression(LOWEST)
 
-	return ast.NewReturnStatement(e), err
+	return ast.NewReturnStatement(exp), nil
 }
 
 // parseExpressionStatement parses a single expression statement
 func (p *parser) parseExpressionStatement() (ast.Statement, error) {
-	e, err := p.parseExpression()
+	e, err := p.parseExpression(LOWEST)
 	if err != nil {
 		return nil, err
 	}
@@ -138,13 +175,19 @@ func (p *parser) parseExpressionStatement() (ast.Statement, error) {
 }
 
 // parseExpression parses a single expression, p.curToken points to the first token of the expression
-func (p *parser) parseExpression() (ast.Expression, error) {
-	// TODO: implement it instead of skipping all
-	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
-		p.nextToken()
+func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
+	prefixFn, ok := p.prefixParseFns[p.curToken.Type]
+	if !ok {
+		return nil, nil
 	}
 
-	return nil, nil
+	leftExp := prefixFn()
+
+	return leftExp, nil
+}
+
+func (p *parser) parseIdentifier() ast.Expression {
+	return ast.NewIdentifier(p.curToken.Literal)
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state

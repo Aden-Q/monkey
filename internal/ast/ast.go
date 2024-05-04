@@ -172,8 +172,8 @@ type ExpressionStatement struct {
 }
 
 // NewExpressionStatement creates a new expression statement node
-func NewExpressionStatement(e Expression) *ExpressionStatement {
+func NewExpressionStatement(exp Expression) *ExpressionStatement {
 	return &ExpressionStatement{
-		Expression: e,
+		Expression: exp,
 	}
 }
