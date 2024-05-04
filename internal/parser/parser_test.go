@@ -24,6 +24,24 @@ var _ = Describe("Parser", func() {
 	})
 
 	Describe("ParseProgram", func() {
+		Context("parse expressions", func() {
+			It("identifier expression", func() {
+				text = `
+				foobar;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewIdentifier("foobar")),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+		})
+
 		Context("parse let statements", func() {
 			It("correct program", func() {
 				text = `
@@ -112,7 +130,6 @@ var _ = Describe("Parser", func() {
 				Expect(program).To(Equal(expectedProgram))
 				Expect(errs).To(Equal(expectedErrors))
 			})
-
 		})
 	})
 })

@@ -56,13 +56,14 @@ func (p *Program) String() string {
 	return builder.String()
 }
 
+// NewProgram creates a new program object
 func NewProgram(statements ...Statement) *Program {
 	return &Program{
 		Statements: statements,
 	}
 }
 
-// Identifier implements the Expression interface because an identifier object
+// Identifier implements the Expression interface. An identifier object
 // can the right value of a statement, meaning that it can evaluate to some value, after it's assgined
 type Identifier struct {
 	// the identifier token
@@ -79,6 +80,7 @@ func (i *Identifier) String() string {
 	return i.Token.Literal
 }
 
+// NewIdentifier creates a new identifier node
 func NewIdentifier(literal string) *Identifier {
 	return &Identifier{
 		Token: token.New(token.IDENT, literal),
@@ -117,6 +119,7 @@ func (ls *LetStatement) String() string {
 	return builder.String()
 }
 
+// NewLetStatement creates a new let statement node
 func NewLetStatement(identifier *Identifier, value Expression) *LetStatement {
 	return &LetStatement{
 		Token:      token.New(token.LET, "let"),
@@ -153,6 +156,7 @@ func (rs *ReturnStatement) String() string {
 	return builder.String()
 }
 
+// NewReturnStatement creates a new return statement node
 func NewReturnStatement(value Expression) *ReturnStatement {
 	return &ReturnStatement{
 		Token: token.New(token.RETURN, "return"),
@@ -162,29 +166,14 @@ func NewReturnStatement(value Expression) *ReturnStatement {
 
 // ExpressionStatement represents a statement consisting of only one expression
 type ExpressionStatement struct {
-	// the first token of the expression
-	Token token.Token
+	Statement
 	// the expression
 	Expression Expression
 }
 
-func (es *ExpressionStatement) statementNode() {}
-
-func (es *ExpressionStatement) TokenLiteral() string {
-	return es.Token.Literal
-}
-
-func (es *ExpressionStatement) String() string {
-	if es.Expression == nil {
-		return ""
-	}
-
-	return es.Expression.String()
-}
-
-func NewExpressionStatement(exp Expression) *ExpressionStatement {
+// NewExpressionStatement creates a new expression statement node
+func NewExpressionStatement(e Expression) *ExpressionStatement {
 	return &ExpressionStatement{
-		Token:      token.New(token.RETURN, "return"),
-		Expression: exp,
+		Expression: e,
 	}
 }

@@ -18,7 +18,7 @@ var (
 
 // a Pratt Parser interface
 type Parser interface {
-	// TODO: add interface methods
+	// TODO: add more interface methods here
 	ParseProgram(text string) (*ast.Program, []error)
 }
 
@@ -30,9 +30,6 @@ type parser struct {
 	// the current parsing progress, the object is stateful
 	curToken  token.Token
 	peekToken token.Token
-
-	// parsing errors
-
 }
 
 func New(l lexer.Lexer) Parser {
@@ -72,16 +69,16 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 
 // parseStatment parses a single statement
 func (p *parser) parseStatment() (ast.Statement, error) {
+	// TODO: check how to propagate errors when the current token is not a statement indicator
+	// make sure not to produce duplicate errors for the same statement
 	switch p.curToken.Type {
 	case token.LET:
 		return p.parseLetStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	default:
+		return p.parseExpressionStatement()
 	}
-
-	// TODO: check how to propagate errors when the current token is not a statement indicator
-	// make sure not to produce duplicate errors for the same statement
-	return nil, nil
 }
 
 // parseLetStatement parses a single let statement
@@ -130,9 +127,19 @@ func (p *parser) parseReturnStatement() (ast.Statement, error) {
 	return ast.NewReturnStatement(e), err
 }
 
+// parseExpressionStatement parses a single expression statement
+func (p *parser) parseExpressionStatement() (ast.Statement, error) {
+	e, err := p.parseExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewExpressionStatement(e), err
+}
+
 // parseExpression parses a single expression, p.curToken points to the first token of the expression
 func (p *parser) parseExpression() (ast.Expression, error) {
-	// TODO: parse the expression after the = token
+	// TODO: implement it instead of skipping all
 	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
 		p.nextToken()
 	}
