@@ -64,7 +64,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("expressions with prefix operators", func() {
+			It("simple prefix expressions", func() {
 				text = `
 				-5;
 				!10;
@@ -77,6 +77,46 @@ var _ = Describe("Parser", func() {
 						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewInteger("10", 10))),
 						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIdentifier("foo"))),
 						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIdentifier("bar"))),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("simple infix expressions", func() {
+				text = `
+				5 + 5;
+				5 - 5;
+				5 * 5;
+				5 / 5;
+				6 > 5;
+				6 >= 5;
+				5 < 6;
+				5 <= 6;
+				5 == 5;
+				5 != 6;
+				foo + bar;
+				foo + 5;
+				bar + 5;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("-", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("/", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression(">", ast.NewInteger("6", 6), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression(">=", ast.NewInteger("6", 6), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("<", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("<=", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewIdentifier("bar"))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("bar"), ast.NewInteger("5", 5))),
 					},
 				}
 				expectedErrors := []error{}

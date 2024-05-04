@@ -21,19 +21,19 @@ type Node interface {
 	String() string
 }
 
-// Statement is a node that does not produce a value
-type Statement interface {
-	Node
-	statementNode()
-}
-
 // Expression is a node that produces a value
 type Expression interface {
 	Node
 	expressionNode()
 }
 
-// Program is a representation of the AST
+// Statement is a node that does not produce a value
+type Statement interface {
+	Node
+	statementNode()
+}
+
+// Program is a representation of the AST. It implements the Node interface (root node of AST)
 type Program struct {
 	Statements []Statement
 }
@@ -57,7 +57,7 @@ func (p *Program) String() string {
 	return builder.String()
 }
 
-// NewProgram creates a new program object
+// NewProgram creates a program node
 func NewProgram(statements ...Statement) *Program {
 	return &Program{
 		Statements: statements,
@@ -83,7 +83,7 @@ func (i *Identifier) String() string {
 	return i.Value
 }
 
-// NewIdentifier creates a new identifier node
+// NewIdentifier creates an identifier expression node
 func NewIdentifier(literal string) *Identifier {
 	return &Identifier{
 		Token: token.New(token.IDENT, literal),
@@ -108,7 +108,7 @@ func (i *Integer) String() string {
 	return i.Token.Literal
 }
 
-// NewInteger creates a new integer node
+// NewInteger creates an integer expression node
 func NewInteger(literal string, value int64) *Integer {
 	return &Integer{
 		Token: token.New(token.INT, literal),
@@ -117,13 +117,13 @@ func NewInteger(literal string, value int64) *Integer {
 }
 
 // PrefixExpression implements the Expression interface
-// a prefix expression is a prefix (-/!) + an operator
+// a prefix expression consists of a prefix (-/!) and an operator
 type PrefixExpression struct {
 	// a token representation of the prefix operator
 	Token token.Token
 	// the string literal of the prefix operator
 	Operator string
-	// the expression following that prefix operator
+	// the expression following the prefix operator
 	Operand Expression
 }
 
@@ -144,12 +144,52 @@ func (pe *PrefixExpression) String() string {
 	return builder.String()
 }
 
-// NewInteger creates a new integer node
+// NewPrefixExpression creates a prefix expression node
 func NewPrefixExpression(literal string, operand Expression) *PrefixExpression {
 	return &PrefixExpression{
 		Token:    token.New(token.LookupTokenType(literal), literal),
 		Operator: literal,
 		Operand:  operand,
+	}
+}
+
+// InfixExpression implements the Expression interface
+type InfixExpression struct {
+	// a token representation of the infix operator
+	Token token.Token
+	// the string literal of the infix operator
+	Operator string
+	// the expression to the left of the infix expression
+	LeftOperand Expression
+	// the expression to the right of the infix expression
+	RightOperand Expression
+}
+
+func (ie *InfixExpression) expressionNode() {}
+
+func (ie *InfixExpression) TokenLiteral() string {
+	return ie.Token.Literal
+}
+
+func (ie *InfixExpression) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString("(")
+	builder.WriteString(ie.LeftOperand.String())
+	builder.WriteString(ie.Operator)
+	builder.WriteString(ie.RightOperand.String())
+	builder.WriteString(")")
+
+	return builder.String()
+}
+
+// NewInExpression creates an infix expression node
+func NewInfixExpression(literal string, leftOperand, rightOperand Expression) *InfixExpression {
+	return &InfixExpression{
+		Token:        token.New(token.LookupTokenType(literal), literal),
+		Operator:     literal,
+		LeftOperand:  leftOperand,
+		RightOperand: rightOperand,
 	}
 }
 
@@ -187,7 +227,7 @@ func (ls *LetStatement) String() string {
 	return builder.String()
 }
 
-// NewLetStatement creates a new let statement node
+// NewLetStatement creates a let statement node
 func NewLetStatement(identifier *Identifier, value Expression) *LetStatement {
 	return &LetStatement{
 		Token:      token.New(token.LET, "let"),
@@ -224,7 +264,7 @@ func (rs *ReturnStatement) String() string {
 	return builder.String()
 }
 
-// NewReturnStatement creates a new return statement node
+// NewReturnStatement creates a return statement node
 func NewReturnStatement(value Expression) *ReturnStatement {
 	return &ReturnStatement{
 		Token: token.New(token.RETURN, "return"),
@@ -239,7 +279,7 @@ type ExpressionStatement struct {
 	Expression Expression
 }
 
-// NewExpressionStatement creates a new expression statement node
+// NewExpressionStatement creates an expression statement node
 func NewExpressionStatement(exp Expression) *ExpressionStatement {
 	return &ExpressionStatement{
 		Expression: exp,

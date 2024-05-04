@@ -44,7 +44,7 @@ func (l *lexer) NextToken() token.Token {
 
 	switch ch {
 	// operators with two characters
-	case '=', '!':
+	case '=', '!', '<', '>':
 		if l.peekNextNextChar() == '=' {
 			ch := l.readChar() + l.readChar()
 			tok = token.New(token.LookupTokenType(ch), ch)
@@ -53,7 +53,7 @@ func (l *lexer) NextToken() token.Token {
 			tok = token.New(token.LookupTokenType(ch), ch)
 		}
 	// operators with a single character
-	case '+', '-', '*', '/', '<', '>':
+	case '+', '-', '*', '/':
 		fallthrough
 	// delimiters
 	case ',', ';', '(', ')', '{', '}':

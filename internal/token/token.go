@@ -18,10 +18,11 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	LT       = "<"
+	LTE      = "<="
 	GT       = ">"
-
-	EQ     = "=="
-	NOT_EQ = "!="
+	GTE      = ">="
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	// delimiters
 	COMMA     = ","
@@ -60,7 +61,9 @@ var operatorTable = map[string]TokenType{
 	"*":  ASTERISK,
 	"/":  SLASH,
 	"<":  LT,
+	"<=": LTE,
 	">":  GT,
+	">=": GTE,
 	"==": EQ,
 	"!=": NOT_EQ,
 }

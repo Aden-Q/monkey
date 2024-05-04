@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Aden-Q/monkey/internal/token"
@@ -10,22 +9,8 @@ import (
 	"github.com/Aden-Q/monkey/internal/lexer"
 )
 
-const (
-	LOWEST      = iota
-	EQUALS      // ==
-	LESSGREATER // >, >=, <, <=
-	SUM         // +
-	PRODUCT     // *
-	PREFIX      // -X or !X
-	CALL        // fn(X)
-)
-
 // interface compliance check
 var _ Parser = (*parser)(nil)
-
-var (
-	ErrUnexpectedTokenType = errors.New("unexpected token type")
-)
 
 type (
 	prefixParseFn func() (ast.Expression, error)
@@ -60,16 +45,32 @@ func New(l lexer.Lexer) Parser {
 	}
 
 	// register prefix parse functions
-	p.registerPrefixFn(token.IDENT, p.parseIdentifier)
-	p.registerPrefixFn(token.INT, p.parseInteger)
-	p.registerPrefixFn(token.BANG, p.parsePrefixExpression)
-	p.registerPrefixFn(token.MINUS, p.parsePrefixExpression)
+	p.registerPrefixParseFn(token.IDENT, p.parseIdentifier)
+	p.registerPrefixParseFn(token.INT, p.parseInteger)
+	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
+	p.registerPrefixParseFn(token.MINUS, p.parsePrefixExpression)
+
+	// register infix parse functions
+	p.registerInfixParseFn(token.PLUS, p.parseInfixExpression)
+	p.registerInfixParseFn(token.MINUS, p.parseInfixExpression)
+	p.registerInfixParseFn(token.ASTERISK, p.parseInfixExpression)
+	p.registerInfixParseFn(token.SLASH, p.parseInfixExpression)
+	p.registerInfixParseFn(token.GT, p.parseInfixExpression)
+	p.registerInfixParseFn(token.GTE, p.parseInfixExpression)
+	p.registerInfixParseFn(token.LT, p.parseInfixExpression)
+	p.registerInfixParseFn(token.LTE, p.parseInfixExpression)
+	p.registerInfixParseFn(token.EQ, p.parseInfixExpression)
+	p.registerInfixParseFn(token.NOT_EQ, p.parseInfixExpression)
 
 	return p
 }
 
-func (p *parser) registerPrefixFn(tokenType token.TokenType, fn prefixParseFn) {
+func (p *parser) registerPrefixParseFn(tokenType token.TokenType, fn prefixParseFn) {
 	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *parser) registerInfixParseFn(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 // TODO: implement it to parse the whole program into a AST
@@ -130,7 +131,7 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 // parseLetStatement parses a single let statement
 func (p *parser) parseLetStatement() (ast.Statement, error) {
 	// expect the next token type to be IDENT
-	if !p.expectPeekTokenType(token.IDENT) {
+	if !p.peekTokenTypeIs(token.IDENT) {
 		// fail to parse this let statement
 		return nil, ErrUnexpectedTokenType
 	}
@@ -139,7 +140,7 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 	p.nextToken()
 
 	// expect the next token type to be IDENT
-	if !p.expectPeekTokenType(token.ASSIGN) {
+	if !p.peekTokenTypeIs(token.ASSIGN) {
 		// fail to parse this let statement
 		return nil, ErrUnexpectedTokenType
 	}
@@ -150,7 +151,7 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 	p.nextToken()
 	p.nextToken()
 
-	value, err := p.parseExpression(LOWEST)
+	value, err := p.parseExpression(token.LOWEST)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +164,7 @@ func (p *parser) parseReturnStatement() (ast.Statement, error) {
 	// move forward to make p.curToekn be the first token of the expression
 	p.nextToken()
 
-	exp, err := p.parseExpression(LOWEST)
+	exp, err := p.parseExpression(token.LOWEST)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +174,7 @@ func (p *parser) parseReturnStatement() (ast.Statement, error) {
 
 // parseExpressionStatement parses a single expression statement
 func (p *parser) parseExpressionStatement() (ast.Statement, error) {
-	exp, err := p.parseExpression(LOWEST)
+	exp, err := p.parseExpression(token.LOWEST)
 	if err != nil {
 		return nil, err
 	}
@@ -183,12 +184,34 @@ func (p *parser) parseExpressionStatement() (ast.Statement, error) {
 
 // parseExpression parses a single expression, p.curToken points to the first token of the expression
 func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
+	// TODO: need to parse infix expression as well
 	prefixFn, ok := p.prefixParseFns[p.curToken.Type]
 	if !ok {
-		return nil, nil
+		return nil, ErrPrefixParseFnNotFound
 	}
 
-	return prefixFn()
+	// the prefix expression
+	exp, err := prefixFn()
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.SEMICOLON) && precedence < token.GetPrecedence(p.peekToken.Type) {
+		infixFn, ok := p.infixParseFns[p.peekToken.Type]
+		if !ok {
+			return exp, ErrInfixParseFnNotFound
+		}
+
+		// move forward to make p.curToekn point to the operator of the infix expression
+		p.nextToken()
+
+		exp, err = infixFn(exp)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return exp, err
 }
 
 func (p *parser) parseIdentifier() (ast.Expression, error) {
@@ -211,12 +234,27 @@ func (p *parser) parsePrefixExpression() (ast.Expression, error) {
 	p.nextToken()
 
 	// recursively parse the expression after the prefix token
-	operand, err := p.parseExpression(PREFIX)
+	operand, err := p.parseExpression(token.PREFIX)
 	if err != nil {
 		return nil, err
 	}
 
 	return ast.NewPrefixExpression(prefixToken.Literal, operand), nil
+}
+
+func (p *parser) parseInfixExpression(leftOperand ast.Expression) (ast.Expression, error) {
+	operatorToken := p.curToken
+	precedence := token.GetPrecedence(operatorToken.Type)
+
+	// move forward to make p.curToekn points to the right operand expression
+	p.nextToken()
+
+	rightOperand, err := p.parseExpression(precedence)
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewInfixExpression(operatorToken.Literal, leftOperand, rightOperand), nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state
@@ -228,6 +266,6 @@ func (p *parser) nextToken() {
 }
 
 // expectPeekTokenType examines whether the peek token type is the expected one
-func (p *parser) expectPeekTokenType(tokenType token.TokenType) bool {
+func (p *parser) peekTokenTypeIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
 }

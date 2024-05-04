@@ -21,9 +21,9 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Loops (`for` and `while` keywords)
 + First-class functions
 + If expressions
-+ Prefix operators
++ Prefix operators (binary expressions)
++ Infix operators (unary expressions)
 + Postfix operators
-+ Infix operators
 
 ## Components
 
@@ -52,6 +52,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 - [ ] feat: support for comments
 - [ ] docs: a diagram for the full REPL loop including the AST used
 - [ ] check whether we need the token field in AST
+- [ ] test: increase test coverage to at least 80%
 
 
 
