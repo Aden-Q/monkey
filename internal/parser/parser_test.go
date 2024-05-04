@@ -4,7 +4,6 @@ import (
 	"github.com/Aden-Q/monkey/internal/ast"
 	"github.com/Aden-Q/monkey/internal/lexer"
 	"github.com/Aden-Q/monkey/internal/parser"
-	"github.com/Aden-Q/monkey/internal/token"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -25,13 +24,37 @@ var _ = Describe("Parser", func() {
 
 	Describe("ParseProgram", func() {
 		Context("parse expressions", func() {
-			It("identifier expression", func() {
+			It("identifier expressions", func() {
 				text = `
-				foobar;
+				foo;
+				bar;
+				cs;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewIdentifier("foobar")),
+						ast.NewExpressionStatement(ast.NewIdentifier("foo")),
+						ast.NewExpressionStatement(ast.NewIdentifier("bar")),
+						ast.NewExpressionStatement(ast.NewIdentifier("cs")),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("integer expressions", func() {
+				text = `
+				5;
+				10;
+				838383;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewInteger("5", 5)),
+						ast.NewExpressionStatement(ast.NewInteger("10", 10)),
+						ast.NewExpressionStatement(ast.NewInteger("838383", 838383)),
 					},
 				}
 				expectedErrors := []error{}
@@ -51,15 +74,18 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewLetStatement(&ast.Identifier{
-							Token: token.New(token.IDENT, "x"),
-						}, nil),
-						ast.NewLetStatement(&ast.Identifier{
-							Token: token.New(token.IDENT, "y"),
-						}, nil),
-						ast.NewLetStatement(&ast.Identifier{
-							Token: token.New(token.IDENT, "foobar"),
-						}, nil),
+						ast.NewLetStatement(
+							ast.NewIdentifier("x"),
+							ast.NewInteger("5", 5),
+						),
+						ast.NewLetStatement(
+							ast.NewIdentifier("y"),
+							ast.NewInteger("10", 10),
+						),
+						ast.NewLetStatement(
+							ast.NewIdentifier("foobar"),
+							ast.NewInteger("838383", 838383),
+						),
 					},
 				}
 				expectedErrors := []error{}
@@ -119,9 +145,9 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewReturnStatement(nil),
-						ast.NewReturnStatement(nil),
-						ast.NewReturnStatement(nil),
+						ast.NewReturnStatement(ast.NewInteger("5", 5)),
+						ast.NewReturnStatement(ast.NewInteger("10", 10)),
+						ast.NewReturnStatement(ast.NewInteger("838383", 838383)),
 					},
 				}
 				expectedErrors := []error{}

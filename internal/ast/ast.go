@@ -64,7 +64,7 @@ func NewProgram(statements ...Statement) *Program {
 }
 
 // Identifier implements the Expression interface. An identifier object
-// can the right value of a statement, meaning that it can evaluate to some value, after it's assgined
+// can be the right value of a statement, meaning that it can evaluate to some value, after it's assgined
 type Identifier struct {
 	// the identifier token
 	Token token.Token
@@ -84,6 +84,32 @@ func (i *Identifier) String() string {
 func NewIdentifier(literal string) *Identifier {
 	return &Identifier{
 		Token: token.New(token.IDENT, literal),
+	}
+}
+
+// Integer implements the Expression interface. An integer object
+// can be the right value of a statement, meaning that it can evaluate to some value, after it's assgined
+type Integer struct {
+	// the integer token
+	Token token.Token
+	Value int64
+}
+
+func (i *Integer) expressionNode() {}
+
+func (i *Integer) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i *Integer) String() string {
+	return i.Token.Literal
+}
+
+// NewInteger creates a new integer node
+func NewInteger(literal string, value int64) *Integer {
+	return &Integer{
+		Token: token.New(token.INT, literal),
+		Value: value,
 	}
 }
 

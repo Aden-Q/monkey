@@ -2,6 +2,8 @@ package parser
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/Aden-Q/monkey/internal/token"
 
@@ -27,8 +29,8 @@ var (
 )
 
 type (
-	prefixParseFn func() ast.Expression
-	infixParseFn  func(ast.Expression) ast.Expression
+	prefixParseFn func() (ast.Expression, error)
+	infixParseFn  func(ast.Expression) (ast.Expression, error)
 )
 
 // a Pratt Parser interface
@@ -58,12 +60,14 @@ func New(l lexer.Lexer) Parser {
 		infixParseFns:  make(map[token.TokenType]infixParseFn, 0),
 	}
 
-	p.registerPrefix(token.IDENT, p.parseIdentifier)
+	// register prefix parse functions
+	p.registerPrefixFn(token.IDENT, p.parseIdentifier)
+	p.registerPrefixFn(token.INT, p.parseInteger)
 
 	return p
 }
 
-func (p *parser) registerPrefix(tokenType token.TokenType, fn prefixParseFn) {
+func (p *parser) registerPrefixFn(tokenType token.TokenType, fn prefixParseFn) {
 	p.prefixParseFns[tokenType] = fn
 }
 
@@ -166,12 +170,12 @@ func (p *parser) parseReturnStatement() (ast.Statement, error) {
 
 // parseExpressionStatement parses a single expression statement
 func (p *parser) parseExpressionStatement() (ast.Statement, error) {
-	e, err := p.parseExpression(LOWEST)
+	exp, err := p.parseExpression(LOWEST)
 	if err != nil {
 		return nil, err
 	}
 
-	return ast.NewExpressionStatement(e), err
+	return ast.NewExpressionStatement(exp), err
 }
 
 // parseExpression parses a single expression, p.curToken points to the first token of the expression
@@ -181,13 +185,20 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 		return nil, nil
 	}
 
-	leftExp := prefixFn()
-
-	return leftExp, nil
+	return prefixFn()
 }
 
-func (p *parser) parseIdentifier() ast.Expression {
-	return ast.NewIdentifier(p.curToken.Literal)
+func (p *parser) parseIdentifier() (ast.Expression, error) {
+	return ast.NewIdentifier(p.curToken.Literal), nil
+}
+
+func (p *parser) parseInteger() (ast.Expression, error) {
+	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	if err != nil {
+		return nil, fmt.Errorf("parse integer %s: %v", p.curToken.Literal, err)
+	}
+
+	return ast.NewInteger(p.curToken.Literal, value), nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state
