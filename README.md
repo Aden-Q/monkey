@@ -12,7 +12,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Features
 
-+ Programs can be ran in REPL or as scripts
++ Programs can run in REPL or as scripts
 + Identifiers that consist of alphabet letters or underscore
 + Able to catch all syntax errors in a single run
 + Able to evaluate arithmetic expressions
