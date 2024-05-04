@@ -10,9 +10,14 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + ginkgo (if you want to run local unit tests)
 + golangci-lint (if you want to do local lint)
 
-## Conventions
+## Features
 
-+ Identifiers only consist of alphabet letters or underscore
++ Programs can be ran in REPL or as scripts
++ Identifiers that consist of alphabet letters or underscore
++ Able to catch all syntax errors in a single run
++ Able to evaluate arithmetic expressions
++ Able to evaluate conditional statements (`if` and `select` keywords)
++ Able to evaluate loops (`for` and `while` keywords)
 
 ## Components
 
