@@ -25,7 +25,7 @@ var _ = Describe("Parser", func() {
 
 	Describe("ParseProgram", func() {
 		Context("parse let statements", func() {
-			It("can parse the correct program", func() {
+			It("correct program", func() {
 				text = `
 				let x = 5;
 				let y = 10;
@@ -51,11 +51,31 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("can propagate errors when the program is missing some identifiers", func() {
+			It("missing identifiers", func() {
 				text = `
 				let = 5;
 				let = 10;
 				let = 838383;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{},
+				}
+				expectedErrors := []error{
+					parser.ErrUnexpectedTokenType,
+					parser.ErrUnexpectedTokenType,
+					parser.ErrUnexpectedTokenType,
+				}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("missing assign tokens", func() {
+				text = `
+				let x 5;
+				let y 10;
+				let foo 838383;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{},
