@@ -15,6 +15,7 @@ var _ = Describe("Parser", func() {
 		l       lexer.Lexer
 		p       parser.Parser
 		program *ast.Program
+		errs    []error
 	)
 
 	BeforeEach(func() {
@@ -24,7 +25,7 @@ var _ = Describe("Parser", func() {
 
 	Describe("Parser", func() {
 		Context("ParseProgram", func() {
-			It("can parse the program", func() {
+			It("can parse the program when there is no error", func() {
 				text = `
 				let x = 5;
 				let y = 10;
@@ -43,13 +44,31 @@ var _ = Describe("Parser", func() {
 						}, nil),
 					},
 				}
+				expectedErrors := []error{}
 
-				program = p.ParseProgram(text)
-				Expect(program).ToNot(BeNil())
-				// expect to have 3 let statments
-				Expect(len(program.Statements)).To(Equal(3))
-				// expect deep equal
+				program, errs = p.ParseProgram(text)
 				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("can propagate errors when the program is missing some identifiers", func() {
+				text = `
+				let = 5;
+				let = 10;
+				let = 838383;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{},
+				}
+				expectedErrors := []error{
+					parser.ErrUnexpectedTokenType,
+					parser.ErrUnexpectedTokenType,
+					parser.ErrUnexpectedTokenType,
+				}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
 			})
 		})
 	})
