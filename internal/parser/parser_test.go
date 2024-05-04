@@ -23,9 +23,9 @@ var _ = Describe("Parser", func() {
 		p = parser.New(l)
 	})
 
-	Describe("Parser", func() {
-		Context("ParseProgram", func() {
-			It("can parse the program when there is no error", func() {
+	Describe("ParseProgram", func() {
+		Context("parse let statements", func() {
+			It("can parse the correct program", func() {
 				text = `
 				let x = 5;
 				let y = 10;
@@ -70,6 +70,29 @@ var _ = Describe("Parser", func() {
 				Expect(program).To(Equal(expectedProgram))
 				Expect(errs).To(Equal(expectedErrors))
 			})
+		})
+
+		Context("parse return statements", func() {
+			It("can parse the program when there is no error", func() {
+				text = `
+				return 5;
+				return 10;
+				return 838383;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewReturnStatement(nil),
+						ast.NewReturnStatement(nil),
+						ast.NewReturnStatement(nil),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 		})
 	})
 })

@@ -101,25 +101,43 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 		return nil, ErrUnexpectedTokenType
 	}
 
-	stmt := ast.NewLetStatement(&ast.Identifier{
-		Token: p.curToken,
-	}, nil)
+	identifier := p.curToken
 
+	// move forward
+	p.nextToken()
+
+	// parse the expression after the '=' token
+	e, err := p.parseExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewLetStatement(&ast.Identifier{
+		Token: identifier,
+	}, e), nil
+}
+
+// parseReturnStatement parses a single return statement
+func (p *parser) parseReturnStatement() (ast.Statement, error) {
+	// move forward
+	p.nextToken()
+
+	e, err := p.parseExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewReturnStatement(e), err
+}
+
+// parseExpression parses a single expression, p.curToken points to the first token of the expression
+func (p *parser) parseExpression() (ast.Expression, error) {
 	// TODO: parse the expression after the = token
 	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
 		p.nextToken()
 	}
 
-	return stmt, nil
-}
-
-// parseReturnStatement parses a single return statement
-func (p *parser) parseReturnStatement() (ast.Statement, error) {
-	stmt := &ast.LetStatement{
-		Token: p.curToken,
-	}
-
-	return stmt, nil
+	return nil, nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state
