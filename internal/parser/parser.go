@@ -2,7 +2,6 @@ package parser
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/Aden-Q/monkey/internal/token"
@@ -63,6 +62,8 @@ func New(l lexer.Lexer) Parser {
 	// register prefix parse functions
 	p.registerPrefixFn(token.IDENT, p.parseIdentifier)
 	p.registerPrefixFn(token.INT, p.parseInteger)
+	p.registerPrefixFn(token.BANG, p.parsePrefixExpression)
+	p.registerPrefixFn(token.MINUS, p.parsePrefixExpression)
 
 	return p
 }
@@ -149,12 +150,12 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 	p.nextToken()
 	p.nextToken()
 
-	// TODO: parse the expression after the return token
-	exp, _ := p.parseExpression(LOWEST)
+	value, err := p.parseExpression(LOWEST)
+	if err != nil {
+		return nil, err
+	}
 
-	return ast.NewLetStatement(&ast.Identifier{
-		Token: tok,
-	}, exp), nil
+	return ast.NewLetStatement(ast.NewIdentifier(tok.Literal), value), nil
 }
 
 // parseReturnStatement parses a single return statement
@@ -162,8 +163,10 @@ func (p *parser) parseReturnStatement() (ast.Statement, error) {
 	// move forward to make p.curToekn be the first token of the expression
 	p.nextToken()
 
-	// TODO: parse the expression after the return token
-	exp, _ := p.parseExpression(LOWEST)
+	exp, err := p.parseExpression(LOWEST)
+	if err != nil {
+		return nil, err
+	}
 
 	return ast.NewReturnStatement(exp), nil
 }
@@ -195,10 +198,25 @@ func (p *parser) parseIdentifier() (ast.Expression, error) {
 func (p *parser) parseInteger() (ast.Expression, error) {
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 	if err != nil {
-		return nil, fmt.Errorf("parse integer %s: %v", p.curToken.Literal, err)
+		return nil, err
 	}
 
 	return ast.NewInteger(p.curToken.Literal, value), nil
+}
+
+func (p *parser) parsePrefixExpression() (ast.Expression, error) {
+	prefixToken := p.curToken
+
+	// move forward to make p.curToekn points to the operand expression
+	p.nextToken()
+
+	// recursively parse the expression after the prefix token
+	operand, err := p.parseExpression(PREFIX)
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewPrefixExpression(prefixToken.Literal, operand), nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state

@@ -106,5 +106,6 @@ func LookupTokenType(literal string) TokenType {
 	}
 
 	// as for now, treat the default type as identifier
+	// TODO: more checks to separate between IDENT and ILLEGAL
 	return IDENT
 }

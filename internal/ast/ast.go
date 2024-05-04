@@ -9,6 +9,7 @@ import (
 // interface compliance check
 var _ Node = (*Program)(nil)
 var _ Expression = (*Identifier)(nil)
+var _ Expression = (*Integer)(nil)
 var _ Statement = (*LetStatement)(nil)
 var _ Statement = (*ReturnStatement)(nil)
 var _ Statement = (*ExpressionStatement)(nil)
@@ -63,11 +64,13 @@ func NewProgram(statements ...Statement) *Program {
 	}
 }
 
-// Identifier implements the Expression interface. An identifier object
-// can be the right value of a statement, meaning that it can evaluate to some value, after it's assgined
+// -------------- Expressions -------------------
+
+// Identifier implements the Expression interface
 type Identifier struct {
 	// the identifier token
 	Token token.Token
+	Value string
 }
 
 func (i *Identifier) expressionNode() {}
@@ -77,18 +80,18 @@ func (i *Identifier) TokenLiteral() string {
 }
 
 func (i *Identifier) String() string {
-	return i.Token.Literal
+	return i.Value
 }
 
 // NewIdentifier creates a new identifier node
 func NewIdentifier(literal string) *Identifier {
 	return &Identifier{
 		Token: token.New(token.IDENT, literal),
+		Value: literal,
 	}
 }
 
-// Integer implements the Expression interface. An integer object
-// can be the right value of a statement, meaning that it can evaluate to some value, after it's assgined
+// Integer implements the Expression interface
 type Integer struct {
 	// the integer token
 	Token token.Token
@@ -112,6 +115,45 @@ func NewInteger(literal string, value int64) *Integer {
 		Value: value,
 	}
 }
+
+// PrefixExpression implements the Expression interface
+// a prefix expression is a prefix (-/!) + an operator
+type PrefixExpression struct {
+	// a token representation of the prefix operator
+	Token token.Token
+	// the string literal of the prefix operator
+	Operator string
+	// the expression following that prefix operator
+	Operand Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+
+func (pe *PrefixExpression) TokenLiteral() string {
+	return pe.Token.Literal
+}
+
+func (pe *PrefixExpression) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString("(")
+	builder.WriteString(pe.Operator)
+	builder.WriteString(pe.Operand.String())
+	builder.WriteString(")")
+
+	return builder.String()
+}
+
+// NewInteger creates a new integer node
+func NewPrefixExpression(literal string, operand Expression) *PrefixExpression {
+	return &PrefixExpression{
+		Token:    token.New(token.LookupTokenType(literal), literal),
+		Operator: literal,
+		Operand:  operand,
+	}
+}
+
+// -------------- Statements -------------------
 
 // LetStatement represents the let statement
 type LetStatement struct {

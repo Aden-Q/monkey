@@ -51,6 +51,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 - [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
 - [ ] feat: support for comments
 - [ ] docs: a diagram for the full REPL loop including the AST used
+- [ ] check whether we need the token field in AST
 
 
 

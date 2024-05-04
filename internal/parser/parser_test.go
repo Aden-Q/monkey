@@ -24,7 +24,7 @@ var _ = Describe("Parser", func() {
 
 	Describe("ParseProgram", func() {
 		Context("parse expressions", func() {
-			It("identifier expressions", func() {
+			It("simple identifier expressions", func() {
 				text = `
 				foo;
 				bar;
@@ -44,7 +44,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("integer expressions", func() {
+			It("simple integer expressions", func() {
 				text = `
 				5;
 				10;
@@ -55,6 +55,28 @@ var _ = Describe("Parser", func() {
 						ast.NewExpressionStatement(ast.NewInteger("5", 5)),
 						ast.NewExpressionStatement(ast.NewInteger("10", 10)),
 						ast.NewExpressionStatement(ast.NewInteger("838383", 838383)),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("expressions with prefix operators", func() {
+				text = `
+				-5;
+				!10;
+				-foo;
+				!bar;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewInteger("10", 10))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIdentifier("foo"))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIdentifier("bar"))),
 					},
 				}
 				expectedErrors := []error{}
@@ -137,7 +159,7 @@ var _ = Describe("Parser", func() {
 		})
 
 		Context("parse return statements", func() {
-			It("can parse the program when there is no error", func() {
+			It("correct program", func() {
 				text = `
 				return 5;
 				return 10;
