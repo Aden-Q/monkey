@@ -19,7 +19,6 @@ type (
 
 // a Pratt Parser interface
 type Parser interface {
-	// TODO: add more interface methods here
 	ParseProgram(text string) (*ast.Program, []error)
 }
 
@@ -88,20 +87,20 @@ func (p *parser) registerInfixParseFn(tokenType token.TokenType, fn infixParseFn
 	p.infixParseFns[tokenType] = fn
 }
 
-// TODO: implement it to parse the whole program into a AST
+// ParseProgram will parse all statements in a program
 func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	errs := []error{}
 
-	// reset the lexer state
+	// reset the parser state
+	p.reset()
+
+	// reset the lexer state and read from the input
 	_ = p.l.Read(text)
 
-	// reset the parser state
 	// the main reason of doing this is skipping any leading white space/newline char
 	// we need to do nextToken twice to populate both the current token and the next token
-	p.curToken = token.Token{}
-	p.peekToken = token.Token{}
 	p.nextToken()
 	p.nextToken()
 
@@ -154,7 +153,8 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		return nil, ErrUnexpectedTokenType
 	}
 
-	// on successful parsing, we skip the ; token so that we can parse the next potential statement
+	// on successful parsing, we need to consume the last token ;
+	// so that we can continue parsing the following statements
 	p.nextToken()
 
 	return stmt, err
@@ -506,4 +506,9 @@ func (p *parser) curTokenTypeIs(tokenType token.TokenType) bool {
 // peekTokenTypeIs examines whether the peek token type is the expected one
 func (p *parser) peekTokenTypeIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
+}
+
+func (p *parser) reset() {
+	p.curToken = token.Token{}
+	p.peekToken = token.Token{}
 }
