@@ -116,6 +116,38 @@ func NewInteger(literal string, value int64) *Integer {
 	}
 }
 
+// Boolean implements the Expression interface
+type Boolean struct {
+	// the boolean token
+	Token token.Token
+	Value bool
+}
+
+func (b *Boolean) expressionNode() {}
+
+func (b *Boolean) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+func (b *Boolean) String() string {
+	return b.Token.Literal
+}
+
+// NewBoolean creates an boolean expression node
+func NewBoolean(value bool) *Boolean {
+	var tok token.Token
+	if value {
+		tok = token.New(token.TRUE, "true")
+	} else {
+		tok = token.New(token.FALSE, "false")
+	}
+
+	return &Boolean{
+		Token: tok,
+		Value: value,
+	}
+}
+
 // PrefixExpression implements the Expression interface
 // a prefix expression consists of a prefix (-/!) and an operator
 type PrefixExpression struct {
