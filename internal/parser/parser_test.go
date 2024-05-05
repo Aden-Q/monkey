@@ -82,25 +82,31 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			// It("simple if expressions", func() {
-			// 	text = `
-			// 	if (x < y) {x};
-			// 	`
-			// 	expectedProgram := &ast.Program{
-			// 		Statements: []ast.Statement{
-			// 			ast.NewExpressionStatement(ast.NewIfExpression(
-			// 				ast.NewInfixExpression("<", ast.NewInteger("5", 5), ast.NewInteger("6", 6)),
-			// 				ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
-			// 				nil,
-			// 			)),
-			// 		},
-			// 	}
-			// 	expectedErrors := []error{}
+			It("simple if expression", func() {
+				text = `
+				if (x < y) { x; };
+				if (x < y) { x; } else { y; };
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewIfExpression(
+							ast.NewInfixExpression("<", ast.NewIdentifier("x"), ast.NewIdentifier("y")),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
+							nil,
+						)),
+						ast.NewExpressionStatement(ast.NewIfExpression(
+							ast.NewInfixExpression("<", ast.NewIdentifier("x"), ast.NewIdentifier("y")),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("y"))),
+						)),
+					},
+				}
+				expectedErrors := []error{}
 
-			// 	program, errs = p.ParseProgram(text)
-			// 	Expect(program).To(Equal(expectedProgram))
-			// 	Expect(errs).To(Equal(expectedErrors))
-			// })
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
 
 			It("simple prefix expressions", func() {
 				text = `
@@ -176,18 +182,18 @@ var _ = Describe("Parser", func() {
 
 			It("complex infix expression string match", func() {
 				texts := []string{
-					`-a * b`,
-					`!-a`,
-					`!a + b`,
-					`a + b + c`,
-					`a + b * c`,
-					`a + b * c + d / e - f`,
-					`3 + 4 * 5 == 3 * 1 + 4 * 5`,
-					`3 > 5 == false`,
-					`1 + (2 + 3) + 4`,
-					`(5 + 5) * 2`,
-					`-(5 + 5)`,
-					`!(true == false)`,
+					`-a * b;`,
+					`!-a;`,
+					`!a + b;`,
+					`a + b + c;`,
+					`a + b * c;`,
+					`a + b * c + d / e - f;`,
+					`3 + 4 * 5 == 3 * 1 + 4 * 5;`,
+					`3 > 5 == false;`,
+					`1 + (2 + 3) + 4;`,
+					`(5 + 5) * 2;`,
+					`-(5 + 5);`,
+					`!(true == false);`,
 				}
 				expectedStrings := []string{
 					`((-a) * b)`,

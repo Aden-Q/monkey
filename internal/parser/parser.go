@@ -145,7 +145,12 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		return stmt, err
 	}
 
-	// on successful parsing, we skip the ; token to parse the next potential statement
+	// illegal statement, no matching close brace
+	if !p.peekTokenTypeIs(token.SEMICOLON) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// on successful parsing, we skip the ; token so that we can parse the next potential statement
 	p.nextToken()
 
 	return stmt, err
@@ -281,10 +286,28 @@ func (p *parser) parseGroupedExpression() (ast.Expression, error) {
 }
 
 func (p *parser) parseBlockStatement() (*ast.BlockStatement, error) {
+	stmts := []ast.Statement{}
+
 	// skip the { token pointed by p.curToken
 	p.nextToken()
 
-	return nil, nil
+	for !p.curTokenTypeIs(token.RBRACE) && !p.curTokenTypeIs(token.EOF) {
+		// parse a single statement
+		stmt, err := p.parseStatment()
+		if err != nil {
+			return nil, err
+		}
+
+		stmts = append(stmts, stmt)
+		p.nextToken()
+	}
+
+	// illegal, no matching close right brace
+	if p.curTokenTypeIs(token.EOF) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	return ast.NewBlockStatement(stmts...), nil
 }
 
 func (p *parser) parseIfExpression() (ast.Expression, error) {
@@ -312,7 +335,29 @@ func (p *parser) parseIfExpression() (ast.Expression, error) {
 		return nil, err
 	}
 
-	return ast.NewIfExpression(condition, consequence, nil), nil
+	// now p.curToken should point to }, the close brace
+	var alternative *ast.BlockStatement
+	// cheeck whether there is an else clause following the block statement
+	if p.peekTokenTypeIs(token.ELSE) {
+		// there is an else clause, we need to continue
+		// move forward to make p.curToken point to the else token
+		p.nextToken()
+
+		if !p.peekTokenTypeIs(token.LBRACE) {
+			return nil, ErrUnexpectedTokenType
+		}
+
+		// move forward to make p.curToken point to the { token
+		// which is the start of the block statement
+		p.nextToken()
+
+		alternative, err = p.parseBlockStatement()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return ast.NewIfExpression(condition, consequence, alternative), nil
 }
 
 func (p *parser) parsePrefixExpression() (ast.Expression, error) {
