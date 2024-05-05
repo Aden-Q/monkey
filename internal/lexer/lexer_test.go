@@ -4,8 +4,8 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/Aden-Q/monkey/internal/lexer"
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/token"
 )
 
 var _ = Describe("Lexer", func() {

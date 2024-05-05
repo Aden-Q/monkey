@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/token"
 )
 
 var _ Lexer = (*lexer)(nil)

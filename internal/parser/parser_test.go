@@ -1,9 +1,9 @@
 package parser_test
 
 import (
-	"github.com/Aden-Q/monkey/internal/ast"
-	"github.com/Aden-Q/monkey/internal/lexer"
-	"github.com/Aden-Q/monkey/internal/parser"
+	"github.com/aden-q/monkey/internal/ast"
+	"github.com/aden-q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/parser"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )

@@ -3,7 +3,7 @@ package ast
 import (
 	"strings"
 
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/token"
 )
 
 // interface compliance check

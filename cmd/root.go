@@ -9,7 +9,7 @@ import (
 	"os"
 	"os/user"
 
-	"github.com/Aden-Q/monkey/internal/repl"
+	"github.com/aden-q/monkey/internal/repl"
 	"github.com/spf13/cobra"
 )
 

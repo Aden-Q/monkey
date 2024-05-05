@@ -3,10 +3,10 @@ package parser
 import (
 	"strconv"
 
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/token"
 
-	"github.com/Aden-Q/monkey/internal/ast"
-	"github.com/Aden-Q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/ast"
+	"github.com/aden-q/monkey/internal/lexer"
 )
 
 // interface compliance check
@@ -200,7 +200,7 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 		return nil, err
 	}
 
-	// iteratively parse the remaining part
+	// recursively parse the remaining part
 	for !p.peekTokenTypeIs(token.SEMICOLON) && precedence < token.GetPrecedence(p.peekToken.Type) {
 		infixFn, ok := p.infixParseFns[p.peekToken.Type]
 		if !ok {
