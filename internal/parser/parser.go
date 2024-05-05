@@ -56,6 +56,8 @@ func New(l lexer.Lexer) Parser {
 	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
 	// handler for if expression
 	p.registerPrefixParseFn(token.IF, p.parseIfExpression)
+	// handler for func expression
+	p.registerPrefixParseFn(token.FUNC, p.parseFuncExpression)
 	// handler for !something expression
 	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
 	// handler for -something expression
@@ -145,7 +147,7 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		return stmt, err
 	}
 
-	// illegal statement, no matching close brace
+	// illegal statement
 	if !p.peekTokenTypeIs(token.SEMICOLON) {
 		return nil, ErrUnexpectedTokenType
 	}
@@ -303,7 +305,7 @@ func (p *parser) parseBlockStatement() (*ast.BlockStatement, error) {
 	}
 
 	// illegal, no matching close right brace
-	if p.curTokenTypeIs(token.EOF) {
+	if !p.curTokenTypeIs(token.RBRACE) {
 		return nil, ErrUnexpectedTokenType
 	}
 
@@ -357,7 +359,65 @@ func (p *parser) parseIfExpression() (ast.Expression, error) {
 		}
 	}
 
+	// illegal, no matching close right brace
+	if !p.curTokenTypeIs(token.RBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
 	return ast.NewIfExpression(condition, consequence, alternative), nil
+}
+
+func (p *parser) parseFuncExpression() (ast.Expression, error) {
+	// expect a ( to follow the fn token
+	if !p.peekTokenTypeIs(token.LPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ( token
+	p.nextToken()
+
+	params, err := p.parseFuncParameters()
+	if err != nil {
+		return nil, err
+	}
+
+	// expect a following { token
+	if !p.peekTokenTypeIs(token.LBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the { token
+	// which is the start of the block statement
+	p.nextToken()
+
+	// parse the function body
+	body, err := p.parseBlockStatement()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewFuncExpression(params, body), nil
+}
+
+func (p *parser) parseFuncParameters() ([]*ast.IdentifierExpression, error) {
+	params := []*ast.IdentifierExpression{}
+
+	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+		params = append(params, ast.NewIdentifierExpression(p.curToken.Literal))
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ) token
+	p.nextToken()
+
+	return params, nil
 }
 
 func (p *parser) parsePrefixExpression() (ast.Expression, error) {

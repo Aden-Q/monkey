@@ -91,13 +91,54 @@ var _ = Describe("Parser", func() {
 					Statements: []ast.Statement{
 						ast.NewExpressionStatement(ast.NewIfExpression(
 							ast.NewInfixExpression("<", ast.NewIdentifierExpression("x"), ast.NewIdentifierExpression("y")),
-							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("x"))),
+							ast.NewBlockStatement(
+								ast.NewExpressionStatement(ast.NewIdentifierExpression("x")),
+							),
 							nil,
 						)),
 						ast.NewExpressionStatement(ast.NewIfExpression(
 							ast.NewInfixExpression("<", ast.NewIdentifierExpression("x"), ast.NewIdentifierExpression("y")),
 							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("x"))),
-							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("y"))),
+							ast.NewBlockStatement(
+								ast.NewExpressionStatement(ast.NewIdentifierExpression("y")),
+							),
+						)),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("simple func expression", func() {
+				text = `
+				fn() {};
+				fn(x) { 1; };
+				fn(x, y) { x + y; };
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewFuncExpression(
+							[]*ast.IdentifierExpression{},
+							ast.NewBlockStatement(),
+						)),
+						ast.NewExpressionStatement(ast.NewFuncExpression(
+							[]*ast.IdentifierExpression{
+								ast.NewIdentifierExpression("x"),
+							},
+							ast.NewBlockStatement(
+								ast.NewExpressionStatement(ast.NewIntegerExpression("1", 1))),
+						)),
+						ast.NewExpressionStatement(ast.NewFuncExpression(
+							[]*ast.IdentifierExpression{
+								ast.NewIdentifierExpression("x"),
+								ast.NewIdentifierExpression("y"),
+							},
+							ast.NewBlockStatement(
+								ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("x"), ast.NewIdentifierExpression("y"))),
+							),
 						)),
 					},
 				}

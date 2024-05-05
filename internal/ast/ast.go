@@ -60,6 +60,12 @@ func (p *Program) String() string {
 
 // NewProgram creates a Program node
 func NewProgram(statements ...Statement) *Program {
+	if statements == nil {
+		return &Program{
+			Statements: []Statement{},
+		}
+	}
+
 	return &Program{
 		Statements: statements,
 	}
@@ -430,6 +436,13 @@ func (bs *BlockStatement) String() string {
 
 // NewBlockStatement creates a BlockStatement node
 func NewBlockStatement(statements ...Statement) *BlockStatement {
+	if statements == nil {
+		return &BlockStatement{
+			Token:      token.New(token.LBRACE, "{"),
+			Statements: []Statement{},
+		}
+	}
+
 	return &BlockStatement{
 		Token:      token.New(token.LBRACE, "{"),
 		Statements: statements,

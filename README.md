@@ -59,6 +59,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: if expression with multiple branches
 + [ ] feat: check peek token type in parseExpression
 + [ ] feat: check the difference between if expression and if statement
++ [ ] feat: empty statement with only a single ;
 
 ## References
 
