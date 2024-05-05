@@ -18,7 +18,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Comments start with double slash `//`
 + Syntax errors are caught in a single run
 + Conditional statements (`if` and `switch` keywords)
-+ Loops (`for` and `while` keywords)
++ Loops (`for`, `range`, and `while` keywords)
 + First-class functions
 + If expressions
 + Prefix operators (binary expressions)
@@ -34,27 +34,40 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## TODOs
 
-- [ ] feat: Unicode
-- [ ] feat: parsing line, column number for better visibility
-- [ ] feat: hexical notation and octal notation for integers
-- [ ] feat: formatting and prettier in REPL
-- [ ] feat: support for multiple types: boolean, float, struct, string, byte, etc
-- [ ] feat: support for collection types: array, map, set
-- [ ] feat: add support for variadic functions
-- [ ] feat: add support for anonymous functions
-- [ ] feat: add <=, >= operators
-- [ ] feat: add logical operators ||， &&
-- [ ] feat: add bitwise operators ^, |, &
-- [ ] refactor: unary operators, binary operators, ternary operators
-- [ ] feat: use Cobra to enable multiple modes when launching the REPL
-- [ ] feat: use quit(), exit(), or Ctrl-D to exit elegantly
-- [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
-- [ ] feat: support for comments
-- [ ] docs: a diagram for the full REPL loop including the AST used
-- [ ] check whether we need the token field in AST
-- [ ] test: increase test coverage to at least 80%
++ [ ] feat: Unicode
++ [ ] feat: parsing line, column number for better visibility
++ [ ] feat: hexical notation and octal notation for integers
++ [ ] feat: formatting and prettier in REPL
++ [ ] feat: support for multiple types: boolean, float, struct, string, byte, etc
++ [ ] feat: support for collection types: array, map, set
++ [ ] feat: add support for variadic functions
++ [ ] feat: add support for anonymous functions
++ [x] feat: add <=, >= operators
++ [ ] feat: add logical operators ||， &&
++ [ ] feat: add bitwise operators ^, |, &
++ [ ] refactor: unary operators, binary operators, ternary operators
++ [ ] feat: use Cobra to enable multiple modes when launching the REPL
++ [ ] feat: use quit(), exit(), or Ctrl-D to exit elegantly
++ [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
++ [ ] feat: support for comments
++ [ ] docs: a diagram for the full REPL loop including the AST used
++ [ ] check whether we need the token field in AST
++ [ ] test: increase test coverage to at least 80%
++ [ ] chore: dockerize it and publish an image to Docker Hub
++ [ ] feat: check how to trigger the GC during runtime (in REPL)
++ [ ] feat: return can only be used in functions, do not allow plain return in REPL
++ [ ] feat: if expression with multiple branches
++ [ ] feat: check peek token type in parseExpression
++ [ ] feat: check the difference between if expression and if statement
++ [ ] feat: empty statement with only a single ;
++ [ ] feat: scroll in command history with up and down keys
++ [ ] feat: PrettyPrint, color, AST, etc
++ [ ] feat: sys call such as print(...)
++ [ ] feat: add a helper for available functions
 
+## References
 
++ *Top Down Operator Precedence*, Vaughan Pratt
 
 ## License
 

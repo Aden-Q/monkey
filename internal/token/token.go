@@ -34,17 +34,17 @@ const (
 	RBRACE = "}"
 
 	// keywords
-	FUNCTION = "FUNCTION"
-	LET      = "LET"
-	TRUE     = "TRUE"
-	FALSE    = "FALSE"
-	IF       = "IF"
-	ELSE     = "ELSE"
-	RETURN   = "RETURN"
+	FUNC   = "FUNC"
+	LET    = "LET"
+	TRUE   = "TRUE"
+	FALSE  = "FALSE"
+	IF     = "IF"
+	ELSE   = "ELSE"
+	RETURN = "RETURN"
 )
 
 var keywordTable = map[string]TokenType{
-	"fn":     FUNCTION,
+	"fn":     FUNC,
 	"let":    LET,
 	"true":   TRUE,
 	"false":  FALSE,

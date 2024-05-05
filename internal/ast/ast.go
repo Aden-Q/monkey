@@ -3,13 +3,14 @@ package ast
 import (
 	"strings"
 
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/token"
 )
 
 // interface compliance check
 var _ Node = (*Program)(nil)
-var _ Expression = (*Identifier)(nil)
-var _ Expression = (*Integer)(nil)
+var _ Expression = (*IdentifierExpression)(nil)
+var _ Expression = (*IntegerExpression)(nil)
+var _ Expression = (*BooleanExpression)(nil)
 var _ Statement = (*LetStatement)(nil)
 var _ Statement = (*ReturnStatement)(nil)
 var _ Statement = (*ExpressionStatement)(nil)
@@ -57,8 +58,14 @@ func (p *Program) String() string {
 	return builder.String()
 }
 
-// NewProgram creates a program node
+// NewProgram creates a Program node
 func NewProgram(statements ...Statement) *Program {
+	if statements == nil {
+		return &Program{
+			Statements: []Statement{},
+		}
+	}
+
 	return &Program{
 		Statements: statements,
 	}
@@ -66,53 +73,218 @@ func NewProgram(statements ...Statement) *Program {
 
 // -------------- Expressions -------------------
 
-// Identifier implements the Expression interface
-type Identifier struct {
+// IdentifierExpression implements the Expression interface
+type IdentifierExpression struct {
 	// the identifier token
 	Token token.Token
 	Value string
 }
 
-func (i *Identifier) expressionNode() {}
+func (ie *IdentifierExpression) expressionNode() {}
 
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
+func (ie *IdentifierExpression) TokenLiteral() string {
+	return ie.Token.Literal
 }
 
-func (i *Identifier) String() string {
-	return i.Value
+func (ie *IdentifierExpression) String() string {
+	return ie.Value
 }
 
-// NewIdentifier creates an identifier expression node
-func NewIdentifier(literal string) *Identifier {
-	return &Identifier{
+// NewIdentifierExpression creates an Identifier node
+func NewIdentifierExpression(literal string) *IdentifierExpression {
+	return &IdentifierExpression{
 		Token: token.New(token.IDENT, literal),
 		Value: literal,
 	}
 }
 
-// Integer implements the Expression interface
-type Integer struct {
+// IntegerExpression implements the Expression interface
+type IntegerExpression struct {
 	// the integer token
 	Token token.Token
 	Value int64
 }
 
-func (i *Integer) expressionNode() {}
+func (ie *IntegerExpression) expressionNode() {}
 
-func (i *Integer) TokenLiteral() string {
-	return i.Token.Literal
+func (ie *IntegerExpression) TokenLiteral() string {
+	return ie.Token.Literal
 }
 
-func (i *Integer) String() string {
-	return i.Token.Literal
+func (ie *IntegerExpression) String() string {
+	return ie.Token.Literal
 }
 
-// NewInteger creates an integer expression node
-func NewInteger(literal string, value int64) *Integer {
-	return &Integer{
+// NewIntegerExpression creates an Integer node
+func NewIntegerExpression(literal string, value int64) *IntegerExpression {
+	return &IntegerExpression{
 		Token: token.New(token.INT, literal),
 		Value: value,
+	}
+}
+
+// BooleanExpression implements the Expression interface
+type BooleanExpression struct {
+	// the boolean token
+	Token token.Token
+	Value bool
+}
+
+func (be *BooleanExpression) expressionNode() {}
+
+func (be *BooleanExpression) TokenLiteral() string {
+	return be.Token.Literal
+}
+
+func (be *BooleanExpression) String() string {
+	return be.Token.Literal
+}
+
+// NewBooleanExpression creates a Boolean node
+func NewBooleanExpression(value bool) *BooleanExpression {
+	var tok token.Token
+	if value {
+		tok = token.New(token.TRUE, "true")
+	} else {
+		tok = token.New(token.FALSE, "false")
+	}
+
+	return &BooleanExpression{
+		Token: tok,
+		Value: value,
+	}
+}
+
+// IfExpression implements the Expression interface
+type IfExpression struct {
+	// the if token
+	Token token.Token
+	// the condition expression
+	Condition Expression
+	// consequence when the condition is true
+	Consequence *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (ie *IfExpression) expressionNode() {}
+
+func (ie *IfExpression) TokenLiteral() string {
+	return ie.Token.Literal
+}
+
+func (ie *IfExpression) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString("if" + " ")
+	builder.WriteString(ie.Condition.String() + " ")
+	builder.WriteString(ie.Consequence.String())
+
+	if ie.Alternative != nil {
+		builder.WriteString(" else ")
+		builder.WriteString(ie.Alternative.String())
+	}
+
+	return builder.String()
+}
+
+// NewIfExpression creates an IfExpression node
+func NewIfExpression(condition Expression, consequence *BlockStatement, alternative *BlockStatement) *IfExpression {
+	return &IfExpression{
+		Token:       token.New(token.IF, "if"),
+		Condition:   condition,
+		Consequence: consequence,
+		Alternative: alternative,
+	}
+}
+
+// FuncExpression implements the Expression interface
+type FuncExpression struct {
+	// the fn token
+	Token token.Token
+	// function parameters
+	Parameters []*IdentifierExpression
+	// function body
+	Body *BlockStatement
+}
+
+func (fe *FuncExpression) expressionNode() {}
+
+func (fe *FuncExpression) TokenLiteral() string {
+	return fe.Token.Literal
+}
+
+func (fe *FuncExpression) String() string {
+	builder := strings.Builder{}
+
+	paramStrings := []string{}
+	for _, param := range fe.Parameters {
+		paramStrings = append(paramStrings, param.String())
+	}
+
+	builder.WriteString("fn")
+	builder.WriteString("(")
+	builder.WriteString(strings.Join(paramStrings, ", "))
+	builder.WriteString(") ")
+	builder.WriteString(fe.Body.String())
+
+	return builder.String()
+}
+
+// NewFuncExpression creates a FuncExpression node
+func NewFuncExpression(params []*IdentifierExpression, body *BlockStatement) *FuncExpression {
+	return &FuncExpression{
+		Token:      token.New(token.FUNC, "fn"),
+		Parameters: params,
+		Body:       body,
+	}
+}
+
+// CallExpression implements the Expression interface
+type CallExpression struct {
+	// the first token (fn or the identifier)
+	Token token.Token
+	// function literal or identifier bound to function
+	Func Expression
+	// function call arguments
+	Arguments []Expression
+}
+
+func (ce *CallExpression) expressionNode() {}
+
+func (ce *CallExpression) TokenLiteral() string {
+	return ce.Token.Literal
+}
+
+func (ce *CallExpression) String() string {
+	builder := strings.Builder{}
+
+	argStrings := []string{}
+	for _, arg := range ce.Arguments {
+		argStrings = append(argStrings, arg.String())
+	}
+
+	builder.WriteString(ce.Func.String())
+	builder.WriteString("(")
+	builder.WriteString(strings.Join(argStrings, ", "))
+	builder.WriteString(")")
+
+	return builder.String()
+}
+
+// NewCallExpression creates a CallExpression node
+func NewCallExpression(fn Expression, args []Expression) *CallExpression {
+	if fn.TokenLiteral() == "fn" {
+		return &CallExpression{
+			Token:     token.New(token.FUNC, "fn"),
+			Func:      fn,
+			Arguments: args,
+		}
+	}
+
+	return &CallExpression{
+		Token:     token.New(token.IDENT, fn.TokenLiteral()),
+		Func:      fn,
+		Arguments: args,
 	}
 }
 
@@ -144,7 +316,7 @@ func (pe *PrefixExpression) String() string {
 	return builder.String()
 }
 
-// NewPrefixExpression creates a prefix expression node
+// NewPrefixExpression creates a PrefixExpression node
 func NewPrefixExpression(literal string, operand Expression) *PrefixExpression {
 	return &PrefixExpression{
 		Token:    token.New(token.LookupTokenType(literal), literal),
@@ -183,7 +355,7 @@ func (ie *InfixExpression) String() string {
 	return builder.String()
 }
 
-// NewInExpression creates an infix expression node
+// NewInExpression creates an InfixExpression node
 func NewInfixExpression(literal string, leftOperand, rightOperand Expression) *InfixExpression {
 	return &InfixExpression{
 		Token:        token.New(token.LookupTokenType(literal), literal),
@@ -200,7 +372,7 @@ type LetStatement struct {
 	// the let token
 	Token token.Token
 	// the identifier
-	Identifier *Identifier
+	Identifier *IdentifierExpression
 	// the expression value on the right side of the statement
 	Value Expression
 }
@@ -227,8 +399,8 @@ func (ls *LetStatement) String() string {
 	return builder.String()
 }
 
-// NewLetStatement creates a let statement node
-func NewLetStatement(identifier *Identifier, value Expression) *LetStatement {
+// NewLetStatement creates a LetStatement node
+func NewLetStatement(identifier *IdentifierExpression, value Expression) *LetStatement {
 	return &LetStatement{
 		Token:      token.New(token.LET, "let"),
 		Identifier: identifier,
@@ -264,7 +436,7 @@ func (rs *ReturnStatement) String() string {
 	return builder.String()
 }
 
-// NewReturnStatement creates a return statement node
+// NewReturnStatement creates a ReturnStatement node
 func NewReturnStatement(value Expression) *ReturnStatement {
 	return &ReturnStatement{
 		Token: token.New(token.RETURN, "return"),
@@ -280,9 +452,48 @@ type ExpressionStatement struct {
 
 func (es *ExpressionStatement) statementNode() {}
 
-// NewExpressionStatement creates an expression statement node
+// NewExpressionStatement creates an ExpressionStatement node
 func NewExpressionStatement(exp Expression) *ExpressionStatement {
 	return &ExpressionStatement{
 		Expression: exp,
+	}
+}
+
+// BlockStatement represents a series of statments grouped by {}
+type BlockStatement struct {
+	// the { token
+	Token token.Token
+	// a series of statements grouped by {}
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode() {}
+
+func (bs *BlockStatement) TokenLiteral() string {
+	return bs.Token.Literal
+}
+
+func (bs *BlockStatement) String() string {
+	builder := strings.Builder{}
+
+	for _, s := range bs.Statements {
+		builder.WriteString(s.String())
+	}
+
+	return builder.String()
+}
+
+// NewBlockStatement creates a BlockStatement node
+func NewBlockStatement(statements ...Statement) *BlockStatement {
+	if statements == nil {
+		return &BlockStatement{
+			Token:      token.New(token.LBRACE, "{"),
+			Statements: []Statement{},
+		}
+	}
+
+	return &BlockStatement{
+		Token:      token.New(token.LBRACE, "{"),
+		Statements: statements,
 	}
 }

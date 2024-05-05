@@ -1,15 +1,15 @@
 package ast_test
 
 import (
-	"github.com/Aden-Q/monkey/internal/ast"
+	"github.com/aden-q/monkey/internal/ast"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Ast", func() {
 	var (
-		identifierFoo   *ast.Identifier
-		identifierBar   *ast.Identifier
+		identifierFoo   *ast.IdentifierExpression
+		identifierBar   *ast.IdentifierExpression
 		letStatement    *ast.LetStatement
 		returnStatement *ast.ReturnStatement
 		program         *ast.Program
@@ -17,9 +17,9 @@ var _ = Describe("Ast", func() {
 
 	BeforeEach(func() {
 		// let foo = bar;
-		identifierFoo = ast.NewIdentifier("foo")
+		identifierFoo = ast.NewIdentifierExpression("foo")
 		Expect(identifierFoo).ToNot(BeNil())
-		identifierBar = ast.NewIdentifier("bar")
+		identifierBar = ast.NewIdentifierExpression("bar")
 		Expect(identifierBar).ToNot(BeNil())
 		letStatement = ast.NewLetStatement(identifierFoo, identifierBar)
 		Expect(letStatement).ToNot(BeNil())

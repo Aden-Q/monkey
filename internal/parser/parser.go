@@ -3,10 +3,10 @@ package parser
 import (
 	"strconv"
 
-	"github.com/Aden-Q/monkey/internal/token"
+	"github.com/aden-q/monkey/internal/token"
 
-	"github.com/Aden-Q/monkey/internal/ast"
-	"github.com/Aden-Q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/ast"
+	"github.com/aden-q/monkey/internal/lexer"
 )
 
 // interface compliance check
@@ -19,7 +19,6 @@ type (
 
 // a Pratt Parser interface
 type Parser interface {
-	// TODO: add more interface methods here
 	ParseProgram(text string) (*ast.Program, []error)
 }
 
@@ -45,9 +44,22 @@ func New(l lexer.Lexer) Parser {
 	}
 
 	// register prefix parse functions
+	// handler for identifier expression
 	p.registerPrefixParseFn(token.IDENT, p.parseIdentifier)
+	// handler for integer expression
 	p.registerPrefixParseFn(token.INT, p.parseInteger)
+	// handler for boolean expression
+	p.registerPrefixParseFn(token.TRUE, p.parseBoolean)
+	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
+	// handler for grouped expression
+	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
+	// handler for if expression
+	p.registerPrefixParseFn(token.IF, p.parseIfExpression)
+	// handler for func expression
+	p.registerPrefixParseFn(token.FUNC, p.parseFuncExpression)
+	// handler for !something expression
 	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
+	// handler for -something expression
 	p.registerPrefixParseFn(token.MINUS, p.parsePrefixExpression)
 
 	// register infix parse functions
@@ -61,6 +73,8 @@ func New(l lexer.Lexer) Parser {
 	p.registerInfixParseFn(token.LTE, p.parseInfixExpression)
 	p.registerInfixParseFn(token.EQ, p.parseInfixExpression)
 	p.registerInfixParseFn(token.NOT_EQ, p.parseInfixExpression)
+	// handler for call expression
+	p.registerInfixParseFn(token.LPAREN, p.parseCallExpression)
 
 	return p
 }
@@ -73,20 +87,20 @@ func (p *parser) registerInfixParseFn(tokenType token.TokenType, fn infixParseFn
 	p.infixParseFns[tokenType] = fn
 }
 
-// TODO: implement it to parse the whole program into a AST
+// ParseProgram will parse all statements in a program
 func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
 	errs := []error{}
 
-	// reset the lexer state
+	// reset the parser state
+	p.reset()
+
+	// reset the lexer state and read from the input
 	_ = p.l.Read(text)
 
-	// reset the parser state
 	// the main reason of doing this is skipping any leading white space/newline char
 	// we need to do nextToken twice to populate both the current token and the next token
-	p.curToken = token.Token{}
-	p.peekToken = token.Token{}
 	p.nextToken()
 	p.nextToken()
 
@@ -125,10 +139,23 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		stmt, err = p.parseExpressionStatement()
 	}
 
-	// move to the end of the current statement, indicated by a semicolon;
-	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
-		p.nextToken()
+	if err != nil {
+		// this loop is needed when we fail to parse the current statement, skip the rest of it
+		for !p.curTokenTypeIs(token.SEMICOLON) && !p.curTokenTypeIs(token.EOF) {
+			p.nextToken()
+		}
+
+		return stmt, err
 	}
+
+	// illegal statement
+	if !p.peekTokenTypeIs(token.SEMICOLON) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// on successful parsing, we need to consume the last token ;
+	// so that we can continue parsing the following statements
+	p.nextToken()
 
 	return stmt, err
 }
@@ -161,7 +188,7 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 		return nil, err
 	}
 
-	return ast.NewLetStatement(ast.NewIdentifier(tok.Literal), value), nil
+	return ast.NewLetStatement(ast.NewIdentifierExpression(tok.Literal), value), nil
 }
 
 // parseReturnStatement parses a single return statement
@@ -200,7 +227,7 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 		return nil, err
 	}
 
-	// iteratively parse the remaining part
+	// recursively parse the remaining part
 	for !p.peekTokenTypeIs(token.SEMICOLON) && precedence < token.GetPrecedence(p.peekToken.Type) {
 		infixFn, ok := p.infixParseFns[p.peekToken.Type]
 		if !ok {
@@ -220,7 +247,7 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 }
 
 func (p *parser) parseIdentifier() (ast.Expression, error) {
-	return ast.NewIdentifier(p.curToken.Literal), nil
+	return ast.NewIdentifierExpression(p.curToken.Literal), nil
 }
 
 func (p *parser) parseInteger() (ast.Expression, error) {
@@ -229,7 +256,171 @@ func (p *parser) parseInteger() (ast.Expression, error) {
 		return nil, err
 	}
 
-	return ast.NewInteger(p.curToken.Literal, value), nil
+	return ast.NewIntegerExpression(p.curToken.Literal, value), nil
+}
+
+func (p *parser) parseBoolean() (ast.Expression, error) {
+	value, err := strconv.ParseBool(p.curToken.Literal)
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewBooleanExpression(value), nil
+}
+
+func (p *parser) parseGroupedExpression() (ast.Expression, error) {
+	// move forward to make p.curToken point to the first token after the ( token
+	p.nextToken()
+
+	// recursively parse the expression after the prefix token
+	exp, err := p.parseExpression(token.LOWEST)
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward to make p.curToken point to ), do not skip ) because we need to check peek token
+	// in a infix expression
+	p.nextToken()
+
+	return exp, nil
+}
+
+func (p *parser) parseBlockStatement() (*ast.BlockStatement, error) {
+	stmts := []ast.Statement{}
+
+	// skip the { token pointed by p.curToken
+	p.nextToken()
+
+	for !p.curTokenTypeIs(token.RBRACE) && !p.curTokenTypeIs(token.EOF) {
+		// parse a single statement
+		stmt, err := p.parseStatment()
+		if err != nil {
+			return nil, err
+		}
+
+		stmts = append(stmts, stmt)
+		p.nextToken()
+	}
+
+	// illegal, no matching close right brace
+	if !p.curTokenTypeIs(token.RBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	return ast.NewBlockStatement(stmts...), nil
+}
+
+func (p *parser) parseIfExpression() (ast.Expression, error) {
+	if !p.peekTokenTypeIs(token.LPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward to make p.curToken point to ( so that we can parse the grouped expressions
+	p.nextToken()
+
+	condition, err := p.parseGroupedExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.LBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken point to {
+	p.nextToken()
+
+	consequence, err := p.parseBlockStatement()
+	if err != nil {
+		return nil, err
+	}
+
+	// now p.curToken should point to }, the close brace
+	var alternative *ast.BlockStatement
+	// cheeck whether there is an else clause following the block statement
+	if p.peekTokenTypeIs(token.ELSE) {
+		// there is an else clause, we need to continue
+		// move forward to make p.curToken point to the else token
+		p.nextToken()
+
+		if !p.peekTokenTypeIs(token.LBRACE) {
+			return nil, ErrUnexpectedTokenType
+		}
+
+		// move forward to make p.curToken point to the { token
+		// which is the start of the block statement
+		p.nextToken()
+
+		alternative, err = p.parseBlockStatement()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// illegal, no matching close right brace
+	if !p.curTokenTypeIs(token.RBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	return ast.NewIfExpression(condition, consequence, alternative), nil
+}
+
+func (p *parser) parseFuncExpression() (ast.Expression, error) {
+	// expect a ( to follow the fn token
+	if !p.peekTokenTypeIs(token.LPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ( token
+	p.nextToken()
+
+	params, err := p.parseFuncParameters()
+	if err != nil {
+		return nil, err
+	}
+
+	// expect a following { token
+	if !p.peekTokenTypeIs(token.LBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the { token
+	// which is the start of the block statement
+	p.nextToken()
+
+	// parse the function body
+	body, err := p.parseBlockStatement()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewFuncExpression(params, body), nil
+}
+
+func (p *parser) parseFuncParameters() ([]*ast.IdentifierExpression, error) {
+	params := []*ast.IdentifierExpression{}
+
+	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+		params = append(params, ast.NewIdentifierExpression(p.curToken.Literal))
+
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ) token
+	p.nextToken()
+
+	return params, nil
 }
 
 func (p *parser) parsePrefixExpression() (ast.Expression, error) {
@@ -262,6 +453,43 @@ func (p *parser) parseInfixExpression(leftOperand ast.Expression) (ast.Expressio
 	return ast.NewInfixExpression(operatorToken.Literal, leftOperand, rightOperand), nil
 }
 
+func (p *parser) parseCallExpression(leftOperand ast.Expression) (ast.Expression, error) {
+	args, err := p.parseCallArguments()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewCallExpression(leftOperand, args), nil
+}
+
+func (p *parser) parseCallArguments() ([]ast.Expression, error) {
+	args := []ast.Expression{}
+
+	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+
+		exp, err := p.parseExpression(token.LOWEST)
+		if err != nil {
+			return nil, err
+		}
+
+		args = append(args, exp)
+
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ) token
+	p.nextToken()
+
+	return args, nil
+}
+
 // nextToken uses the lexer to read the next token and mutate the parser's state
 func (p *parser) nextToken() {
 	tok := p.l.NextToken()
@@ -270,7 +498,17 @@ func (p *parser) nextToken() {
 	p.peekToken = tok
 }
 
-// expectPeekTokenType examines whether the peek token type is the expected one
+// peekTokenTypeIs examines whether the current token type is the expected one
+func (p *parser) curTokenTypeIs(tokenType token.TokenType) bool {
+	return p.curToken.Type == tokenType
+}
+
+// peekTokenTypeIs examines whether the peek token type is the expected one
 func (p *parser) peekTokenTypeIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
+}
+
+func (p *parser) reset() {
+	p.curToken = token.Token{}
+	p.peekToken = token.Token{}
 }

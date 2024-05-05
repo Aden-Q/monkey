@@ -1,4 +1,4 @@
-module github.com/Aden-Q/monkey
+module github.com/aden-q/monkey
 
 go 1.21.4
 

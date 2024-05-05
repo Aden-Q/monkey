@@ -7,8 +7,8 @@ const (
 	LESSGREATER // >, >=, <, <=
 	SUM         // +
 	PRODUCT     // *
-	PREFIX      // -X or !X
-	CALL        // fn(X)
+	PREFIX      // -x or !x
+	CALL        // fn(x) { return x + 1; } (1);
 )
 
 // token type to precedence maping
@@ -25,7 +25,7 @@ var (
 		SLASH:    PRODUCT,
 		ASTERISK: PRODUCT,
 		BANG:     PREFIX,
-		FUNCTION: CALL,
+		LPAREN:   CALL,
 	}
 )
 
