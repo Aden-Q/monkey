@@ -53,6 +53,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] docs: a diagram for the full REPL loop including the AST used
 + [ ] check whether we need the token field in AST
 + [ ] test: increase test coverage to at least 80%
++ [ ] chore: dockerize it and publish an image to Docker Hub
 
 ## References
 
