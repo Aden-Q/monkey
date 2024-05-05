@@ -88,6 +88,8 @@ var _ = Describe("Parser", func() {
 				!10;
 				-foo;
 				!bar;
+				!true;
+				!false;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
@@ -95,6 +97,8 @@ var _ = Describe("Parser", func() {
 						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewInteger("10", 10))),
 						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIdentifier("foo"))),
 						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIdentifier("bar"))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBoolean(true))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBoolean(false))),
 					},
 				}
 				expectedErrors := []error{}
@@ -185,7 +189,8 @@ var _ = Describe("Parser", func() {
 				text = `
 				let x = 5;
 				let y = 10;
-				let foobar = 838383;
+				let foo = 838383;
+				let foo = true;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
@@ -198,8 +203,12 @@ var _ = Describe("Parser", func() {
 							ast.NewInteger("10", 10),
 						),
 						ast.NewLetStatement(
-							ast.NewIdentifier("foobar"),
+							ast.NewIdentifier("foo"),
 							ast.NewInteger("838383", 838383),
+						),
+						ast.NewLetStatement(
+							ast.NewIdentifier("foo"),
+							ast.NewBoolean(true),
 						),
 					},
 				}
@@ -215,11 +224,13 @@ var _ = Describe("Parser", func() {
 				let = 5;
 				let = 10;
 				let = 838383;
+				let true;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{},
 				}
 				expectedErrors := []error{
+					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
@@ -235,11 +246,13 @@ var _ = Describe("Parser", func() {
 				let x 5;
 				let y 10;
 				let foo 838383;
+				let foo true;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{},
 				}
 				expectedErrors := []error{
+					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
 					parser.ErrUnexpectedTokenType,
@@ -257,12 +270,14 @@ var _ = Describe("Parser", func() {
 				return 5;
 				return 10;
 				return 838383;
+				return true;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
 						ast.NewReturnStatement(ast.NewInteger("5", 5)),
 						ast.NewReturnStatement(ast.NewInteger("10", 10)),
 						ast.NewReturnStatement(ast.NewInteger("838383", 838383)),
+						ast.NewReturnStatement(ast.NewBoolean(true)),
 					},
 				}
 				expectedErrors := []error{}
