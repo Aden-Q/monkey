@@ -158,20 +158,30 @@ var _ = Describe("Parser", func() {
 				texts := []string{
 					`-a * b`,
 					`!-a`,
+					`!a + b`,
 					`a + b + c`,
 					`a + b * c`,
 					`a + b * c + d / e - f`,
 					`3 + 4 * 5 == 3 * 1 + 4 * 5`,
 					`3 > 5 == false`,
+					`1 + (2 + 3) + 4`,
+					`(5 + 5) * 2`,
+					`-(5 + 5)`,
+					`!(true == false)`,
 				}
 				expectedStrings := []string{
 					`((-a) * b)`,
 					`(!(-a))`,
+					`((!a) + b)`,
 					`((a + b) + c)`,
 					`(a + (b * c))`,
 					`(((a + (b * c)) + (d / e)) - f)`,
 					`((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))`,
 					`((3 > 5) == false)`,
+					`((1 + (2 + 3)) + 4)`,
+					`((5 + 5) * 2)`,
+					`(-(5 + 5))`,
+					`(!(true == false))`,
 				}
 				expectedErrors := []error{}
 
