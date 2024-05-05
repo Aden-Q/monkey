@@ -54,6 +54,9 @@ Monkey is an interpreted language written in Go. *This project is still under de
 - [ ] check whether we need the token field in AST
 - [ ] test: increase test coverage to at least 80%
 
+## References
+
++ *Top Down Operator Precedence*, Vaughan Pratt
 
 
 ## License
