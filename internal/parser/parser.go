@@ -127,8 +127,8 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		stmt, err = p.parseExpressionStatement()
 	}
 
-	// move to the end of the current statement, indicated by a semicolon;
-	for !(p.curToken.Type == token.SEMICOLON) && !(p.curToken.Type == token.EOF) {
+	// this loop is needed when we fail to parse the current statement, skip the rest of it
+	for !p.curTokenTypeIs(token.SEMICOLON) && !p.curTokenTypeIs(token.EOF) {
 		p.nextToken()
 	}
 
@@ -281,7 +281,12 @@ func (p *parser) nextToken() {
 	p.peekToken = tok
 }
 
-// expectPeekTokenType examines whether the peek token type is the expected one
+// peekTokenTypeIs examines whether the current token type is the expected one
+func (p *parser) curTokenTypeIs(tokenType token.TokenType) bool {
+	return p.curToken.Type == tokenType
+}
+
+// peekTokenTypeIs examines whether the peek token type is the expected one
 func (p *parser) peekTokenTypeIs(tokenType token.TokenType) bool {
 	return p.peekToken.Type == tokenType
 }
