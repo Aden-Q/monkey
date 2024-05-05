@@ -120,6 +120,8 @@ var _ = Describe("Parser", func() {
 				foo + 5;
 				bar + 5;
 				-a * b;
+				true == true;
+				true != false;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
@@ -137,6 +139,8 @@ var _ = Describe("Parser", func() {
 						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewInteger("5", 5))),
 						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("bar"), ast.NewInteger("5", 5))),
 						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewPrefixExpression("-", ast.NewIdentifier("a")), ast.NewIdentifier("b"))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewBoolean(true), ast.NewBoolean(true))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewBoolean(true), ast.NewBoolean(false))),
 					},
 				}
 				expectedErrors := []error{}
@@ -154,6 +158,7 @@ var _ = Describe("Parser", func() {
 					`a + b * c`,
 					`a + b * c + d / e - f`,
 					`3 + 4 * 5 == 3 * 1 + 4 * 5`,
+					`3 > 5 == false`,
 				}
 				expectedStrings := []string{
 					`((-a) * b)`,
@@ -162,6 +167,7 @@ var _ = Describe("Parser", func() {
 					`(a + (b * c))`,
 					`(((a + (b * c)) + (d / e)) - f)`,
 					`((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))`,
+					`((3 > 5) == false)`,
 				}
 				expectedErrors := []error{}
 
