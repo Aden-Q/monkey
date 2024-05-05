@@ -12,19 +12,25 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Features
 
-+ Programs can be ran in REPL or as scripts
-+ Identifiers that consist of alphabet letters or underscore
-+ Able to catch all syntax errors in a single run
-+ Able to evaluate arithmetic expressions
-+ Able to evaluate conditional statements (`if` and `select` keywords)
-+ Able to evaluate loops (`for` and `while` keywords)
++ Programs can run in REPL or as scripts
++ Identifiers consist of alphabet letters or underscore
++ Statements are explicitly end by seminlon `;`
++ Comments start with double slash `//`
++ Syntax errors are caught in a single run
++ Conditional statements (`if` and `switch` keywords)
++ Loops (`for` and `while` keywords)
++ First-class functions
++ If expressions
++ Prefix operators (binary expressions)
++ Infix operators (unary expressions)
++ Postfix operators
 
 ## Components
 
 + Token set
 + Lexer
 + Abstract Syntax Tree (AST)
-+ Pratt parser
++ Pratt parser based on context-free grammars and the Backus-Naur-Form
 
 ## TODOs
 
@@ -44,6 +50,9 @@ Monkey is an interpreted language written in Go. *This project is still under de
 - [ ] feat: use quit(), exit(), or Ctrl-D to exit elegantly
 - [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
 - [ ] feat: support for comments
+- [ ] docs: a diagram for the full REPL loop including the AST used
+- [ ] check whether we need the token field in AST
+- [ ] test: increase test coverage to at least 80%
 
 
 

@@ -18,10 +18,11 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 	LT       = "<"
+	LTE      = "<="
 	GT       = ">"
-
-	EQ     = "=="
-	NOT_EQ = "!="
+	GTE      = ">="
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	// delimiters
 	COMMA     = ","
@@ -60,7 +61,9 @@ var operatorTable = map[string]TokenType{
 	"*":  ASTERISK,
 	"/":  SLASH,
 	"<":  LT,
+	"<=": LTE,
 	">":  GT,
+	">=": GTE,
 	"==": EQ,
 	"!=": NOT_EQ,
 }
@@ -106,5 +109,6 @@ func LookupTokenType(literal string) TokenType {
 	}
 
 	// as for now, treat the default type as identifier
+	// TODO: more checks to separate between IDENT and ILLEGAL
 	return IDENT
 }
