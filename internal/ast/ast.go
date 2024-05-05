@@ -266,7 +266,7 @@ func (ce *CallExpression) String() string {
 	builder.WriteString(ce.Func.String())
 	builder.WriteString("(")
 	builder.WriteString(strings.Join(argStrings, ", "))
-	builder.WriteString(") ")
+	builder.WriteString(")")
 
 	return builder.String()
 }

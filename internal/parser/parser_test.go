@@ -244,7 +244,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("infix expression string match", func() {
+			It("expression string match", func() {
 				texts := []string{
 					`-a * b;`,
 					`!-a;`,
@@ -258,6 +258,8 @@ var _ = Describe("Parser", func() {
 					`(5 + 5) * 2;`,
 					`-(5 + 5);`,
 					`!(true == false);`,
+					`a + add(b * c) +d;`,
+					`add(a + b + c * d / f + g);`,
 				}
 				expectedStrings := []string{
 					`((-a) * b)`,
@@ -272,6 +274,8 @@ var _ = Describe("Parser", func() {
 					`((5 + 5) * 2)`,
 					`(-(5 + 5))`,
 					`(!(true == false))`,
+					`((a + add((b * c))) + d)`,
+					`add((((a + b) + ((c * d) / f)) + g))`,
 				}
 				expectedErrors := []error{}
 
