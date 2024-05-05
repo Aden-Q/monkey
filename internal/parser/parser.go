@@ -184,7 +184,7 @@ func (p *parser) parseLetStatement() (ast.Statement, error) {
 		return nil, err
 	}
 
-	return ast.NewLetStatement(ast.NewIdentifier(tok.Literal), value), nil
+	return ast.NewLetStatement(ast.NewIdentifierExpression(tok.Literal), value), nil
 }
 
 // parseReturnStatement parses a single return statement
@@ -243,7 +243,7 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 }
 
 func (p *parser) parseIdentifier() (ast.Expression, error) {
-	return ast.NewIdentifier(p.curToken.Literal), nil
+	return ast.NewIdentifierExpression(p.curToken.Literal), nil
 }
 
 func (p *parser) parseInteger() (ast.Expression, error) {
@@ -252,7 +252,7 @@ func (p *parser) parseInteger() (ast.Expression, error) {
 		return nil, err
 	}
 
-	return ast.NewInteger(p.curToken.Literal, value), nil
+	return ast.NewIntegerExpression(p.curToken.Literal, value), nil
 }
 
 func (p *parser) parseBoolean() (ast.Expression, error) {
@@ -261,7 +261,7 @@ func (p *parser) parseBoolean() (ast.Expression, error) {
 		return nil, err
 	}
 
-	return ast.NewBoolean(value), nil
+	return ast.NewBooleanExpression(value), nil
 }
 
 func (p *parser) parseGroupedExpression() (ast.Expression, error) {

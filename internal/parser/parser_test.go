@@ -32,9 +32,9 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewIdentifier("foo")),
-						ast.NewExpressionStatement(ast.NewIdentifier("bar")),
-						ast.NewExpressionStatement(ast.NewIdentifier("cs")),
+						ast.NewExpressionStatement(ast.NewIdentifierExpression("foo")),
+						ast.NewExpressionStatement(ast.NewIdentifierExpression("bar")),
+						ast.NewExpressionStatement(ast.NewIdentifierExpression("cs")),
 					},
 				}
 				expectedErrors := []error{}
@@ -52,9 +52,9 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewInteger("5", 5)),
-						ast.NewExpressionStatement(ast.NewInteger("10", 10)),
-						ast.NewExpressionStatement(ast.NewInteger("838383", 838383)),
+						ast.NewExpressionStatement(ast.NewIntegerExpression("5", 5)),
+						ast.NewExpressionStatement(ast.NewIntegerExpression("10", 10)),
+						ast.NewExpressionStatement(ast.NewIntegerExpression("838383", 838383)),
 					},
 				}
 				expectedErrors := []error{}
@@ -71,8 +71,8 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewBoolean(true)),
-						ast.NewExpressionStatement(ast.NewBoolean(false)),
+						ast.NewExpressionStatement(ast.NewBooleanExpression(true)),
+						ast.NewExpressionStatement(ast.NewBooleanExpression(false)),
 					},
 				}
 				expectedErrors := []error{}
@@ -90,14 +90,14 @@ var _ = Describe("Parser", func() {
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
 						ast.NewExpressionStatement(ast.NewIfExpression(
-							ast.NewInfixExpression("<", ast.NewIdentifier("x"), ast.NewIdentifier("y")),
-							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
+							ast.NewInfixExpression("<", ast.NewIdentifierExpression("x"), ast.NewIdentifierExpression("y")),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("x"))),
 							nil,
 						)),
 						ast.NewExpressionStatement(ast.NewIfExpression(
-							ast.NewInfixExpression("<", ast.NewIdentifier("x"), ast.NewIdentifier("y")),
-							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
-							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("y"))),
+							ast.NewInfixExpression("<", ast.NewIdentifierExpression("x"), ast.NewIdentifierExpression("y")),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("x"))),
+							ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifierExpression("y"))),
 						)),
 					},
 				}
@@ -119,12 +119,12 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewInteger("10", 10))),
-						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIdentifier("foo"))),
-						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIdentifier("bar"))),
-						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBoolean(true))),
-						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBoolean(false))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIntegerExpression("10", 10))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("-", ast.NewIdentifierExpression("foo"))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewIdentifierExpression("bar"))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBooleanExpression(true))),
+						ast.NewExpressionStatement(ast.NewPrefixExpression("!", ast.NewBooleanExpression(false))),
 					},
 				}
 				expectedErrors := []error{}
@@ -155,22 +155,22 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("-", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("/", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression(">", ast.NewInteger("6", 6), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression(">=", ast.NewInteger("6", 6), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("<", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("<=", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewInteger("5", 5), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewInteger("5", 5), ast.NewInteger("6", 6))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewIdentifier("bar"))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("bar"), ast.NewInteger("5", 5))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewPrefixExpression("-", ast.NewIdentifier("a")), ast.NewIdentifier("b"))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewBoolean(true), ast.NewBoolean(true))),
-						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewBoolean(true), ast.NewBoolean(false))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("-", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("/", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression(">", ast.NewIntegerExpression("6", 6), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression(">=", ast.NewIntegerExpression("6", 6), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("<", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("<=", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewIntegerExpression("5", 5), ast.NewIntegerExpression("6", 6))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("foo"), ast.NewIdentifierExpression("bar"))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("foo"), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("bar"), ast.NewIntegerExpression("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewPrefixExpression("-", ast.NewIdentifierExpression("a")), ast.NewIdentifierExpression("b"))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("==", ast.NewBooleanExpression(true), ast.NewBooleanExpression(true))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("!=", ast.NewBooleanExpression(true), ast.NewBooleanExpression(false))),
 					},
 				}
 				expectedErrors := []error{}
@@ -231,20 +231,20 @@ var _ = Describe("Parser", func() {
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
 						ast.NewLetStatement(
-							ast.NewIdentifier("x"),
-							ast.NewInteger("5", 5),
+							ast.NewIdentifierExpression("x"),
+							ast.NewIntegerExpression("5", 5),
 						),
 						ast.NewLetStatement(
-							ast.NewIdentifier("y"),
-							ast.NewInteger("10", 10),
+							ast.NewIdentifierExpression("y"),
+							ast.NewIntegerExpression("10", 10),
 						),
 						ast.NewLetStatement(
-							ast.NewIdentifier("foo"),
-							ast.NewInteger("838383", 838383),
+							ast.NewIdentifierExpression("foo"),
+							ast.NewIntegerExpression("838383", 838383),
 						),
 						ast.NewLetStatement(
-							ast.NewIdentifier("foo"),
-							ast.NewBoolean(true),
+							ast.NewIdentifierExpression("foo"),
+							ast.NewBooleanExpression(true),
 						),
 					},
 				}
@@ -310,10 +310,10 @@ var _ = Describe("Parser", func() {
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
-						ast.NewReturnStatement(ast.NewInteger("5", 5)),
-						ast.NewReturnStatement(ast.NewInteger("10", 10)),
-						ast.NewReturnStatement(ast.NewInteger("838383", 838383)),
-						ast.NewReturnStatement(ast.NewBoolean(true)),
+						ast.NewReturnStatement(ast.NewIntegerExpression("5", 5)),
+						ast.NewReturnStatement(ast.NewIntegerExpression("10", 10)),
+						ast.NewReturnStatement(ast.NewIntegerExpression("838383", 838383)),
+						ast.NewReturnStatement(ast.NewBooleanExpression(true)),
 					},
 				}
 				expectedErrors := []error{}

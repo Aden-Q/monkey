@@ -8,8 +8,9 @@ import (
 
 // interface compliance check
 var _ Node = (*Program)(nil)
-var _ Expression = (*Identifier)(nil)
-var _ Expression = (*Integer)(nil)
+var _ Expression = (*IdentifierExpression)(nil)
+var _ Expression = (*IntegerExpression)(nil)
+var _ Expression = (*BooleanExpression)(nil)
 var _ Statement = (*LetStatement)(nil)
 var _ Statement = (*ReturnStatement)(nil)
 var _ Statement = (*ExpressionStatement)(nil)
@@ -66,75 +67,75 @@ func NewProgram(statements ...Statement) *Program {
 
 // -------------- Expressions -------------------
 
-// Identifier implements the Expression interface
-type Identifier struct {
+// IdentifierExpression implements the Expression interface
+type IdentifierExpression struct {
 	// the identifier token
 	Token token.Token
 	Value string
 }
 
-func (i *Identifier) expressionNode() {}
+func (ie *IdentifierExpression) expressionNode() {}
 
-func (i *Identifier) TokenLiteral() string {
-	return i.Token.Literal
+func (ie *IdentifierExpression) TokenLiteral() string {
+	return ie.Token.Literal
 }
 
-func (i *Identifier) String() string {
-	return i.Value
+func (ie *IdentifierExpression) String() string {
+	return ie.Value
 }
 
-// NewIdentifier creates an Identifier node
-func NewIdentifier(literal string) *Identifier {
-	return &Identifier{
+// NewIdentifierExpression creates an Identifier node
+func NewIdentifierExpression(literal string) *IdentifierExpression {
+	return &IdentifierExpression{
 		Token: token.New(token.IDENT, literal),
 		Value: literal,
 	}
 }
 
-// Integer implements the Expression interface
-type Integer struct {
+// IntegerExpression implements the Expression interface
+type IntegerExpression struct {
 	// the integer token
 	Token token.Token
 	Value int64
 }
 
-func (i *Integer) expressionNode() {}
+func (ie *IntegerExpression) expressionNode() {}
 
-func (i *Integer) TokenLiteral() string {
-	return i.Token.Literal
+func (ie *IntegerExpression) TokenLiteral() string {
+	return ie.Token.Literal
 }
 
-func (i *Integer) String() string {
-	return i.Token.Literal
+func (ie *IntegerExpression) String() string {
+	return ie.Token.Literal
 }
 
-// NewInteger creates an Integer node
-func NewInteger(literal string, value int64) *Integer {
-	return &Integer{
+// NewIntegerExpression creates an Integer node
+func NewIntegerExpression(literal string, value int64) *IntegerExpression {
+	return &IntegerExpression{
 		Token: token.New(token.INT, literal),
 		Value: value,
 	}
 }
 
-// Boolean implements the Expression interface
-type Boolean struct {
+// BooleanExpression implements the Expression interface
+type BooleanExpression struct {
 	// the boolean token
 	Token token.Token
 	Value bool
 }
 
-func (b *Boolean) expressionNode() {}
+func (be *BooleanExpression) expressionNode() {}
 
-func (b *Boolean) TokenLiteral() string {
-	return b.Token.Literal
+func (be *BooleanExpression) TokenLiteral() string {
+	return be.Token.Literal
 }
 
-func (b *Boolean) String() string {
-	return b.Token.Literal
+func (be *BooleanExpression) String() string {
+	return be.Token.Literal
 }
 
-// NewBoolean creates a Boolean node
-func NewBoolean(value bool) *Boolean {
+// NewBooleanExpression creates a Boolean node
+func NewBooleanExpression(value bool) *BooleanExpression {
 	var tok token.Token
 	if value {
 		tok = token.New(token.TRUE, "true")
@@ -142,7 +143,7 @@ func NewBoolean(value bool) *Boolean {
 		tok = token.New(token.FALSE, "false")
 	}
 
-	return &Boolean{
+	return &BooleanExpression{
 		Token: tok,
 		Value: value,
 	}
@@ -182,6 +183,48 @@ func (ie *IfExpression) String() string {
 
 // NewIfExpression creates an IfExpression node
 func NewIfExpression(condition Expression, consequence *BlockStatement, alternative *BlockStatement) *IfExpression {
+	return &IfExpression{
+		Token:       token.New(token.IF, "if"),
+		Condition:   condition,
+		Consequence: consequence,
+		Alternative: alternative,
+	}
+}
+
+// FuncExpression implements the Expression interface
+type FuncExpression struct {
+	// the if token
+	Token token.Token
+	// the condition expression
+	Condition Expression
+	// consequence when the condition is true
+	Consequence *BlockStatement
+	Alternative *BlockStatement
+}
+
+func (fe *FuncExpression) expressionNode() {}
+
+func (fe *FuncExpression) TokenLiteral() string {
+	return fe.Token.Literal
+}
+
+func (fe *FuncExpression) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString("if" + " ")
+	builder.WriteString(fe.Condition.String() + " ")
+	builder.WriteString(fe.Consequence.String())
+
+	if fe.Alternative != nil {
+		builder.WriteString(" else ")
+		builder.WriteString(fe.Alternative.String())
+	}
+
+	return builder.String()
+}
+
+// NewFuncExpression creates an IfExpression node
+func NewFuncExpression(condition Expression, consequence *BlockStatement, alternative *BlockStatement) *IfExpression {
 	return &IfExpression{
 		Token:       token.New(token.IF, "if"),
 		Condition:   condition,
@@ -274,7 +317,7 @@ type LetStatement struct {
 	// the let token
 	Token token.Token
 	// the identifier
-	Identifier *Identifier
+	Identifier *IdentifierExpression
 	// the expression value on the right side of the statement
 	Value Expression
 }
@@ -302,7 +345,7 @@ func (ls *LetStatement) String() string {
 }
 
 // NewLetStatement creates a LetStatement node
-func NewLetStatement(identifier *Identifier, value Expression) *LetStatement {
+func NewLetStatement(identifier *IdentifierExpression, value Expression) *LetStatement {
 	return &LetStatement{
 		Token:      token.New(token.LET, "let"),
 		Identifier: identifier,
