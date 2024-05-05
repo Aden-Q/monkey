@@ -47,6 +47,8 @@ func New(l lexer.Lexer) Parser {
 	// register prefix parse functions
 	p.registerPrefixParseFn(token.IDENT, p.parseIdentifier)
 	p.registerPrefixParseFn(token.INT, p.parseInteger)
+	p.registerPrefixParseFn(token.TRUE, p.parseBoolean)
+	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
 	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
 	p.registerPrefixParseFn(token.MINUS, p.parsePrefixExpression)
 
@@ -230,6 +232,15 @@ func (p *parser) parseInteger() (ast.Expression, error) {
 	}
 
 	return ast.NewInteger(p.curToken.Literal, value), nil
+}
+
+func (p *parser) parseBoolean() (ast.Expression, error) {
+	value, err := strconv.ParseBool(p.curToken.Literal)
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewBoolean(value), nil
 }
 
 func (p *parser) parsePrefixExpression() (ast.Expression, error) {

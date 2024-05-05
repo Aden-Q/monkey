@@ -64,6 +64,24 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			It("simple boolean expressions", func() {
+				text = `
+				true;
+				false;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewBoolean(true)),
+						ast.NewExpressionStatement(ast.NewBoolean(false)),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 			It("simple prefix expressions", func() {
 				text = `
 				-5;
