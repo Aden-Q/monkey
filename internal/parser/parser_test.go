@@ -82,6 +82,26 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			// It("simple if expressions", func() {
+			// 	text = `
+			// 	if (x < y) {x};
+			// 	`
+			// 	expectedProgram := &ast.Program{
+			// 		Statements: []ast.Statement{
+			// 			ast.NewExpressionStatement(ast.NewIfExpression(
+			// 				ast.NewInfixExpression("<", ast.NewInteger("5", 5), ast.NewInteger("6", 6)),
+			// 				ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewIdentifier("x"))),
+			// 				nil,
+			// 			)),
+			// 		},
+			// 	}
+			// 	expectedErrors := []error{}
+
+			// 	program, errs = p.ParseProgram(text)
+			// 	Expect(program).To(Equal(expectedProgram))
+			// 	Expect(errs).To(Equal(expectedErrors))
+			// })
+
 			It("simple prefix expressions", func() {
 				text = `
 				-5;

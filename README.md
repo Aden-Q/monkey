@@ -56,8 +56,8 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] chore: dockerize it and publish an image to Docker Hub
 + [ ] feat: check how to trigger the GC during runtime (in REPL)
 + [ ] feat: return can only be used in functions, do not allow plain return in REPL
-+ [ ] feat: block statements
-+ [ ] feat: if statement with multiple branches
++ [ ] feat: if expression with multiple branches
++ [ ] feat: check peek token type in parseExpression
 
 ## References
 

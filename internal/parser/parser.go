@@ -45,19 +45,21 @@ func New(l lexer.Lexer) Parser {
 	}
 
 	// register prefix parse functions
-	// handler for identifier expressions
+	// handler for identifier expression
 	p.registerPrefixParseFn(token.IDENT, p.parseIdentifier)
-	// handler for integer expressions
+	// handler for integer expression
 	p.registerPrefixParseFn(token.INT, p.parseInteger)
-	// handler for boolean expressions
+	// handler for boolean expression
 	p.registerPrefixParseFn(token.TRUE, p.parseBoolean)
 	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
-	// handler for !something expressions
-	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
-	// handler for -something expressions
-	p.registerPrefixParseFn(token.MINUS, p.parsePrefixExpression)
-	// handler for grouped expressions
+	// handler for grouped expression
 	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
+	// handler for if expression
+	p.registerPrefixParseFn(token.IF, p.parseIfExpression)
+	// handler for !something expression
+	p.registerPrefixParseFn(token.BANG, p.parsePrefixExpression)
+	// handler for -something expression
+	p.registerPrefixParseFn(token.MINUS, p.parsePrefixExpression)
 
 	// register infix parse functions
 	p.registerInfixParseFn(token.PLUS, p.parseInfixExpression)
@@ -134,10 +136,17 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 		stmt, err = p.parseExpressionStatement()
 	}
 
-	// this loop is needed when we fail to parse the current statement, skip the rest of it
-	for !p.curTokenTypeIs(token.SEMICOLON) && !p.curTokenTypeIs(token.EOF) {
-		p.nextToken()
+	if err != nil {
+		// this loop is needed when we fail to parse the current statement, skip the rest of it
+		for !p.curTokenTypeIs(token.SEMICOLON) && !p.curTokenTypeIs(token.EOF) {
+			p.nextToken()
+		}
+
+		return stmt, err
 	}
+
+	// on successful parsing, we skip the ; token to parse the next potential statement
+	p.nextToken()
 
 	return stmt, err
 }
@@ -250,6 +259,62 @@ func (p *parser) parseBoolean() (ast.Expression, error) {
 	return ast.NewBoolean(value), nil
 }
 
+func (p *parser) parseGroupedExpression() (ast.Expression, error) {
+	// move forward to make p.curToken point to the first token after the ( token
+	p.nextToken()
+
+	// recursively parse the expression after the prefix token
+	exp, err := p.parseExpression(token.LOWEST)
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward to make p.curToken point to ), do not skip ) because we need to check peek token
+	// in a infix expression
+	p.nextToken()
+
+	return exp, nil
+}
+
+func (p *parser) parseBlockStatement() (*ast.BlockStatement, error) {
+	// skip the { token pointed by p.curToken
+	p.nextToken()
+
+	return nil, nil
+}
+
+func (p *parser) parseIfExpression() (ast.Expression, error) {
+	if !p.peekTokenTypeIs(token.LPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward to make p.curToken point to ( so that we can parse the grouped expressions
+	p.nextToken()
+
+	condition, err := p.parseGroupedExpression()
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.LBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken point to {
+	p.nextToken()
+
+	consequence, err := p.parseBlockStatement()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewIfExpression(condition, consequence, nil), nil
+}
+
 func (p *parser) parsePrefixExpression() (ast.Expression, error) {
 	prefixToken := p.curToken
 
@@ -263,26 +328,6 @@ func (p *parser) parsePrefixExpression() (ast.Expression, error) {
 	}
 
 	return ast.NewPrefixExpression(prefixToken.Literal, operand), nil
-}
-
-func (p *parser) parseGroupedExpression() (ast.Expression, error) {
-	// move forward to make p.curToekn points to the first token after the ( token
-	p.nextToken()
-
-	// recursively parse the expression after the prefix token
-	exp, err := p.parseExpression(token.LOWEST)
-	if err != nil {
-		return nil, err
-	}
-
-	if !p.peekTokenTypeIs(token.RPAREN) {
-		return nil, nil
-	}
-
-	// skip the right parenthesis associated with the left parenthesis that is currently being examined
-	p.nextToken()
-
-	return exp, nil
 }
 
 func (p *parser) parseInfixExpression(leftOperand ast.Expression) (ast.Expression, error) {
