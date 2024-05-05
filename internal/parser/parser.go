@@ -79,9 +79,14 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 	program.Statements = []ast.Statement{}
 	errs := []error{}
 
+	// reset the lexer state
 	_ = p.l.Read(text)
+
+	// reset the parser state
 	// the main reason of doing this is skipping any leading white space/newline char
 	// we need to do nextToken twice to populate both the current token and the next token
+	p.curToken = token.Token{}
+	p.peekToken = token.Token{}
 	p.nextToken()
 	p.nextToken()
 
@@ -184,7 +189,6 @@ func (p *parser) parseExpressionStatement() (ast.Statement, error) {
 
 // parseExpression parses a single expression, p.curToken points to the first token of the expression
 func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
-	// TODO: need to parse infix expression as well
 	prefixFn, ok := p.prefixParseFns[p.curToken.Type]
 	if !ok {
 		return nil, ErrPrefixParseFnNotFound
@@ -196,7 +200,8 @@ func (p *parser) parseExpression(precedence int) (ast.Expression, error) {
 		return nil, err
 	}
 
-	if !p.peekTokenTypeIs(token.SEMICOLON) && precedence < token.GetPrecedence(p.peekToken.Type) {
+	// iteratively parse the remaining part
+	for !p.peekTokenTypeIs(token.SEMICOLON) && precedence < token.GetPrecedence(p.peekToken.Type) {
 		infixFn, ok := p.infixParseFns[p.peekToken.Type]
 		if !ok {
 			return exp, ErrInfixParseFnNotFound

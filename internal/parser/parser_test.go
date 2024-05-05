@@ -101,6 +101,7 @@ var _ = Describe("Parser", func() {
 				foo + bar;
 				foo + 5;
 				bar + 5;
+				-a * b;
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
@@ -117,12 +118,40 @@ var _ = Describe("Parser", func() {
 						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewIdentifier("bar"))),
 						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("foo"), ast.NewInteger("5", 5))),
 						ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifier("bar"), ast.NewInteger("5", 5))),
+						ast.NewExpressionStatement(ast.NewInfixExpression("*", ast.NewPrefixExpression("-", ast.NewIdentifier("a")), ast.NewIdentifier("b"))),
 					},
 				}
 				expectedErrors := []error{}
 
 				program, errs = p.ParseProgram(text)
 				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("complex infix expression string match", func() {
+				texts := []string{
+					`-a * b`,
+					`!-a`,
+					`a + b + c`,
+					`a + b * c`,
+					`a + b * c + d / e - f`,
+					`3 + 4 * 5 == 3 * 1 + 4 * 5`,
+				}
+				expectedStrings := []string{
+					`((-a) * b)`,
+					`(!(-a))`,
+					`((a + b) + c)`,
+					`(a + (b * c))`,
+					`(((a + (b * c)) + (d / e)) - f)`,
+					`((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))`,
+				}
+				expectedErrors := []error{}
+
+				for idx := range texts {
+					program, errs = p.ParseProgram(texts[idx])
+					Expect(program.String()).To(Equal(expectedStrings[idx]))
+				}
+
 				Expect(errs).To(Equal(expectedErrors))
 			})
 		})

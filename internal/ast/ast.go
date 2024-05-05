@@ -175,8 +175,8 @@ func (ie *InfixExpression) String() string {
 	builder := strings.Builder{}
 
 	builder.WriteString("(")
-	builder.WriteString(ie.LeftOperand.String())
-	builder.WriteString(ie.Operator)
+	builder.WriteString(ie.LeftOperand.String() + " ")
+	builder.WriteString(ie.Operator + " ")
 	builder.WriteString(ie.RightOperand.String())
 	builder.WriteString(")")
 
@@ -274,10 +274,11 @@ func NewReturnStatement(value Expression) *ReturnStatement {
 
 // ExpressionStatement represents a statement consisting of only one expression
 type ExpressionStatement struct {
-	Statement
 	// the expression
-	Expression Expression
+	Expression
 }
+
+func (es *ExpressionStatement) statementNode() {}
 
 // NewExpressionStatement creates an expression statement node
 func NewExpressionStatement(exp Expression) *ExpressionStatement {
