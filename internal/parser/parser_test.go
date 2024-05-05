@@ -23,7 +23,7 @@ var _ = Describe("Parser", func() {
 	})
 
 	Describe("ParseProgram", func() {
-		Context("parse expressions", func() {
+		Context("expressions", func() {
 			It("simple identifier expressions", func() {
 				text = `
 				foo;
@@ -261,7 +261,7 @@ var _ = Describe("Parser", func() {
 			})
 		})
 
-		Context("parse let statements", func() {
+		Context("let statements", func() {
 			It("correct program", func() {
 				text = `
 				let x = 5;
@@ -341,7 +341,7 @@ var _ = Describe("Parser", func() {
 			})
 		})
 
-		Context("parse return statements", func() {
+		Context("return statements", func() {
 			It("correct program", func() {
 				text = `
 				return 5;
@@ -364,5 +364,24 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 		})
+
+		// TODO: parse empty statement
+		// Context("special statements", func() {
+		// 	It("empty statement", func() {
+		// 		text = `
+		// 		;
+		// 		`
+		// 		expectedProgram := &ast.Program{
+		// 			Statements: []ast.Statement{
+		// 				ast.NewExpressionStatement(nil),
+		// 			},
+		// 		}
+		// 		expectedErrors := []error{}
+
+		// 		program, errs = p.ParseProgram(text)
+		// 		Expect(program).To(Equal(expectedProgram))
+		// 		Expect(errs).To(Equal(expectedErrors))
+		// 	})
+		// })
 	})
 })

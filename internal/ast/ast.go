@@ -239,6 +239,45 @@ func NewFuncExpression(params []*IdentifierExpression, body *BlockStatement) *Fu
 	}
 }
 
+// CallExpression implements the Expression interface
+type CallExpression struct {
+	// the first token (fn or the identifier)
+	Token token.Token
+	// function literal or identifier bound to function
+	Func Expression
+	// function call arguments
+	Arguments []Expression
+}
+
+func (ce *CallExpression) expressionNode() {}
+
+func (ce *CallExpression) TokenLiteral() string {
+	return ce.Token.Literal
+}
+
+func (ce *CallExpression) String() string {
+	builder := strings.Builder{}
+
+	return builder.String()
+}
+
+// NewCallExpression creates a CallExpression node
+func NewCallExpression(fn Expression, args []Expression) *CallExpression {
+	if fn.TokenLiteral() == "fn" {
+		return &CallExpression{
+			Token:     token.New(token.FUNC, "fn"),
+			Func:      fn,
+			Arguments: args,
+		}
+	}
+
+	return &CallExpression{
+		Token:     token.New(token.IDENT, fn.TokenLiteral()),
+		Func:      fn,
+		Arguments: args,
+	}
+}
+
 // PrefixExpression implements the Expression interface
 // a prefix expression consists of a prefix (-/!) and an operator
 type PrefixExpression struct {
