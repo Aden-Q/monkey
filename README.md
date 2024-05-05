@@ -63,6 +63,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: scroll in command history with up and down keys
 + [ ] feat: PrettyPrint, color, AST, etc
 + [ ] feat: sys call such as print(...)
++ [ ] feat: add a helper for available functions
 
 ## References
 

@@ -43,8 +43,8 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 	l := lexer.New()
 	p := parser.New(l)
 
-	io.WriteString(out, MONKEY_FACE)
-	io.WriteString(out, fmt.Sprintf("Hello %s! This is the Monkey programming language!\n", userName))
+	fmt.Print(MONKEY_FACE)
+	fmt.Printf("Hello %s! This is the Monkey programming language!\n", userName)
 
 	for {
 		fmt.Print(PROMPT)
@@ -61,15 +61,15 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 			printParserErrors(out, errs)
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		// TODO: PrettyPrint
+		fmt.Println(program.String())
 	}
 }
 
 func printParserErrors(out io.WriteCloser, errs []error) {
-	io.WriteString(out, "parser errors:\n")
+	fmt.Println("parser errors:")
 
 	for _, err := range errs {
-		io.WriteString(out, "\t"+err.Error()+"\n")
+		fmt.Println("\t" + err.Error())
 	}
 }
