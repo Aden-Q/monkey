@@ -217,8 +217,8 @@ func (fe *FuncExpression) String() string {
 	builder := strings.Builder{}
 
 	paramStrings := []string{}
-	for _, p := range fe.Parameters {
-		paramStrings = append(paramStrings, p.String())
+	for _, param := range fe.Parameters {
+		paramStrings = append(paramStrings, param.String())
 	}
 
 	builder.WriteString("fn")
@@ -257,6 +257,16 @@ func (ce *CallExpression) TokenLiteral() string {
 
 func (ce *CallExpression) String() string {
 	builder := strings.Builder{}
+
+	argStrings := []string{}
+	for _, arg := range ce.Arguments {
+		argStrings = append(argStrings, arg.String())
+	}
+
+	builder.WriteString(ce.Func.String())
+	builder.WriteString("(")
+	builder.WriteString(strings.Join(argStrings, ", "))
+	builder.WriteString(") ")
 
 	return builder.String()
 }

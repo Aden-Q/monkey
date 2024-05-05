@@ -74,6 +74,8 @@ func New(l lexer.Lexer) Parser {
 	p.registerInfixParseFn(token.LTE, p.parseInfixExpression)
 	p.registerInfixParseFn(token.EQ, p.parseInfixExpression)
 	p.registerInfixParseFn(token.NOT_EQ, p.parseInfixExpression)
+	// handler for call expression
+	p.registerInfixParseFn(token.LPAREN, p.parseCallExpression)
 
 	return p
 }
@@ -405,6 +407,7 @@ func (p *parser) parseFuncParameters() ([]*ast.IdentifierExpression, error) {
 	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
 		p.nextToken()
 		params = append(params, ast.NewIdentifierExpression(p.curToken.Literal))
+
 		if p.peekTokenTypeIs(token.COMMA) {
 			p.nextToken()
 		}
@@ -448,6 +451,43 @@ func (p *parser) parseInfixExpression(leftOperand ast.Expression) (ast.Expressio
 	}
 
 	return ast.NewInfixExpression(operatorToken.Literal, leftOperand, rightOperand), nil
+}
+
+func (p *parser) parseCallExpression(leftOperand ast.Expression) (ast.Expression, error) {
+	args, err := p.parseCallArguments()
+	if err != nil {
+		return nil, err
+	}
+
+	return ast.NewCallExpression(leftOperand, args), nil
+}
+
+func (p *parser) parseCallArguments() ([]ast.Expression, error) {
+	args := []ast.Expression{}
+
+	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+
+		exp, err := p.parseExpression(token.LOWEST)
+		if err != nil {
+			return nil, err
+		}
+
+		args = append(args, exp)
+
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RPAREN) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ) token
+	p.nextToken()
+
+	return args, nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state

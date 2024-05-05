@@ -24,7 +24,7 @@ var _ = Describe("Parser", func() {
 
 	Describe("ParseProgram", func() {
 		Context("expressions", func() {
-			It("simple identifier expressions", func() {
+			It("identifier expressions", func() {
 				text = `
 				foo;
 				bar;
@@ -44,7 +44,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple integer expressions", func() {
+			It("integer expressions", func() {
 				text = `
 				5;
 				10;
@@ -64,7 +64,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple boolean expressions", func() {
+			It("boolean expressions", func() {
 				text = `
 				true;
 				false;
@@ -82,7 +82,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple if expression", func() {
+			It("if expressions", func() {
 				text = `
 				if (x < y) { x; };
 				if (x < y) { x; } else { y; };
@@ -112,7 +112,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple func expression", func() {
+			It("func expressions", func() {
 				text = `
 				fn() {};
 				fn(x) { 1; };
@@ -149,7 +149,30 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple prefix expressions", func() {
+			It("call expressions", func() {
+				text = `
+				add(1, 2 * 3, 4 + 5);
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewCallExpression(
+							ast.NewIdentifierExpression("add"),
+							[]ast.Expression{
+								ast.NewIntegerExpression("1", 1),
+								ast.NewInfixExpression("*", ast.NewIntegerExpression("2", 2), ast.NewIntegerExpression("3", 3)),
+								ast.NewInfixExpression("+", ast.NewIntegerExpression("4", 4), ast.NewIntegerExpression("5", 5)),
+							},
+						)),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("prefix expressions", func() {
 				text = `
 				-5;
 				!10;
@@ -175,7 +198,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("simple infix expressions", func() {
+			It("infix expressions", func() {
 				text = `
 				5 + 5;
 				5 - 5;
@@ -221,7 +244,7 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
-			It("complex infix expression string match", func() {
+			It("infix expression string match", func() {
 				texts := []string{
 					`-a * b;`,
 					`!-a;`,
