@@ -4,7 +4,6 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/user"
@@ -41,10 +40,9 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("user error: %v", err)
 	}
 
-	fmt.Printf("Hello %s! This is the Monkey programming language!\n", user.Username)
-
 	r := repl.New(repl.Config{})
-	r.Start(os.Stdin, os.Stdout)
+
+	r.Start(os.Stdin, os.Stdout, user.Username)
 }
 
 func init() {

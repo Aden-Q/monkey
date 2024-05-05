@@ -11,8 +11,21 @@ import (
 
 const PROMPT = ">>> "
 
+const MONKEY_FACE = `            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+`
+
 type REPL interface {
-	Start(in io.ReadCloser, out io.WriteCloser)
+	Start(in io.ReadCloser, out io.WriteCloser, userName string)
 }
 
 type Config struct {
@@ -25,10 +38,13 @@ func New(config Config) REPL {
 	return &repl{}
 }
 
-func (r *repl) Start(in io.ReadCloser, out io.WriteCloser) {
+func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 	scanner := bufio.NewScanner(in)
 	l := lexer.New()
 	p := parser.New(l)
+
+	io.WriteString(out, MONKEY_FACE)
+	io.WriteString(out, fmt.Sprintf("Hello %s! This is the Monkey programming language!\n", userName))
 
 	for {
 		fmt.Print(PROMPT)
@@ -51,6 +67,8 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser) {
 }
 
 func printParserErrors(out io.WriteCloser, errs []error) {
+	io.WriteString(out, "parser errors:\n")
+
 	for _, err := range errs {
 		io.WriteString(out, "\t"+err.Error()+"\n")
 	}
