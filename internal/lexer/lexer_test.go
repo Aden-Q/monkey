@@ -152,7 +152,7 @@ var _ = Describe("Lexer", func() {
 						Literal: "=",
 					},
 					{
-						Type:    token.FUNCTION,
+						Type:    token.FUNC,
 						Literal: "fn",
 					},
 					{

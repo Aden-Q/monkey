@@ -25,7 +25,7 @@ var (
 		SLASH:    PRODUCT,
 		ASTERISK: PRODUCT,
 		BANG:     PREFIX,
-		FUNCTION: CALL,
+		FUNC:     CALL,
 	}
 )
 

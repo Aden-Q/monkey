@@ -193,13 +193,12 @@ func NewIfExpression(condition Expression, consequence *BlockStatement, alternat
 
 // FuncExpression implements the Expression interface
 type FuncExpression struct {
-	// the if token
+	// the fn token
 	Token token.Token
-	// the condition expression
-	Condition Expression
-	// consequence when the condition is true
-	Consequence *BlockStatement
-	Alternative *BlockStatement
+	// function parameters
+	Parameters []*IdentifierExpression
+	// function body
+	Body *BlockStatement
 }
 
 func (fe *FuncExpression) expressionNode() {}
@@ -211,25 +210,26 @@ func (fe *FuncExpression) TokenLiteral() string {
 func (fe *FuncExpression) String() string {
 	builder := strings.Builder{}
 
-	builder.WriteString("if" + " ")
-	builder.WriteString(fe.Condition.String() + " ")
-	builder.WriteString(fe.Consequence.String())
-
-	if fe.Alternative != nil {
-		builder.WriteString(" else ")
-		builder.WriteString(fe.Alternative.String())
+	paramStrings := []string{}
+	for _, p := range fe.Parameters {
+		paramStrings = append(paramStrings, p.String())
 	}
+
+	builder.WriteString("fn")
+	builder.WriteString("(")
+	builder.WriteString(strings.Join(paramStrings, ", "))
+	builder.WriteString(") ")
+	builder.WriteString(fe.Body.String())
 
 	return builder.String()
 }
 
-// NewFuncExpression creates an IfExpression node
-func NewFuncExpression(condition Expression, consequence *BlockStatement, alternative *BlockStatement) *IfExpression {
-	return &IfExpression{
-		Token:       token.New(token.IF, "if"),
-		Condition:   condition,
-		Consequence: consequence,
-		Alternative: alternative,
+// NewFuncExpression creates a FuncExpression node
+func NewFuncExpression(params []*IdentifierExpression, body *BlockStatement) *FuncExpression {
+	return &FuncExpression{
+		Token:      token.New(token.FUNC, "fn"),
+		Parameters: params,
+		Body:       body,
 	}
 }
 
