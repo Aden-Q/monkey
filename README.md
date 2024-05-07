@@ -25,6 +25,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Infix operators (unary expressions)
 + Postfix operators
 + Tree-walking interpreter
++ Works on 64-bit machines
 
 ## Components
 
@@ -66,6 +67,9 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: PrettyPrint, color, AST, etc
 + [ ] feat: sys call such as print(...)
 + [ ] feat: add a helper for available functions
++ [ ] feat: consider how to write a GC
++ [ ] feat: switch between multiple value representation system using some flag
++ [ ] feat: class (object system)
 
 ## References
 

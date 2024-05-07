@@ -11,9 +11,15 @@ var _ Node = (*Program)(nil)
 var _ Expression = (*IdentifierExpression)(nil)
 var _ Expression = (*IntegerExpression)(nil)
 var _ Expression = (*BooleanExpression)(nil)
+var _ Expression = (*IfExpression)(nil)
+var _ Expression = (*FuncExpression)(nil)
+var _ Expression = (*CallExpression)(nil)
+var _ Expression = (*PrefixExpression)(nil)
+var _ Expression = (*InfixExpression)(nil)
 var _ Statement = (*LetStatement)(nil)
 var _ Statement = (*ReturnStatement)(nil)
 var _ Statement = (*ExpressionStatement)(nil)
+var _ Statement = (*BlockStatement)(nil)
 
 // Node is a common interface for nodes in AST
 type Node interface {
