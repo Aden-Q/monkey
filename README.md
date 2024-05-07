@@ -70,6 +70,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: consider how to write a GC
 + [ ] feat: switch between multiple value representation system using some flag
 + [ ] feat: class (object system)
++ [ ] feat: configuration with yaml or envrc
 
 ## References
 
