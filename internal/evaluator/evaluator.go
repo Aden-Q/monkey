@@ -28,26 +28,26 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NIL, ErrEmptyNodeInput
 	}
 
-	switch node.(type) {
+	switch node := node.(type) {
 	// evaluate the program
 	case *ast.Program:
-		return e.evalStatements(node.(*ast.Program).Statements)
+		return e.evalStatements(node.Statements)
 	// evaluate statements
 	case *ast.ExpressionStatement:
-		return e.Eval(node.(*ast.ExpressionStatement).Expression)
+		return e.Eval(node.Expression)
 	case *ast.BlockStatement:
-		return e.evalStatements(node.(*ast.BlockStatement).Statements)
+		return e.evalStatements(node.Statements)
 	// evaluate expressions
 	case *ast.IntegerExpression:
-		return object.NewInteger(node.(*ast.IntegerExpression).Value), nil
+		return object.NewInteger(node.Value), nil
 	case *ast.BooleanExpression:
-		return booleanConv(node.(*ast.BooleanExpression).Value), nil
+		return booleanConv(node.Value), nil
 	case *ast.IfExpression:
-		return e.evalIfExpression(node.(*ast.IfExpression))
+		return e.evalIfExpression(node)
 	case *ast.PrefixExpression:
-		return e.evalPrefixExpression(node.(*ast.PrefixExpression))
+		return e.evalPrefixExpression(node)
 	case *ast.InfixExpression:
-		return e.evalInfixExpression(node.(*ast.InfixExpression))
+		return e.evalInfixExpression(node)
 	}
 
 	// no match, unexpected path

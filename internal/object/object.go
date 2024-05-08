@@ -2,10 +2,17 @@ package object
 
 import "strconv"
 
-const (
-	INTEGER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NIL_OBJ     = "NIL"
+// interface compliance check
+var _ Object = (*Integer)(nil)
+var _ Object = (*Boolean)(nil)
+var _ Object = (*Nil)(nil)
+
+type ObjectType string
+
+var (
+	INTEGER_OBJ = ObjectType("INTEGER")
+	BOOLEAN_OBJ = ObjectType("BOOLEAN")
+	NIL_OBJ     = ObjectType("NIL")
 )
 
 // boolean literal objects
@@ -14,13 +21,6 @@ var (
 	FALSE = NewBoolean(false)
 	NIL   = NewNil()
 )
-
-// interface compliance check
-var _ Object = (*Integer)(nil)
-var _ Object = (*Boolean)(nil)
-var _ Object = (*Nil)(nil)
-
-type ObjectType string
 
 type Object interface {
 	Type() ObjectType
@@ -70,7 +70,7 @@ func (b *Boolean) Inspect() string {
 }
 
 func (b *Boolean) IsTruthy() bool {
-	return b.Value == true
+	return b.Value
 }
 
 // Nil represents the absence of any value
