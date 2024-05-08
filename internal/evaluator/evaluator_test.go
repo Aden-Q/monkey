@@ -153,7 +153,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				true;
 				`
-				expectedObject := object.NewBoolean(true)
+				expectedObject := object.TRUE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -170,7 +170,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!true;
 				`
-				expectedObject := object.NewBoolean(false)
+				expectedObject := object.FALSE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -187,7 +187,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!false;
 				`
-				expectedObject := object.NewBoolean(true)
+				expectedObject := object.TRUE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -204,7 +204,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!5;
 				`
-				expectedObject := object.NewBoolean(false)
+				expectedObject := object.FALSE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -221,7 +221,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!!true;
 				`
-				expectedObject := object.NewBoolean(true)
+				expectedObject := object.TRUE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -238,7 +238,7 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!!false;
 				`
-				expectedObject := object.NewBoolean(false)
+				expectedObject := object.FALSE
 				expectedErrors := []error{}
 
 				// parse the program
@@ -255,7 +255,211 @@ var _ = Describe("Evaluator", func() {
 				text = `
 				!!5;
 				`
-				expectedObject := object.NewBoolean(true)
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 < 2;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 <= 2;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 < 1;
+				`
+				expectedObject := object.FALSE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 <= 1;
+				`
+				expectedObject := object.FALSE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 > 2;
+				`
+				expectedObject := object.FALSE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 >= 2;
+				`
+				expectedObject := object.FALSE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 > 1;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 >= 1;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 == 1;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 == 1;
+				`
+				expectedObject := object.FALSE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				2 != 1;
+				`
+				expectedObject := object.TRUE
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix comparision expression", func() {
+				text = `
+				1 != 1;
+				`
+				expectedObject := object.FALSE
 				expectedErrors := []error{}
 
 				// parse the program

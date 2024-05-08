@@ -33,7 +33,7 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 	case *ast.IntegerExpression:
 		return &object.Integer{Value: node.(*ast.IntegerExpression).Value}, nil
 	case *ast.BooleanExpression:
-		return getBooleanObject(node.(*ast.BooleanExpression).Value), nil
+		return booleanConv(node.(*ast.BooleanExpression).Value), nil
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node.(*ast.PrefixExpression))
 	case *ast.InfixExpression:
@@ -105,14 +105,15 @@ func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object,
 
 	switch {
 	case leftOperandObj.Type() == object.INTEGER_OBJ && rightOperandObj.Type() == object.INTEGER_OBJ:
-		return e.evalIntegerInfixExpression(ie.Operator, leftOperandObj, rightOperandObj)
+		return e.evalIntegerInfixExpression(ie.Operator, leftOperandObj.(*object.Integer), rightOperandObj.(*object.Integer))
 	default:
+		// TODO: check infix expressions involving boolean operands and operators that result in boolean values
 		return object.NIL, ErrUnexpectedObjectType
 	}
 }
 
-func (e *evaluator) evalIntegerInfixExpression(operator string, left, right object.Object) (object.Object, error) {
-	leftVal, rightVal := left.(*object.Integer).Value, right.(*object.Integer).Value
+func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *object.Integer) (object.Object, error) {
+	leftVal, rightVal := left.Value, right.Value
 
 	switch operator {
 	case "+":
@@ -123,12 +124,24 @@ func (e *evaluator) evalIntegerInfixExpression(operator string, left, right obje
 		return object.NewInteger(leftVal * rightVal), nil
 	case "/":
 		return object.NewInteger(leftVal / rightVal), nil
+	case "<":
+		return booleanConv(leftVal < rightVal), nil
+	case "<=":
+		return booleanConv(leftVal <= rightVal), nil
+	case ">":
+		return booleanConv(leftVal > rightVal), nil
+	case ">=":
+		return booleanConv(leftVal >= rightVal), nil
+	case "==":
+		return booleanConv(leftVal == rightVal), nil
+	case "!=":
+		return booleanConv(leftVal != rightVal), nil
 	default:
 		return object.NIL, ErrUnexpectedOperatorType
 	}
 }
 
-func getBooleanObject(input bool) object.Object {
+func booleanConv(input bool) object.Object {
 	if input {
 		return object.TRUE
 	}
