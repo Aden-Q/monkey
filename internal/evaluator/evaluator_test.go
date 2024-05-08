@@ -720,6 +720,27 @@ var _ = Describe("Evaluator", func() {
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
 			})
+
+			It("return an boolean with if condition", func() {
+				text = `
+				if (10 > 1) {
+					return 10 > 1;
+				};
+				
+				return false;
+				`
+				expectedObject := object.NewReturnValue(object.TRUE)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
 		})
 	})
 })
