@@ -84,6 +84,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: lexing, parsing, evaluation of nil expression statement
 + [ ] feat: slow startup
 + [ ] ci: deploy as a web app
++ [ ] fix: do not allow plain return in REPL outside of a function, report an error instead
 
 ## References
 
