@@ -635,5 +635,91 @@ var _ = Describe("Evaluator", func() {
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
+
+		Context("return statements", func() {
+			It("return an integer", func() {
+				text = `
+				return 10;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer", func() {
+				text = `
+				9;
+				false;
+				return 10;
+				5;
+				true;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer with if condition", func() {
+				text = `
+				if (10 > 1) {
+					return 10;
+				};
+
+				return 5;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer with nested if conditions", func() {
+				text = `
+				if (10 > 1) {
+					if (10 > 1) {
+						return 10;
+					};
+
+					return 8;
+				};
+				
+				return 5;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
 	})
 })

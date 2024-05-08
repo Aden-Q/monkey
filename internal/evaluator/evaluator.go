@@ -37,6 +37,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return e.Eval(node.Expression)
 	case *ast.BlockStatement:
 		return e.evalStatements(node.Statements)
+	case *ast.ReturnStatement:
+		return e.evalReturnStatement(node)
 	// evaluate expressions
 	case *ast.IntegerExpression:
 		return object.NewInteger(node.Value), nil
@@ -64,9 +66,23 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 		if err != nil {
 			return nil, err
 		}
+
+		// short-circuit return statement
+		if result.Type() == object.RETURN_VALUE_OBJ {
+			return result, nil
+		}
 	}
 
 	return result, nil
+}
+
+func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Object, error) {
+	val, err := e.Eval(stmt.Value)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	return object.NewReturnValue(val), nil
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
