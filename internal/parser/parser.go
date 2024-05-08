@@ -106,6 +106,14 @@ func (p *parser) ParseProgram(text string) (*ast.Program, []error) {
 
 	// in each iteration of the for loop here, we parse a single statement separated by a semicolon ;
 	for p.curToken.Type != token.EOF {
+		if p.curToken.Type == token.SEMICOLON {
+			// this is an empty statement (i.e. only a single ; token in the whole statement)
+			// treat it as an empty expression statement, instead of ignoring it
+			program.Statements = append(program.Statements, ast.NewExpressionStatement(nil))
+			p.nextToken()
+			continue
+		}
+
 		// parse a single statement every time
 		stmt, err := p.parseStatment()
 		if err != nil {
@@ -157,7 +165,7 @@ func (p *parser) parseStatment() (ast.Statement, error) {
 	// so that we can continue parsing the following statements
 	p.nextToken()
 
-	return stmt, err
+	return stmt, nil
 }
 
 // parseLetStatement parses a single let statement

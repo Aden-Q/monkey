@@ -24,6 +24,8 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Prefix operators (binary expressions)
 + Infix operators (unary expressions)
 + Postfix operators
++ Tree-walking interpreter
++ Works on 64-bit machines
 
 ## Components
 
@@ -31,6 +33,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Lexer
 + Abstract Syntax Tree (AST)
 + Pratt parser based on context-free grammars and the Backus-Naur-Form
++ Tree-walking interpreter (evaluator), future: bytecode, VM, and JIT compilation
 
 ## TODOs
 
@@ -64,10 +67,22 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: PrettyPrint, color, AST, etc
 + [ ] feat: sys call such as print(...)
 + [ ] feat: add a helper for available functions
++ [ ] feat: consider how to write a GC
++ [ ] feat: switch between multiple value representation system using some flag
++ [ ] feat: class (object system)
++ [ ] feat: configuration with yaml or envrc
++ [ ] feat: edge cases for those operators
++ [ ] feat: integer division operator and float division operator
++ [ ] feat: reference integer literal as constant, simulate some static memory space for literals of integer, strings, etc.
++ [ ] feat: immutable types
++ [ ] feat: integer overflow problem
++ [ ] feat: command history and navigate in REPL using left, right, up, bottom
 
 ## References
 
-+ *Top Down Operator Precedence*, Vaughan Pratt
++ *Writing An Interpreter In Go, Thorsten Ball*
++ *Top Down Operator Precedence, Vaughan Pratt*
++ *The Structure and Interpretation of Computer Programs (SICP), Harold Abelson*
 
 ## License
 
