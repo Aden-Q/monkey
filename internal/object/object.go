@@ -14,6 +14,7 @@ var (
 	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
 	NIL_OBJ          = ObjectType("NIL")
 	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
+	ERROR_OBJ        = ObjectType("ERROR")
 )
 
 // boolean literal objects
@@ -93,7 +94,7 @@ func (n *Nil) IsTruthy() bool {
 	return false
 }
 
-// ReturnValue represents the return value of a function
+// ReturnValue represents a return value of a function
 type ReturnValue struct {
 	Value Object
 }
@@ -114,4 +115,28 @@ func (rv *ReturnValue) Inspect() string {
 
 func (rv *ReturnValue) IsTruthy() bool {
 	return rv.Value.IsTruthy()
+}
+
+// Error represents an error
+type Error struct {
+	Message string
+}
+
+func NewError(msg string) *Error {
+	return &Error{
+		Message: msg,
+	}
+}
+
+func (e *Error) Type() ObjectType {
+	return ERROR_OBJ
+}
+
+func (e *Error) Inspect() string {
+	return "ERROR: " + e.Message
+}
+
+// FIXME: this behavior is undined, not sure an error is truthy or not
+func (e *Error) IsTruthy() bool {
+	return false
 }
