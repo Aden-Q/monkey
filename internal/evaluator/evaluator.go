@@ -16,10 +16,13 @@ type Evaluator interface {
 }
 
 type evaluator struct {
+	env object.Environment
 }
 
 func New() Evaluator {
-	return &evaluator{}
+	return &evaluator{
+		env: object.NewEnvironment(),
+	}
 }
 
 // Eval evaluate an AST node recursively
@@ -28,6 +31,7 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NIL, ErrEmptyNodeInput
 	}
 
+	// explicitly polymorphic switch statement
 	switch node := node.(type) {
 	// evaluate the program
 	case *ast.Program:
@@ -37,9 +41,13 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return e.Eval(node.Expression)
 	case *ast.BlockStatement:
 		return e.evalStatements(node.Statements)
+	case *ast.LetStatement:
+		return e.evalLetStatement(node)
 	case *ast.ReturnStatement:
 		return e.evalReturnStatement(node)
 	// evaluate expressions
+	case *ast.IdentifierExpression:
+		return e.evalIdentifierExpression(node)
 	case *ast.IntegerExpression:
 		return object.NewInteger(node.Value), nil
 	case *ast.BooleanExpression:
@@ -76,6 +84,19 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 	return result, nil
 }
 
+// FIXME: let statement does not produce a value, it should return nothing
+func (e *evaluator) evalLetStatement(stmt *ast.LetStatement) (object.Object, error) {
+	val, err := e.Eval(stmt.Value)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	// bind the evaluated value to the environment
+	e.env.Set(stmt.Identifier.Value, val)
+
+	return val, nil
+}
+
 func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Object, error) {
 	val, err := e.Eval(stmt.Value)
 	if err != nil {
@@ -83,6 +104,15 @@ func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Objec
 	}
 
 	return object.NewReturnValue(val), nil
+}
+
+func (e *evaluator) evalIdentifierExpression(ie *ast.IdentifierExpression) (object.Object, error) {
+	val, ok := e.env.Get(ie.Value)
+	if !ok {
+		return object.NIL, ErrIdentifierNotFound
+	}
+
+	return val, nil
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {

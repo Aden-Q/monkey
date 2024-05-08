@@ -782,6 +782,44 @@ var _ = Describe("Evaluator", func() {
 					Expect(obj).To(Equal(expectedObject))
 				})
 			})
+
+			Context("let statements", func() {
+				It("successful binding", func() {
+					text = `
+					let a = 5 * 5;
+					a;
+					`
+					expectedObject := object.NewInteger(25)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("unbound identifier", func() {
+					text = `
+					foobar;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrIdentifierNotFound
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
 		})
 	})
 })
