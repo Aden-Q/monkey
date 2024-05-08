@@ -74,7 +74,7 @@ func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Objec
 	}
 }
 
-// TODO: check when the ! operator can fail and return a proper error
+// evalBangOperatorExpression evaluates a prefix expression with a '!' token as the prefix
 func (e *evaluator) evalBangOperatorExpression(o object.Object) (object.Object, error) {
 	switch o {
 	case object.FALSE, object.NewInteger(0):
@@ -84,6 +84,7 @@ func (e *evaluator) evalBangOperatorExpression(o object.Object) (object.Object, 
 	}
 }
 
+// evalMinuxPrefixOperatorExpression evaluates a prefix expression with a '-' token as the prefix
 func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.Object, error) {
 	if o.Type() != object.INTEGER_OBJ {
 		return object.NIL, ErrUnexpectedObjectType
@@ -92,6 +93,7 @@ func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.O
 	return object.NewInteger(-o.(*object.Integer).Value), nil
 }
 
+// evalInfixExpression evaluates an infix expression
 func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object, error) {
 	leftOperandObj, err := e.Eval(ie.LeftOperand)
 	if err != nil {
@@ -112,6 +114,7 @@ func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object,
 	}
 }
 
+// evalIntegerInfixExpression evaluates an infix expression involving two integer operators
 func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *object.Integer) (object.Object, error) {
 	leftVal, rightVal := left.Value, right.Value
 
@@ -141,6 +144,7 @@ func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *obj
 	}
 }
 
+// booleanConv converts a boolean literal to a boolean object in the object system
 func booleanConv(input bool) object.Object {
 	if input {
 		return object.TRUE
