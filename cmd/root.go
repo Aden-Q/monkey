@@ -40,7 +40,9 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("user error: %v", err)
 	}
 
-	r := repl.New(repl.Config{})
+	r := repl.New(repl.Config{
+		MaxHistory: 1000,
+	})
 
 	r.Start(os.Stdin, os.Stdout, user.Username)
 }

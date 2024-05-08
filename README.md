@@ -78,6 +78,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: immutable types
 + [ ] feat: integer overflow problem
 + [ ] feat: command history and navigate in REPL using left, right, up, bottom
++ [ ] feat: configuration as env vars, default + direnv
 
 ## References
 

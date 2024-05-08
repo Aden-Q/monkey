@@ -30,13 +30,18 @@ type REPL interface {
 }
 
 type Config struct {
+	MaxHistory int
 }
 
 type repl struct {
+	// command history is a fixed size buffer that stores the last N commands
+	history []string
 }
 
 func New(config Config) REPL {
-	return &repl{}
+	return &repl{
+		history: make([]string, config.MaxHistory),
+	}
 }
 
 func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
@@ -57,6 +62,8 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 		}
 
 		line := scanner.Text()
+		// TODO: use the history list to navigate through the command history
+		_ = append(r.history, line)
 
 		program, errs := p.ParseProgram(line)
 		if len(errs) != 0 {
