@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/aden-q/monkey/internal/evaluator"
 	"github.com/aden-q/monkey/internal/lexer"
 	"github.com/aden-q/monkey/internal/parser"
 )
@@ -42,6 +43,7 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 	scanner := bufio.NewScanner(in)
 	l := lexer.New()
 	p := parser.New(l)
+	e := evaluator.New()
 
 	fmt.Print(MONKEY_FACE)
 	fmt.Printf("Hello %s! This is the Monkey programming language!\n", userName)
@@ -59,10 +61,17 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 		program, errs := p.ParseProgram(line)
 		if len(errs) != 0 {
 			printParserErrors(out, errs)
+			continue
+		}
+
+		res, err := e.Eval(program)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			continue
 		}
 
 		// TODO: PrettyPrint
-		fmt.Println(program.String())
+		fmt.Println(res.Inspect())
 	}
 }
 
