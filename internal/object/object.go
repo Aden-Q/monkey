@@ -10,9 +10,10 @@ var _ Object = (*Nil)(nil)
 type ObjectType string
 
 var (
-	INTEGER_OBJ = ObjectType("INTEGER")
-	BOOLEAN_OBJ = ObjectType("BOOLEAN")
-	NIL_OBJ     = ObjectType("NIL")
+	INTEGER_OBJ      = ObjectType("INTEGER")
+	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
+	NIL_OBJ          = ObjectType("NIL")
+	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
 )
 
 // boolean literal objects
@@ -90,4 +91,27 @@ func (n *Nil) Inspect() string {
 
 func (n *Nil) IsTruthy() bool {
 	return false
+}
+
+// ReturnValue represents the return value of a function
+type ReturnValue struct {
+	Value Object
+}
+
+func NewReturnValue(value Object) *ReturnValue {
+	return &ReturnValue{
+		Value: value,
+	}
+}
+
+func (rv *ReturnValue) Type() ObjectType {
+	return RETURN_VALUE_OBJ
+}
+
+func (rv *ReturnValue) Inspect() string {
+	return rv.Value.Inspect()
+}
+
+func (rv *ReturnValue) IsTruthy() bool {
+	return rv.Value.IsTruthy()
 }
