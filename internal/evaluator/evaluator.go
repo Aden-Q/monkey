@@ -36,6 +36,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return getBooleanObject(node.(*ast.BooleanExpression).Value), nil
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node.(*ast.PrefixExpression))
+	case *ast.InfixExpression:
+		return e.evalInfixExpression(node.(*ast.InfixExpression))
 	}
 
 	return object.NIL, nil
@@ -88,6 +90,42 @@ func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.O
 	}
 
 	return object.NewInteger(-o.(*object.Integer).Value), nil
+}
+
+func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object, error) {
+	leftOperandObj, err := e.Eval(ie.LeftOperand)
+	if err != nil {
+		return nil, err
+	}
+
+	rightOperandObj, err := e.Eval(ie.RightOperand)
+	if err != nil {
+		return nil, err
+	}
+
+	switch {
+	case leftOperandObj.Type() == object.INTEGER_OBJ && rightOperandObj.Type() == object.INTEGER_OBJ:
+		return e.evalIntegerInfixExpression(ie.Operator, leftOperandObj, rightOperandObj)
+	default:
+		return object.NIL, ErrUnexpectedObjectType
+	}
+}
+
+func (e *evaluator) evalIntegerInfixExpression(operator string, left, right object.Object) (object.Object, error) {
+	leftVal, rightVal := left.(*object.Integer).Value, right.(*object.Integer).Value
+
+	switch operator {
+	case "+":
+		return object.NewInteger(leftVal + rightVal), nil
+	case "-":
+		return object.NewInteger(leftVal - rightVal), nil
+	case "*":
+		return object.NewInteger(leftVal * rightVal), nil
+	case "/":
+		return object.NewInteger(leftVal / rightVal), nil
+	default:
+		return object.NIL, ErrUnexpectedOperatorType
+	}
 }
 
 func getBooleanObject(input bool) object.Object {

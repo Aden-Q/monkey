@@ -61,6 +61,91 @@ var _ = Describe("Evaluator", func() {
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
 			})
+
+			It("infix plus operator expression", func() {
+				text = `
+				5 + 5;
+				`
+				expectedObject := object.NewInteger(10)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix minus operator expression", func() {
+				text = `
+				5 - 5;
+				`
+				expectedObject := object.NewInteger(0)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix multiply operator expression", func() {
+				text = `
+				5 * 5;
+				`
+				expectedObject := object.NewInteger(25)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix division operator expression", func() {
+				text = `
+				10 / 5;
+				`
+				expectedObject := object.NewInteger(2)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("infix mix-operator expression", func() {
+				text = `
+				5 + 5 - 2 + 10 * 3 / 5;
+				`
+				expectedObject := object.NewInteger(14)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
 		})
 
 		Context("boolean object", func() {
