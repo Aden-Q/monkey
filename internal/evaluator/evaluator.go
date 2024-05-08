@@ -20,20 +20,25 @@ func New() Evaluator {
 	return &evaluator{}
 }
 
-// Evaluate recursively evaluate an AST node
+// Eval evaluate an AST node recursively
 func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 	switch node.(type) {
+	// parse program
 	case *ast.Program:
 		return e.evalStatements(node.(*ast.Program).Statements)
+	// parse statement
 	case *ast.ExpressionStatement:
 		return e.Eval(node.(*ast.ExpressionStatement).Expression)
+	// parse expression
 	case *ast.IntegerExpression:
 		return &object.Integer{Value: node.(*ast.IntegerExpression).Value}, nil
 	case *ast.BooleanExpression:
-		return &object.Boolean{Value: node.(*ast.BooleanExpression).Value}, nil
+		return getBooleanObject(node.(*ast.BooleanExpression).Value), nil
+	case *ast.PrefixExpression:
+		return e.evalPrefixExpression(node.(*ast.PrefixExpression))
 	}
 
-	return nil, nil
+	return object.NIL, nil
 }
 
 func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error) {
@@ -49,4 +54,46 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 	}
 
 	return result, nil
+}
+
+func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {
+	operandObj, err := e.Eval(pe.Operand)
+	if err != nil {
+		return nil, nil
+	}
+
+	switch pe.Operator {
+	case "!":
+		return e.evalBangOperatorExpression(operandObj)
+	case "-":
+		return e.evalMinuxPrefixOperatorExpression(operandObj)
+	default:
+		return object.NIL, nil
+	}
+}
+
+// TODO: check when the ! operator can fail and return a proper error
+func (e *evaluator) evalBangOperatorExpression(o object.Object) (object.Object, error) {
+	switch o {
+	case object.FALSE, object.NewInteger(0):
+		return object.TRUE, nil
+	default:
+		return object.FALSE, nil
+	}
+}
+
+func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.Object, error) {
+	if o.Type() != object.INTEGER_OBJ {
+		return object.NIL, ErrUnexpectedObjectType
+	}
+
+	return object.NewInteger(-o.(*object.Integer).Value), nil
+}
+
+func getBooleanObject(input bool) object.Object {
+	if input {
+		return object.TRUE
+	}
+
+	return object.FALSE
 }

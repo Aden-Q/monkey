@@ -28,7 +28,7 @@ var _ = Describe("Evaluator", func() {
 
 	Describe("Eval", func() {
 		Context("integer object", func() {
-			It("integer expressions", func() {
+			It("integer expression", func() {
 				text = `
 				5;
 				`
@@ -44,12 +44,131 @@ var _ = Describe("Evaluator", func() {
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
 			})
+
+			It("prefix minus operator expression", func() {
+				text = `
+				-5;
+				`
+				expectedObject := object.NewInteger(-5)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
 		})
 
 		Context("boolean object", func() {
-			It("boolean expressions", func() {
+			It("boolean expression", func() {
 				text = `
 				true;
+				`
+				expectedObject := object.NewBoolean(true)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!true;
+				`
+				expectedObject := object.NewBoolean(false)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!false;
+				`
+				expectedObject := object.NewBoolean(true)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!5;
+				`
+				expectedObject := object.NewBoolean(false)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!!true;
+				`
+				expectedObject := object.NewBoolean(true)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!!false;
+				`
+				expectedObject := object.NewBoolean(false)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("prefix bang boolean expression", func() {
+				text = `
+				!!5;
 				`
 				expectedObject := object.NewBoolean(true)
 				expectedErrors := []error{}
