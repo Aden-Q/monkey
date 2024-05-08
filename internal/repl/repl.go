@@ -7,6 +7,7 @@ import (
 
 	"github.com/aden-q/monkey/internal/evaluator"
 	"github.com/aden-q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/object"
 	"github.com/aden-q/monkey/internal/parser"
 )
 
@@ -78,7 +79,9 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 		}
 
 		// TODO: PrettyPrint
-		fmt.Println(res.Inspect())
+		if res != object.NIL {
+			fmt.Println(res.Inspect())
+		}
 	}
 }
 

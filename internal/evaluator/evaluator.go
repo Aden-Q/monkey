@@ -84,7 +84,6 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 	return result, nil
 }
 
-// FIXME: let statement does not produce a value, it should return nothing
 func (e *evaluator) evalLetStatement(stmt *ast.LetStatement) (object.Object, error) {
 	val, err := e.Eval(stmt.Value)
 	if err != nil {
@@ -94,7 +93,7 @@ func (e *evaluator) evalLetStatement(stmt *ast.LetStatement) (object.Object, err
 	// bind the evaluated value to the environment
 	e.env.Set(stmt.Identifier.Value, val)
 
-	return val, nil
+	return object.NIL, nil
 }
 
 func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Object, error) {
