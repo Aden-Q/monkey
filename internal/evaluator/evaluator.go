@@ -54,6 +54,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return booleanConv(node.Value), nil
 	case *ast.IfExpression:
 		return e.evalIfExpression(node)
+	case *ast.FuncExpression:
+		return e.evalFuncExpression(node)
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node)
 	case *ast.InfixExpression:
@@ -129,6 +131,10 @@ func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error
 	}
 
 	return object.NIL, nil
+}
+
+func (e *evaluator) evalFuncExpression(fe *ast.FuncExpression) (object.Object, error) {
+	return object.NewFunc(fe.Parameters, fe.Body, e.env), nil
 }
 
 func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {

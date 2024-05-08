@@ -820,6 +820,31 @@ var _ = Describe("Evaluator", func() {
 					Expect(obj).To(Equal(expectedObject))
 				})
 			})
+
+			Context("function expressions", func() {
+				It("func", func() {
+					text = `
+					fn(x) { x + 2; };
+					`
+					expectedObject := object.NewFunc(
+						[]*ast.IdentifierExpression{
+							ast.NewIdentifierExpression("x"),
+						},
+						ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("x"), ast.NewIntegerExpression("2", 2)))),
+						object.NewEnvironment(),
+					)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
 		})
 	})
 })
