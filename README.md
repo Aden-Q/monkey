@@ -71,6 +71,11 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: switch between multiple value representation system using some flag
 + [ ] feat: class (object system)
 + [ ] feat: configuration with yaml or envrc
++ [ ] feat: edge cases for those operators
++ [ ] feat: integer division operator and float division operator
++ [ ] feat: reference integer literal as constant, simulate some static memory space for literals of integer, strings, etc.
++ [ ] feat: immutable types
++ [ ] feat: integer overflow problem
 
 ## References
 

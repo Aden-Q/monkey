@@ -392,23 +392,22 @@ var _ = Describe("Parser", func() {
 			})
 		})
 
-		// TODO: parse empty statement
-		// Context("special statements", func() {
-		// 	It("empty statement", func() {
-		// 		text = `
-		// 		;
-		// 		`
-		// 		expectedProgram := &ast.Program{
-		// 			Statements: []ast.Statement{
-		// 				ast.NewExpressionStatement(nil),
-		// 			},
-		// 		}
-		// 		expectedErrors := []error{}
+		Context("special statements", func() {
+			It("empty statement", func() {
+				text = `
+				;
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(nil),
+					},
+				}
+				expectedErrors := []error{}
 
-		// 		program, errs = p.ParseProgram(text)
-		// 		Expect(program).To(Equal(expectedProgram))
-		// 		Expect(errs).To(Equal(expectedErrors))
-		// 	})
-		// })
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+		})
 	})
 })
