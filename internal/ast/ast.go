@@ -230,8 +230,9 @@ func (fe *FuncExpression) String() string {
 	builder.WriteString("fn")
 	builder.WriteString("(")
 	builder.WriteString(strings.Join(paramStrings, ", "))
-	builder.WriteString(") ")
+	builder.WriteString(") {\n")
 	builder.WriteString(fe.Body.String())
+	builder.WriteString("\n")
 
 	return builder.String()
 }

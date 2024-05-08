@@ -27,6 +27,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Tree-walking interpreter
 + Works on 64-bit machines
 + Not production ready yet, need a few more details to be addressed
++ Function that allows for closures
 
 ## Components
 
