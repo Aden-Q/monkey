@@ -24,25 +24,34 @@ func New() Evaluator {
 
 // Eval evaluate an AST node recursively
 func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
+	if node == nil {
+		return object.NIL, ErrEmptyNodeInput
+	}
+
 	switch node.(type) {
-	// parse program
+	// evaluate the program
 	case *ast.Program:
 		return e.evalStatements(node.(*ast.Program).Statements)
-	// parse statement
+	// evaluate statements
 	case *ast.ExpressionStatement:
 		return e.Eval(node.(*ast.ExpressionStatement).Expression)
-	// parse expression
+	case *ast.BlockStatement:
+		return e.evalStatements(node.(*ast.BlockStatement).Statements)
+	// evaluate expressions
 	case *ast.IntegerExpression:
-		return &object.Integer{Value: node.(*ast.IntegerExpression).Value}, nil
+		return object.NewInteger(node.(*ast.IntegerExpression).Value), nil
 	case *ast.BooleanExpression:
 		return booleanConv(node.(*ast.BooleanExpression).Value), nil
+	case *ast.IfExpression:
+		return e.evalIfExpression(node.(*ast.IfExpression))
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node.(*ast.PrefixExpression))
 	case *ast.InfixExpression:
 		return e.evalInfixExpression(node.(*ast.InfixExpression))
 	}
 
-	return object.NIL, nil
+	// no match, unexpected path
+	return object.NIL, ErrUnexpectedNodeType
 }
 
 func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error) {
@@ -58,6 +67,23 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 	}
 
 	return result, nil
+}
+
+func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
+	condition, err := e.Eval(ie.Condition)
+	if err != nil {
+		return object.NIL, nil
+	}
+
+	if condition.IsTruthy() {
+		return e.Eval(ie.Consequence)
+	}
+
+	if ie.Alternative != nil {
+		return e.Eval(ie.Alternative)
+	}
+
+	return object.NIL, nil
 }
 
 func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {

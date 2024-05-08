@@ -557,5 +557,83 @@ var _ = Describe("Evaluator", func() {
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
+
+		Context("if conditionals", func() {
+			It("if condition is truthy", func() {
+				text = `
+				if (true) {
+					10;
+				};
+				`
+				expectedObject := object.NewInteger(10)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("if condition is truthy", func() {
+				text = `
+				if (5) {
+					10;
+				};
+				`
+				expectedObject := object.NewInteger(10)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("if condition is truthy", func() {
+				text = `
+				if (1 < 2) {
+					10;
+				};
+				`
+				expectedObject := object.NewInteger(10)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("if condition is false", func() {
+				text = `
+				if (false) {
+					10;
+				};
+				`
+				expectedObject := object.NIL
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
 	})
 })
