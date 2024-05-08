@@ -64,7 +64,7 @@ func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error)
 	for _, stmt := range stmts {
 		result, err = e.Eval(stmt)
 		if err != nil {
-			return nil, err
+			return object.NIL, err
 		}
 
 		// short-circuit return statement
@@ -88,7 +88,7 @@ func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Objec
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
 	condition, err := e.Eval(ie.Condition)
 	if err != nil {
-		return object.NIL, nil
+		return object.NIL, ErrUnexpectedNodeType
 	}
 
 	if condition.IsTruthy() {
@@ -105,7 +105,7 @@ func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error
 func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {
 	operandObj, err := e.Eval(pe.Operand)
 	if err != nil {
-		return nil, nil
+		return object.NIL, err
 	}
 
 	switch pe.Operator {
@@ -141,12 +141,12 @@ func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.O
 func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object, error) {
 	leftOperandObj, err := e.Eval(ie.LeftOperand)
 	if err != nil {
-		return nil, err
+		return object.NIL, err
 	}
 
 	rightOperandObj, err := e.Eval(ie.RightOperand)
 	if err != nil {
-		return nil, err
+		return object.NIL, err
 	}
 
 	switch {

@@ -741,6 +741,47 @@ var _ = Describe("Evaluator", func() {
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
 			})
+
+			Context("errors", func() {
+				It("can detect errors", func() {
+					text = `
+					5 + true;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrUnexpectedObjectType
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("errors", func() {
+				It("can early terminate when there's an error", func() {
+					text = `
+					5 + true;
+					10;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrUnexpectedObjectType
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
 		})
 	})
 })
