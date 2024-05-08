@@ -45,5 +45,24 @@ var _ = Describe("Evaluator", func() {
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
+
+		Context("boolean object", func() {
+			It("boolean expressions", func() {
+				text = `
+				true;
+				`
+				expectedObject := object.NewBoolean(true)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
 	})
 })
