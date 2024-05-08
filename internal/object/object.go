@@ -118,6 +118,7 @@ func (rv *ReturnValue) IsTruthy() bool {
 }
 
 // Error represents an error
+// Note: this is not necessary for the interpreter to work, we do error handling in Go's native way
 type Error struct {
 	Message string
 }
