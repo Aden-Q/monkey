@@ -1,6 +1,8 @@
 package evaluator
 
 import (
+	"reflect"
+
 	"github.com/aden-q/monkey/internal/ast"
 	"github.com/aden-q/monkey/internal/object"
 )
@@ -106,6 +108,11 @@ func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object,
 	}
 
 	switch {
+	// equality test
+	case ie.Operator == "==":
+		return booleanConv(reflect.DeepEqual(leftOperandObj, rightOperandObj)), nil
+	case ie.Operator == "!=":
+		return booleanConv(!reflect.DeepEqual(leftOperandObj, rightOperandObj)), nil
 	case leftOperandObj.Type() == object.INTEGER_OBJ && rightOperandObj.Type() == object.INTEGER_OBJ:
 		return e.evalIntegerInfixExpression(ie.Operator, leftOperandObj.(*object.Integer), rightOperandObj.(*object.Integer))
 	default:
@@ -135,10 +142,6 @@ func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *obj
 		return booleanConv(leftVal > rightVal), nil
 	case ">=":
 		return booleanConv(leftVal >= rightVal), nil
-	case "==":
-		return booleanConv(leftVal == rightVal), nil
-	case "!=":
-		return booleanConv(leftVal != rightVal), nil
 	default:
 		return object.NIL, ErrUnexpectedOperatorType
 	}
