@@ -127,6 +127,8 @@ Simple if condition with an else branch:
 + [ ] fix: slow startup issue
 + [ ] fix: do not allow plain return in REPL outside of a function, report an error instead
 + [ ] docs: a section for all control structures
++ [ ] feat: semantics of scope
++ [ ] feat: pointer/reference semantics
 
 ## References
 
