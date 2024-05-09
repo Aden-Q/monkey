@@ -129,6 +129,7 @@ Simple if condition with an else branch:
 + [ ] docs: a section for all control structures
 + [ ] feat: semantics of scope
 + [ ] feat: pointer/reference semantics
++ [ ] feat: func multiple return values
 
 ## References
 
