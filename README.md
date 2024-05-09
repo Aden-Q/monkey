@@ -124,8 +124,7 @@ Simple if condition with an else branch:
 + [ ] feat: semantics for left and right arrows in REPL
 + [ ] feat: semantics for up and down arrows in REPL
 + [ ] feat: lexing, parsing, evaluation of nil expression statement
-+ [ ] feat: slow startup
-+ [ ] ci: deploy as a web app
++ [ ] fix: slow startup issue
 + [ ] fix: do not allow plain return in REPL outside of a function, report an error instead
 
 ## References
