@@ -6,6 +6,8 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ### Functions
 
+Anonymous function and function binding:
+
 ```bash
             __,__
    .--.  .-"     "-.  .--.
@@ -19,14 +21,18 @@ Monkey is an interpreted language written in Go. *This project is still under de
         '._ '-=-' _.'
            '-----'
 Hello zecheng! This is the Monkey programming language!
->>> let add = fn(x, y) { return x + y;};
+>>> fn(x, y) { return x * y; } (5, 6);
+30
+>>> let add = fn(x, y) { return x + y; };
 >>> add(2, 8);
 10
 ```
 
 ### Conditionals
 
-```
+Simple if condition with an else branch:
+
+```bash
             __,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \
@@ -39,11 +45,9 @@ Hello zecheng! This is the Monkey programming language!
         '._ '-=-' _.'
            '-----'
 Hello zecheng! This is the Monkey programming language!
->>> if (10 > 5) { 5;} else {10;};
+>>> if (10 > 5) { 5; } else { 10; };
 5
 ```
-
-
 
 ## Dependencies
 
