@@ -847,12 +847,47 @@ var _ = Describe("Evaluator", func() {
 			})
 
 			Context("call expressions", func() {
-				It("func", func() {
+				It("func with 1 parameter", func() {
 					text = `
 					let a = fn(x) { x + 2; };
 					a(5);
 					`
 					expectedObject := object.NewInteger(7)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("func with 2 parameters", func() {
+					text = `
+					let a = fn(x, y) { x * y + 2; };
+					a(5, 6);
+					`
+					expectedObject := object.NewInteger(32)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("func with 2 parameters", func() {
+					text = `
+				 	fn(x, y) { x * y + 2; } (5, 6);
+					`
+					expectedObject := object.NewInteger(32)
 					expectedParseErrors := []error{}
 
 					// parse the program
