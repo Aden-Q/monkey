@@ -57,24 +57,20 @@ Hello zecheng! This is the Monkey programming language!
 + ginkgo (if you want to run local unit tests)
 + golangci-lint (if you want to do local lint)
 
-## Features
+## Conventions and Features
 
 + Programs can run in REPL or as scripts
 + Identifiers consist of alphabet letters or underscore
 + Statements are explicitly end by seminlon `;`
 + Comments start with double slash `//`
-+ Syntax errors are caught in a single run
 + Conditional statements (`if` and `switch` keywords)
 + Loops (`for`, `range`, and `while` keywords)
-+ First-class functions
-+ If expressions
++ First-class functions that allow closures
 + Prefix operators (binary expressions)
 + Infix operators (unary expressions)
 + Postfix operators
-+ Tree-walking interpreter
-+ Works on 64-bit machines
-+ Not production ready yet, need a few more details to be addressed
-+ Function that allows for closures
++ A Pratt Parser implementation
++ A Tree-walking interpreter
 + Use Go's GC to prevent memory leak
 
 ## Components
@@ -84,9 +80,11 @@ Hello zecheng! This is the Monkey programming language!
 + Abstract Syntax Tree (AST)
 + Pratt parser based on context-free grammars and the Backus-Naur-Form
 + Tree-walking interpreter (evaluator), future: bytecode, VM, and JIT compilation
++ An object system
 
 ## TODOs
 
++ [ ] docs: doc everything related to usage and implementation details
 + [ ] feat: Unicode
 + [ ] feat: parsing line, column number for better visibility
 + [ ] feat: hexical notation and octal notation for integers
