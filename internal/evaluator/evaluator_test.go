@@ -23,7 +23,7 @@ var _ = Describe("Evaluator", func() {
 	BeforeEach(func() {
 		l = lexer.New()
 		p = parser.New(l)
-		e = evaluator.New()
+		e = evaluator.New(object.NewEnvironment())
 	})
 
 	Describe("Eval", func() {
@@ -833,6 +833,26 @@ var _ = Describe("Evaluator", func() {
 						ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("x"), ast.NewIntegerExpression("2", 2)))),
 						object.NewEnvironment(),
 					)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("call expressions", func() {
+				It("func", func() {
+					text = `
+					let a = fn(x) { x + 2; };
+					a(5);
+					`
+					expectedObject := object.NewInteger(7)
 					expectedParseErrors := []error{}
 
 					// parse the program

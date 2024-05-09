@@ -13,15 +13,16 @@ var _ Evaluator = (*evaluator)(nil)
 // An interpreter/evaluator interface
 type Evaluator interface {
 	Eval(node ast.Node) (object.Object, error)
+	extendFunctionEnv(fn *object.Func, args []object.Object)
 }
 
 type evaluator struct {
 	env object.Environment
 }
 
-func New() Evaluator {
+func New(env object.Environment) Evaluator {
 	return &evaluator{
-		env: object.NewEnvironment(),
+		env: env,
 	}
 }
 
@@ -56,6 +57,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return e.evalIfExpression(node)
 	case *ast.FuncExpression:
 		return e.evalFuncExpression(node)
+	case *ast.CallExpression:
+		return e.evalCallExpression(node)
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node)
 	case *ast.InfixExpression:
@@ -67,7 +70,7 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 }
 
 func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error) {
-	var result object.Object
+	var result object.Object = object.NIL
 	var err error
 
 	// iteratively evaluate each statement and return the result from the last one
@@ -119,7 +122,7 @@ func (e *evaluator) evalIdentifierExpression(ie *ast.IdentifierExpression) (obje
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
 	condition, err := e.Eval(ie.Condition)
 	if err != nil {
-		return object.NIL, ErrUnexpectedNodeType
+		return object.NIL, err
 	}
 
 	if condition.IsTruthy() {
@@ -135,6 +138,56 @@ func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error
 
 func (e *evaluator) evalFuncExpression(fe *ast.FuncExpression) (object.Object, error) {
 	return object.NewFunc(fe.Parameters, fe.Body, e.env), nil
+}
+
+func (e *evaluator) evalCallExpression(ce *ast.CallExpression) (object.Object, error) {
+	function, err := e.Eval(ce.Func)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	args := make([]object.Object, 0, len(ce.Arguments))
+
+	for _, exp := range ce.Arguments {
+		res, err := e.Eval(exp)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		args = append(args, res)
+	}
+
+	// call the function with the given arguments
+	return applyFunc(function, args, e.env)
+}
+
+func applyFunc(fn object.Object, args []object.Object, env object.Environment) (object.Object, error) {
+	function, ok := fn.(*object.Func)
+	if !ok {
+		return object.NIL, ErrNotAFunction
+	}
+
+	// create a new environment for the function scope
+	funcEvaluator := New(object.NewClosureEnvironment(env))
+	// extend the closure environment with arguments passed to the function
+	funcEvaluator.extendFunctionEnv(function, args)
+
+	val, err := funcEvaluator.Eval(function.Body)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	if returnVal, ok := val.(*object.ReturnValue); ok {
+		return returnVal.Value, nil
+	}
+
+	return val, nil
+}
+
+func (e *evaluator) extendFunctionEnv(fn *object.Func, args []object.Object) {
+	for i, param := range fn.Parameters {
+		e.env.Set(param.Value, args[i])
+	}
 }
 
 func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {
