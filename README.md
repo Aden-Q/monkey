@@ -4,6 +4,8 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Demo
 
+### Functions
+
 ```bash
             __,__
    .--.  .-"     "-.  .--.
@@ -21,6 +23,27 @@ Hello zecheng! This is the Monkey programming language!
 >>> add(2, 8);
 10
 ```
+
+### Conditionals
+
+```
+            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+Hello zecheng! This is the Monkey programming language!
+>>> if (10 > 5) { 5;} else {10;};
+5
+```
+
+
 
 ## Dependencies
 
