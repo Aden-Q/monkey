@@ -2,13 +2,20 @@
 
 Monkey is an interpreted language written in Go. *This project is still under development.*
 
-## Demo
+## Dependencies
 
-### Functions
++ `direnv`
++ `just` (not necessary)
++ Go 1.21+
++ ginkgo (if you want to run local unit tests)
++ golangci-lint (if you want to do local lint)
 
-Anonymous function and function binding:
+## Usage
+
+Open your shell, then REPL ready for you:
 
 ```bash
+➜  ~ just run
             __,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \
@@ -20,7 +27,17 @@ Anonymous function and function binding:
        \   \ '~' /   /
         '._ '-=-' _.'
            '-----'
-Hello zecheng! This is the Monkey programming language!
+Hello xxx! This is the Monkey programming language!
+>>> 
+```
+
+## Demo
+
+### Functions
+
+Anonymous function and function binding:
+
+```bash
 >>> fn(x, y) { return x * y; } (5, 6);
 30
 >>> let add = fn(x, y) { return x + y; };
@@ -33,29 +50,9 @@ Hello zecheng! This is the Monkey programming language!
 Simple if condition with an else branch:
 
 ```bash
-            __,__
-   .--.  .-"     "-.  .--.
-  / .. \/  .-. .-.  \/ .. \
- | |  '|  /   Y   \  |'  | |
- | \   \  \ 0 | 0 /  /   / |
-  \ '- ,\.-"""""""-./, -' /
-   ''-' /_   ^ ^   _\ '-''
-       |  \._   _./  |
-       \   \ '~' /   /
-        '._ '-=-' _.'
-           '-----'
-Hello zecheng! This is the Monkey programming language!
 >>> if (10 > 5) { 5; } else { 10; };
 5
 ```
-
-## Dependencies
-
-+ `direnv`
-+ `just` (not necessary)
-+ Go 1.21+
-+ ginkgo (if you want to run local unit tests)
-+ golangci-lint (if you want to do local lint)
 
 ## Conventions and Features
 
