@@ -2,6 +2,26 @@
 
 Monkey is an interpreted language written in Go. *This project is still under development.*
 
+## Demo
+
+```bash
+            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+Hello zecheng! This is the Monkey programming language!
+>>> let add = fn(x, y) { return x + y;};
+>>> add(2, 8);
+10
+```
+
 ## Dependencies
 
 + `direnv`
