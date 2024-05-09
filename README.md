@@ -130,6 +130,7 @@ Simple if condition with an else branch:
 + [ ] feat: semantics of scope
 + [ ] feat: pointer/reference semantics
 + [ ] feat: func multiple return values
++ [ ] refactor: evalExpressions (int, error)
 
 ## References
 
