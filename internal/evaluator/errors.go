@@ -9,4 +9,6 @@ var (
 	ErrUnexpectedNodeType     = errors.New("unexpected node type")
 	ErrUnexpectedObjectType   = errors.New("unexpected object type")
 	ErrUnexpectedOperatorType = errors.New("unexpected operator type")
+	ErrIdentifierNotFound     = errors.New("identifier not found")
+	ErrNotAFunction           = errors.New("not a function")
 )

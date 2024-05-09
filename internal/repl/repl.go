@@ -7,6 +7,7 @@ import (
 
 	"github.com/aden-q/monkey/internal/evaluator"
 	"github.com/aden-q/monkey/internal/lexer"
+	"github.com/aden-q/monkey/internal/object"
 	"github.com/aden-q/monkey/internal/parser"
 )
 
@@ -30,20 +31,25 @@ type REPL interface {
 }
 
 type Config struct {
+	MaxHistory int
 }
 
 type repl struct {
+	// command history is a fixed size buffer that stores the last N commands
+	history []string
 }
 
 func New(config Config) REPL {
-	return &repl{}
+	return &repl{
+		history: make([]string, 0, config.MaxHistory),
+	}
 }
 
 func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 	scanner := bufio.NewScanner(in)
 	l := lexer.New()
 	p := parser.New(l)
-	e := evaluator.New()
+	e := evaluator.New(object.NewEnvironment())
 
 	fmt.Print(MONKEY_FACE)
 	fmt.Printf("Hello %s! This is the Monkey programming language!\n", userName)
@@ -57,6 +63,8 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 		}
 
 		line := scanner.Text()
+		// TODO: use the history list to navigate through the command history
+		_ = append(r.history, line)
 
 		program, errs := p.ParseProgram(line)
 		if len(errs) != 0 {
@@ -71,7 +79,9 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 		}
 
 		// TODO: PrettyPrint
-		fmt.Println(res.Inspect())
+		if res != object.NIL {
+			fmt.Println(res.Inspect())
+		}
 	}
 }
 

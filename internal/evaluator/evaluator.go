@@ -13,13 +13,17 @@ var _ Evaluator = (*evaluator)(nil)
 // An interpreter/evaluator interface
 type Evaluator interface {
 	Eval(node ast.Node) (object.Object, error)
+	extendFunctionEnv(fn *object.Func, args []object.Object)
 }
 
 type evaluator struct {
+	env object.Environment
 }
 
-func New() Evaluator {
-	return &evaluator{}
+func New(env object.Environment) Evaluator {
+	return &evaluator{
+		env: env,
+	}
 }
 
 // Eval evaluate an AST node recursively
@@ -28,6 +32,7 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NIL, ErrEmptyNodeInput
 	}
 
+	// explicitly polymorphic switch statement
 	switch node := node.(type) {
 	// evaluate the program
 	case *ast.Program:
@@ -37,13 +42,23 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return e.Eval(node.Expression)
 	case *ast.BlockStatement:
 		return e.evalStatements(node.Statements)
+	case *ast.LetStatement:
+		return e.evalLetStatement(node)
+	case *ast.ReturnStatement:
+		return e.evalReturnStatement(node)
 	// evaluate expressions
+	case *ast.IdentifierExpression:
+		return e.evalIdentifierExpression(node)
 	case *ast.IntegerExpression:
 		return object.NewInteger(node.Value), nil
 	case *ast.BooleanExpression:
 		return booleanConv(node.Value), nil
 	case *ast.IfExpression:
 		return e.evalIfExpression(node)
+	case *ast.FuncExpression:
+		return e.evalFuncExpression(node)
+	case *ast.CallExpression:
+		return e.evalCallExpression(node)
 	case *ast.PrefixExpression:
 		return e.evalPrefixExpression(node)
 	case *ast.InfixExpression:
@@ -55,24 +70,59 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 }
 
 func (e *evaluator) evalStatements(stmts []ast.Statement) (object.Object, error) {
-	var result object.Object
+	var result object.Object = object.NIL
 	var err error
 
 	// iteratively evaluate each statement and return the result from the last one
 	for _, stmt := range stmts {
 		result, err = e.Eval(stmt)
 		if err != nil {
-			return nil, err
+			return object.NIL, err
+		}
+
+		// short-circuit return statement
+		if result.Type() == object.RETURN_VALUE_OBJ {
+			return result, nil
 		}
 	}
 
 	return result, nil
 }
 
+func (e *evaluator) evalLetStatement(stmt *ast.LetStatement) (object.Object, error) {
+	val, err := e.Eval(stmt.Value)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	// bind the evaluated value to the environment
+	e.env.Set(stmt.Identifier.Value, val)
+
+	return object.NIL, nil
+}
+
+func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Object, error) {
+	val, err := e.Eval(stmt.Value)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	return object.NewReturnValue(val), nil
+}
+
+func (e *evaluator) evalIdentifierExpression(ie *ast.IdentifierExpression) (object.Object, error) {
+	val, ok := e.env.Get(ie.Value)
+	if !ok {
+		return object.NIL, ErrIdentifierNotFound
+	}
+
+	return val, nil
+}
+
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
 	condition, err := e.Eval(ie.Condition)
 	if err != nil {
-		return object.NIL, nil
+		return object.NIL, err
 	}
 
 	if condition.IsTruthy() {
@@ -86,10 +136,64 @@ func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error
 	return object.NIL, nil
 }
 
+func (e *evaluator) evalFuncExpression(fe *ast.FuncExpression) (object.Object, error) {
+	return object.NewFunc(fe.Parameters, fe.Body, e.env), nil
+}
+
+func (e *evaluator) evalCallExpression(ce *ast.CallExpression) (object.Object, error) {
+	function, err := e.Eval(ce.Func)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	args := make([]object.Object, 0, len(ce.Arguments))
+
+	for _, exp := range ce.Arguments {
+		res, err := e.Eval(exp)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		args = append(args, res)
+	}
+
+	// call the function with the given arguments
+	return applyFunc(function, args, e.env)
+}
+
+func applyFunc(fn object.Object, args []object.Object, env object.Environment) (object.Object, error) {
+	function, ok := fn.(*object.Func)
+	if !ok {
+		return object.NIL, ErrNotAFunction
+	}
+
+	// create a new environment for the function scope
+	funcEvaluator := New(object.NewClosureEnvironment(env))
+	// extend the closure environment with arguments passed to the function
+	funcEvaluator.extendFunctionEnv(function, args)
+
+	val, err := funcEvaluator.Eval(function.Body)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	if returnVal, ok := val.(*object.ReturnValue); ok {
+		return returnVal.Value, nil
+	}
+
+	return val, nil
+}
+
+func (e *evaluator) extendFunctionEnv(fn *object.Func, args []object.Object) {
+	for i, param := range fn.Parameters {
+		e.env.Set(param.Value, args[i])
+	}
+}
+
 func (e *evaluator) evalPrefixExpression(pe *ast.PrefixExpression) (object.Object, error) {
 	operandObj, err := e.Eval(pe.Operand)
 	if err != nil {
-		return nil, nil
+		return object.NIL, err
 	}
 
 	switch pe.Operator {
@@ -125,12 +229,12 @@ func (e *evaluator) evalMinuxPrefixOperatorExpression(o object.Object) (object.O
 func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object, error) {
 	leftOperandObj, err := e.Eval(ie.LeftOperand)
 	if err != nil {
-		return nil, err
+		return object.NIL, err
 	}
 
 	rightOperandObj, err := e.Eval(ie.RightOperand)
 	if err != nil {
-		return nil, err
+		return object.NIL, err
 	}
 
 	switch {

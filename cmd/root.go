@@ -9,6 +9,7 @@ import (
 	"os/user"
 
 	"github.com/aden-q/monkey/internal/repl"
+	"github.com/aden-q/monkey/internal/setting"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +41,14 @@ func run(cmd *cobra.Command, args []string) {
 		log.Fatalf("user error: %v", err)
 	}
 
-	r := repl.New(repl.Config{})
+	config, err := setting.Load()
+	if err != nil {
+		log.Fatalf("setting load error: %v", err)
+	}
+
+	r := repl.New(repl.Config{
+		MaxHistory: config.MaxHistory,
+	})
 
 	r.Start(os.Stdin, os.Stdout, user.Username)
 }

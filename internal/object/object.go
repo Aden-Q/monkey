@@ -1,18 +1,29 @@
 package object
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+
+	"github.com/aden-q/monkey/internal/ast"
+)
 
 // interface compliance check
 var _ Object = (*Integer)(nil)
 var _ Object = (*Boolean)(nil)
 var _ Object = (*Nil)(nil)
+var _ Object = (*ReturnValue)(nil)
+var _ Object = (*Error)(nil)
+var _ Object = (*Func)(nil)
 
 type ObjectType string
 
 var (
-	INTEGER_OBJ = ObjectType("INTEGER")
-	BOOLEAN_OBJ = ObjectType("BOOLEAN")
-	NIL_OBJ     = ObjectType("NIL")
+	INTEGER_OBJ      = ObjectType("INTEGER")
+	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
+	NIL_OBJ          = ObjectType("NIL")
+	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
+	ERROR_OBJ        = ObjectType("ERROR")
+	FUNCTION_OBJ     = ObjectType("FUNCTION")
 )
 
 // boolean literal objects
@@ -89,5 +100,93 @@ func (n *Nil) Inspect() string {
 }
 
 func (n *Nil) IsTruthy() bool {
+	return false
+}
+
+// ReturnValue represents a return value of a function
+type ReturnValue struct {
+	Value Object
+}
+
+func NewReturnValue(value Object) *ReturnValue {
+	return &ReturnValue{
+		Value: value,
+	}
+}
+
+func (rv *ReturnValue) Type() ObjectType {
+	return RETURN_VALUE_OBJ
+}
+
+func (rv *ReturnValue) Inspect() string {
+	return rv.Value.Inspect()
+}
+
+func (rv *ReturnValue) IsTruthy() bool {
+	return rv.Value.IsTruthy()
+}
+
+// Error represents an error
+// Note: this is not necessary for the interpreter to work, we do error handling in Go's native way
+type Error struct {
+	Message string
+}
+
+func NewError(msg string) *Error {
+	return &Error{
+		Message: msg,
+	}
+}
+
+func (e *Error) Type() ObjectType {
+	return ERROR_OBJ
+}
+
+func (e *Error) Inspect() string {
+	return "ERROR: " + e.Message
+}
+
+// FIXME: this behavior is undined, not sure an error is truthy or not
+func (e *Error) IsTruthy() bool {
+	return false
+}
+
+// Func represents a function object
+type Func struct {
+	Parameters []*ast.IdentifierExpression
+	Body       *ast.BlockStatement
+}
+
+func NewFunc(params []*ast.IdentifierExpression, body *ast.BlockStatement, env Environment) *Func {
+	return &Func{
+		Parameters: params,
+		Body:       body,
+	}
+}
+
+func (f *Func) Type() ObjectType {
+	return FUNCTION_OBJ
+}
+
+func (f *Func) Inspect() string {
+	builder := strings.Builder{}
+
+	paramStrings := []string{}
+	for _, param := range f.Parameters {
+		paramStrings = append(paramStrings, param.String())
+	}
+
+	builder.WriteString("fn")
+	builder.WriteString("(")
+	builder.WriteString(strings.Join(paramStrings, ", "))
+	builder.WriteString(") {\n")
+	builder.WriteString(f.Body.String())
+	builder.WriteString("\n}")
+
+	return builder.String()
+}
+
+// FIXME: this behavior is undined, not sure an error is truthy or not
+func (f *Func) IsTruthy() bool {
 	return false
 }

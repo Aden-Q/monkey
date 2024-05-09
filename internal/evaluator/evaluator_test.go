@@ -23,7 +23,7 @@ var _ = Describe("Evaluator", func() {
 	BeforeEach(func() {
 		l = lexer.New()
 		p = parser.New(l)
-		e = evaluator.New()
+		e = evaluator.New(object.NewEnvironment())
 	})
 
 	Describe("Eval", func() {
@@ -633,6 +633,272 @@ var _ = Describe("Evaluator", func() {
 				obj, err := e.Eval(program)
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
+			})
+		})
+
+		Context("return statements", func() {
+			It("return an integer", func() {
+				text = `
+				return 10;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer", func() {
+				text = `
+				9;
+				false;
+				return 10;
+				5;
+				true;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer with if condition", func() {
+				text = `
+				if (10 > 1) {
+					return 10;
+				};
+
+				return 5;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an integer with nested if conditions", func() {
+				text = `
+				if (10 > 1) {
+					if (10 > 1) {
+						return 10;
+					};
+
+					return 8;
+				};
+				
+				return 5;
+				`
+				expectedObject := object.NewReturnValue(object.NewInteger(10))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("return an boolean with if condition", func() {
+				text = `
+				if (10 > 1) {
+					return 10 > 1;
+				};
+				
+				return false;
+				`
+				expectedObject := object.NewReturnValue(object.TRUE)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			Context("errors", func() {
+				It("can detect errors", func() {
+					text = `
+					5 + true;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrUnexpectedObjectType
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("errors", func() {
+				It("can early terminate when there's an error", func() {
+					text = `
+					5 + true;
+					10;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrUnexpectedObjectType
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("let statements", func() {
+				It("successful binding", func() {
+					text = `
+					let a = 5 * 5;
+					a;
+					`
+					expectedObject := object.NewInteger(25)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("unbound identifier", func() {
+					text = `
+					foobar;
+					`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+					expectedEvaluateError := evaluator.ErrIdentifierNotFound
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(Equal(expectedEvaluateError))
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("function expressions", func() {
+				It("func", func() {
+					text = `
+					fn(x) { x + 2; };
+					`
+					expectedObject := object.NewFunc(
+						[]*ast.IdentifierExpression{
+							ast.NewIdentifierExpression("x"),
+						},
+						ast.NewBlockStatement(ast.NewExpressionStatement(ast.NewInfixExpression("+", ast.NewIdentifierExpression("x"), ast.NewIntegerExpression("2", 2)))),
+						object.NewEnvironment(),
+					)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
+
+			Context("call expressions", func() {
+				It("func with 1 parameter", func() {
+					text = `
+					let a = fn(x) { x + 2; };
+					a(5);
+					`
+					expectedObject := object.NewInteger(7)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("func with 2 parameters", func() {
+					text = `
+					let a = fn(x, y) { x * y + 2; };
+					a(5, 6);
+					`
+					expectedObject := object.NewInteger(32)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("func with 2 parameters", func() {
+					text = `
+				 	fn(x, y) { x * y + 2; } (5, 6);
+					`
+					expectedObject := object.NewInteger(32)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
 			})
 		})
 	})
