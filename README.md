@@ -126,6 +126,7 @@ Simple if condition with an else branch:
 + [ ] feat: lexing, parsing, evaluation of nil expression statement
 + [ ] fix: slow startup issue
 + [ ] fix: do not allow plain return in REPL outside of a function, report an error instead
++ [ ] docs: a section for all control structures
 
 ## References
 
