@@ -4,9 +4,10 @@ package object
 var _ Environment = (*environment)(nil)
 
 type Environment interface {
+	Keys() []string
 	Get(name string) (Object, bool)
 	Set(name string, val Object)
-	Copy() Environment
+	copy() Environment
 }
 
 type environment struct {
@@ -19,6 +20,19 @@ func NewEnvironment() Environment {
 	}
 }
 
+func NewClosureEnvironment(env Environment) Environment {
+	return env.copy()
+}
+
+func (e *environment) Keys() []string {
+	keys := make([]string, 0, len(e.store))
+	for k := range e.store {
+		keys = append(keys, k)
+	}
+
+	return keys
+}
+
 func (e *environment) Get(name string) (Object, bool) {
 	obj, ok := e.store[name]
 	return obj, ok
@@ -29,7 +43,7 @@ func (e *environment) Set(name string, val Object) {
 }
 
 // return a deep copy of the env
-func (e *environment) Copy() Environment {
+func (e *environment) copy() Environment {
 	env := NewEnvironment()
 	for k, v := range e.store {
 		env.Set(k, v)

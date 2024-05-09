@@ -41,7 +41,7 @@ type repl struct {
 
 func New(config Config) REPL {
 	return &repl{
-		history: make([]string, config.MaxHistory),
+		history: make([]string, 0, config.MaxHistory),
 	}
 }
 
@@ -49,7 +49,7 @@ func (r *repl) Start(in io.ReadCloser, out io.WriteCloser, userName string) {
 	scanner := bufio.NewScanner(in)
 	l := lexer.New()
 	p := parser.New(l)
-	e := evaluator.New()
+	e := evaluator.New(object.NewEnvironment())
 
 	fmt.Print(MONKEY_FACE)
 	fmt.Printf("Hello %s! This is the Monkey programming language!\n", userName)

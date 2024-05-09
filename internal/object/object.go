@@ -155,15 +155,12 @@ func (e *Error) IsTruthy() bool {
 type Func struct {
 	Parameters []*ast.IdentifierExpression
 	Body       *ast.BlockStatement
-	// the environment for the function scope, allowing closure
-	Env Environment
 }
 
 func NewFunc(params []*ast.IdentifierExpression, body *ast.BlockStatement, env Environment) *Func {
 	return &Func{
 		Parameters: params,
 		Body:       body,
-		Env:        env.Copy(),
 	}
 }
 

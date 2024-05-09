@@ -28,6 +28,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + Works on 64-bit machines
 + Not production ready yet, need a few more details to be addressed
 + Function that allows for closures
++ Use Go's GC to prevent memory leak
 
 ## Components
 
@@ -59,7 +60,6 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] check whether we need the token field in AST
 + [ ] test: increase test coverage to at least 80%
 + [ ] chore: dockerize it and publish an image to Docker Hub
-+ [ ] feat: check how to trigger the GC during runtime (in REPL)
 + [ ] feat: return can only be used in functions, do not allow plain return in REPL
 + [ ] feat: if expression with multiple branches
 + [ ] feat: check peek token type in parseExpression
@@ -69,7 +69,6 @@ Monkey is an interpreted language written in Go. *This project is still under de
 + [ ] feat: PrettyPrint, color, AST, etc
 + [ ] feat: sys call such as print(...)
 + [ ] feat: add a helper for available functions
-+ [ ] feat: consider how to write a GC
 + [ ] feat: switch between multiple value representation system using some flag
 + [ ] feat: class (object system)
 + [ ] feat: configuration with yaml or envrc
