@@ -82,6 +82,24 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			It("string expressions", func() {
+				text = `
+				"foo";
+				"foo bar";
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewStringExpression("foo")),
+						ast.NewExpressionStatement(ast.NewStringExpression("foo bar")),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 			It("if expressions", func() {
 				text = `
 				if (x < y) { x; };

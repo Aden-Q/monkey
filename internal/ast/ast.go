@@ -11,6 +11,7 @@ var _ Node = (*Program)(nil)
 var _ Expression = (*IdentifierExpression)(nil)
 var _ Expression = (*IntegerExpression)(nil)
 var _ Expression = (*BooleanExpression)(nil)
+var _ Expression = (*StringExpression)(nil)
 var _ Expression = (*IfExpression)(nil)
 var _ Expression = (*FuncExpression)(nil)
 var _ Expression = (*CallExpression)(nil)
@@ -158,6 +159,31 @@ func NewBooleanExpression(value bool) *BooleanExpression {
 	return &BooleanExpression{
 		Token: tok,
 		Value: value,
+	}
+}
+
+// StringExpression implements the Expression interface
+type StringExpression struct {
+	// the string token
+	Token token.Token
+	Value string
+}
+
+func (se *StringExpression) expressionNode() {}
+
+func (se *StringExpression) TokenLiteral() string {
+	return se.Token.Literal
+}
+
+func (se *StringExpression) String() string {
+	return se.Token.Literal
+}
+
+// NewStringExpression creates a String node
+func NewStringExpression(literal string) *StringExpression {
+	return &StringExpression{
+		Token: token.New(token.STRING, literal),
+		Value: literal,
 	}
 }
 

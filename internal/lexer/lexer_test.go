@@ -97,6 +97,8 @@ var _ = Describe("Lexer", func() {
 					10 == 10;
 					10 != 9;
 					9 <= 10;
+					"foo";
+					"foo bar";
 					`
 				expectedTokens := []token.Token{
 					{
@@ -399,6 +401,22 @@ var _ = Describe("Lexer", func() {
 					{
 						Type:    token.INT,
 						Literal: "10",
+					},
+					{
+						Type:    token.SEMICOLON,
+						Literal: ";",
+					},
+					{
+						Type:    token.STRING,
+						Literal: "foo",
+					},
+					{
+						Type:    token.SEMICOLON,
+						Literal: ";",
+					},
+					{
+						Type:    token.STRING,
+						Literal: "foo bar",
 					},
 					{
 						Type:    token.SEMICOLON,
