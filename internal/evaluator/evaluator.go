@@ -53,6 +53,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NewInteger(node.Value), nil
 	case *ast.BooleanExpression:
 		return booleanConv(node.Value), nil
+	case *ast.StringExpression:
+		return object.NewString(node.Value), nil
 	case *ast.IfExpression:
 		return e.evalIfExpression(node)
 	case *ast.FuncExpression:

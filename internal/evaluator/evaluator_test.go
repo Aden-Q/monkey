@@ -558,6 +558,25 @@ var _ = Describe("Evaluator", func() {
 			})
 		})
 
+		Context("string object", func() {
+			It("string expression", func() {
+				text = `
+				"hello world";
+				`
+				expectedObject := object.NewString("hello world")
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
+
 		Context("if conditionals", func() {
 			It("if condition is truthy", func() {
 				text = `

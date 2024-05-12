@@ -66,7 +66,7 @@ var _ = Describe("Object", func() {
 		})
 	})
 
-	Describe("Boolean", func() {
+	Describe("Nil", func() {
 		It("false nil object", func() {
 			expectedNilObj := object.NIL
 			obj := object.NewNil()
@@ -75,6 +75,36 @@ var _ = Describe("Object", func() {
 			Expect(obj.Inspect()).To(Equal("nil"))
 			Expect(obj.Type()).To(Equal(object.NIL_OBJ))
 			Expect(obj.IsTruthy()).To(Equal(false))
+		})
+	})
+
+	Describe("String", func() {
+		It("false string object", func() {
+			var val string = ""
+
+			expectedStringObj := &object.String{
+				Value: val,
+			}
+			obj := object.NewString(val)
+
+			Expect(obj).To(Equal(expectedStringObj))
+			Expect(obj.Inspect()).To(Equal(""))
+			Expect(obj.Type()).To(Equal(object.STRING_OBJ))
+			Expect(obj.IsTruthy()).To(Equal(false))
+		})
+
+		It("truthy string object", func() {
+			var val string = "hello"
+
+			expectedStringObj := &object.String{
+				Value: val,
+			}
+			obj := object.NewString(val)
+
+			Expect(obj).To(Equal(expectedStringObj))
+			Expect(obj.Inspect()).To(Equal("hello"))
+			Expect(obj.Type()).To(Equal(object.STRING_OBJ))
+			Expect(obj.IsTruthy()).To(Equal(true))
 		})
 	})
 })

@@ -10,6 +10,7 @@ import (
 // interface compliance check
 var _ Object = (*Integer)(nil)
 var _ Object = (*Boolean)(nil)
+var _ Object = (*String)(nil)
 var _ Object = (*Nil)(nil)
 var _ Object = (*ReturnValue)(nil)
 var _ Object = (*Error)(nil)
@@ -20,6 +21,7 @@ type ObjectType string
 var (
 	INTEGER_OBJ      = ObjectType("INTEGER")
 	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
+	STRING_OBJ       = ObjectType("STRING")
 	NIL_OBJ          = ObjectType("NIL")
 	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
 	ERROR_OBJ        = ObjectType("ERROR")
@@ -82,6 +84,28 @@ func (b *Boolean) Inspect() string {
 
 func (b *Boolean) IsTruthy() bool {
 	return b.Value
+}
+
+type String struct {
+	Value string
+}
+
+func NewString(value string) *String {
+	return &String{
+		Value: value,
+	}
+}
+
+func (s *String) Type() ObjectType {
+	return STRING_OBJ
+}
+
+func (s *String) Inspect() string {
+	return s.Value
+}
+
+func (s *String) IsTruthy() bool {
+	return len(s.Value) > 0
 }
 
 // Nil represents the absence of any value
