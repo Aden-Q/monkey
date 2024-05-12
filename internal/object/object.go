@@ -15,6 +15,7 @@ var _ Object = (*Nil)(nil)
 var _ Object = (*ReturnValue)(nil)
 var _ Object = (*Error)(nil)
 var _ Object = (*Func)(nil)
+var _ Object = (BuiltinFunc)(nil)
 
 type ObjectType string
 
@@ -26,6 +27,7 @@ var (
 	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
 	ERROR_OBJ        = ObjectType("ERROR")
 	FUNCTION_OBJ     = ObjectType("FUNCTION")
+	BUILTINFUNC_OBJ  = ObjectType("BUILTINFUNC")
 )
 
 // boolean literal objects
@@ -34,6 +36,21 @@ var (
 	FALSE = NewBoolean(false)
 	NIL   = NewNil()
 )
+
+var BuiltinFuncs = map[string]BuiltinFunc{
+	"len": func(args ...Object) (Object, error) {
+		if len(args) != 1 {
+			return NIL, ErrWrongNumberArguments
+		}
+
+		switch arg := args[0].(type) {
+		case *String:
+			return NewInteger(int64(len(arg.Value))), nil
+		default:
+			return NIL, ErrUnsupportedArgumentType
+		}
+	},
+}
 
 type Object interface {
 	Type() ObjectType
@@ -212,5 +229,21 @@ func (f *Func) Inspect() string {
 
 // FIXME: this behavior is undined, not sure an error is truthy or not
 func (f *Func) IsTruthy() bool {
+	return false
+}
+
+// BuiltinFunc represents a builtin function object
+type BuiltinFunc func(args ...Object) (Object, error)
+
+func (b BuiltinFunc) Type() ObjectType {
+	return FUNCTION_OBJ
+}
+
+func (b BuiltinFunc) Inspect() string {
+	return "builtin function"
+}
+
+// FIXME: this behavior is undined, not sure an error is truthy or not
+func (b BuiltinFunc) IsTruthy() bool {
 	return false
 }

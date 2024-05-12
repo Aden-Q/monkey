@@ -936,6 +936,59 @@ var _ = Describe("Evaluator", func() {
 					Expect(obj).To(Equal(expectedObject))
 				})
 			})
+
+			Context("builtin functions", func() {
+				It("length of an empty string", func() {
+					text = `
+				 	len("");
+					`
+					expectedObject := object.NewInteger(0)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("length of a non-empty string", func() {
+					text = `
+						 len("hello world");
+						`
+					expectedObject := object.NewInteger(11)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("length on integer unsupported", func() {
+					text = `
+						 len(1);
+						`
+					expectedObject := object.NIL
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).To(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+			})
 		})
 	})
 })

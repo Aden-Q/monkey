@@ -113,12 +113,15 @@ func (e *evaluator) evalReturnStatement(stmt *ast.ReturnStatement) (object.Objec
 }
 
 func (e *evaluator) evalIdentifierExpression(ie *ast.IdentifierExpression) (object.Object, error) {
-	val, ok := e.env.Get(ie.Value)
-	if !ok {
-		return object.NIL, ErrIdentifierNotFound
+	if val, ok := e.env.Get(ie.Value); ok {
+		return val, nil
 	}
 
-	return val, nil
+	if builtinFunc, ok := object.BuiltinFuncs[ie.Value]; ok {
+		return builtinFunc, nil
+	}
+
+	return object.NIL, ErrIdentifierNotFound
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
@@ -164,26 +167,28 @@ func (e *evaluator) evalCallExpression(ce *ast.CallExpression) (object.Object, e
 }
 
 func applyFunc(fn object.Object, args []object.Object, env object.Environment) (object.Object, error) {
-	function, ok := fn.(*object.Func)
-	if !ok {
+	switch fn := fn.(type) {
+	case *object.Func:
+		// create a new environment for the function scope
+		funcEvaluator := New(object.NewClosureEnvironment(env))
+		// extend the closure environment with arguments passed to the function
+		funcEvaluator.extendFunctionEnv(fn, args)
+
+		val, err := funcEvaluator.Eval(fn.Body)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		if returnVal, ok := val.(*object.ReturnValue); ok {
+			return returnVal.Value, nil
+		}
+
+		return val, nil
+	case object.BuiltinFunc:
+		return fn(args...)
+	default:
 		return object.NIL, ErrNotAFunction
 	}
-
-	// create a new environment for the function scope
-	funcEvaluator := New(object.NewClosureEnvironment(env))
-	// extend the closure environment with arguments passed to the function
-	funcEvaluator.extendFunctionEnv(function, args)
-
-	val, err := funcEvaluator.Eval(function.Body)
-	if err != nil {
-		return object.NIL, err
-	}
-
-	if returnVal, ok := val.(*object.ReturnValue); ok {
-		return returnVal.Value, nil
-	}
-
-	return val, nil
 }
 
 func (e *evaluator) extendFunctionEnv(fn *object.Func, args []object.Object) {
