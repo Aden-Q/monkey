@@ -242,6 +242,8 @@ func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object,
 	switch {
 	case leftOperandObj.Type() == object.INTEGER_OBJ && rightOperandObj.Type() == object.INTEGER_OBJ:
 		return e.evalIntegerInfixExpression(ie.Operator, leftOperandObj.(*object.Integer), rightOperandObj.(*object.Integer))
+	case leftOperandObj.Type() == object.STRING_OBJ && rightOperandObj.Type() == object.STRING_OBJ:
+		return e.evalStringInfixExpression(ie.Operator, leftOperandObj.(*object.String), rightOperandObj.(*object.String))
 	// equality test
 	case ie.Operator == "==":
 		return booleanConv(reflect.DeepEqual(leftOperandObj, rightOperandObj)), nil
@@ -253,7 +255,7 @@ func (e *evaluator) evalInfixExpression(ie *ast.InfixExpression) (object.Object,
 	}
 }
 
-// evalIntegerInfixExpression evaluates an infix expression involving two integer operators
+// evalIntegerInfixExpression evaluates an infix expression involving two integer operands and a single operator
 func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *object.Integer) (object.Object, error) {
 	leftVal, rightVal := left.Value, right.Value
 
@@ -281,6 +283,18 @@ func (e *evaluator) evalIntegerInfixExpression(operator string, left, right *obj
 	default:
 		return object.NIL, ErrUnexpectedOperatorType
 	}
+}
+
+// evalStringInfixExpression evaluates an infix expression involving two string operands and a single operator
+func (e *evaluator) evalStringInfixExpression(operator string, left, right *object.String) (object.Object, error) {
+	leftVal, rightVal := left.Value, right.Value
+
+	switch operator {
+	case "+":
+		return object.NewString(leftVal + rightVal), nil
+	}
+
+	return object.NIL, ErrUnexpectedOperatorType
 }
 
 // booleanConv converts a boolean literal to a boolean object in the object system
