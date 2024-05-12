@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-build-test:
+  ci:
+    name: lint, build, test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
