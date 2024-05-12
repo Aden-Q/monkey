@@ -133,6 +133,8 @@ Simple if condition with an else branch:
 + [ ] refactor: evalExpressions (int, error)
 + [ ] feat: parallel assignment
 + [ ] feat: escaping characters and error when " mismatches
++ [ ] perf: add immutable constants to the envvironment to reduce memory allocation
++ [ ] feat: add a print builtin function
 
 ## References
 
