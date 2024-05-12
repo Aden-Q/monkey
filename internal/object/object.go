@@ -227,7 +227,7 @@ func (f *Func) Inspect() string {
 	return builder.String()
 }
 
-// FIXME: this behavior is undined, not sure an error is truthy or not
+// FIXME: this behavior is undined, not sure whether a function is truthy or not
 func (f *Func) IsTruthy() bool {
 	return false
 }
@@ -243,7 +243,7 @@ func (b BuiltinFunc) Inspect() string {
 	return "builtin function"
 }
 
-// FIXME: this behavior is undined, not sure an error is truthy or not
+// FIXME: this behavior is undined, not sure whether a builtin function is truthy or not
 func (b BuiltinFunc) IsTruthy() bool {
 	return false
 }
