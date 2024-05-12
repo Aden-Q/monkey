@@ -51,6 +51,8 @@ func New(l lexer.Lexer) Parser {
 	// handler for boolean expression
 	p.registerPrefixParseFn(token.TRUE, p.parseBoolean)
 	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
+	// handler for string expression
+	p.registerPrefixParseFn(token.STRING, p.parseString)
 	// handler for grouped expression
 	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
 	// handler for if expression
@@ -274,6 +276,10 @@ func (p *parser) parseBoolean() (ast.Expression, error) {
 	}
 
 	return ast.NewBooleanExpression(value), nil
+}
+
+func (p *parser) parseString() (ast.Expression, error) {
+	return ast.NewStringExpression(p.curToken.Literal), nil
 }
 
 func (p *parser) parseGroupedExpression() (ast.Expression, error) {

@@ -161,6 +161,31 @@ func NewBooleanExpression(value bool) *BooleanExpression {
 	}
 }
 
+// StringExpression implements the Expression interface
+type StringExpression struct {
+	// the string token
+	Token token.Token
+	Value string
+}
+
+func (se *StringExpression) expressionNode() {}
+
+func (se *StringExpression) TokenLiteral() string {
+	return se.Token.Literal
+}
+
+func (se *StringExpression) String() string {
+	return se.Token.Literal
+}
+
+// NewStringExpression creates a String node
+func NewStringExpression(literal string) *StringExpression {
+	return &StringExpression{
+		Token: token.New(token.STRING, literal),
+		Value: literal,
+	}
+}
+
 // IfExpression implements the Expression interface
 type IfExpression struct {
 	// the if token
