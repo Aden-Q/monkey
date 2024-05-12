@@ -135,6 +135,7 @@ Simple if condition with an else branch:
 + [ ] feat: escaping characters and error when " mismatches
 + [ ] perf: add immutable constants to the envvironment to reduce memory allocation
 + [ ] feat: add a print builtin function
++ [ ] feat: add a static/dynamic type system
 
 ## References
 
