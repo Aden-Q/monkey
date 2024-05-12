@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"github.com/aden-q/monkey/internal/bytesconv"
 	"github.com/aden-q/monkey/internal/token"
 )
 
@@ -46,10 +47,10 @@ func (l *lexer) NextToken() token.Token {
 	// operators with two characters
 	case '=', '!', '<', '>':
 		if l.peekNextNextChar() == '=' {
-			ch := l.readChar() + l.readChar()
+			ch := bytesconv.BytesToString([]byte{l.readChar(), l.readChar()})
 			tok = token.New(token.LookupTokenType(ch), ch)
 		} else {
-			ch := l.readChar()
+			ch := bytesconv.ByteToString(l.readChar())
 			tok = token.New(token.LookupTokenType(ch), ch)
 		}
 	// operators with a single character
@@ -57,8 +58,11 @@ func (l *lexer) NextToken() token.Token {
 		fallthrough
 	// delimiters
 	case ',', ';', '(', ')', '{', '}':
-		ch := l.readChar()
+		ch := bytesconv.ByteToString(l.readChar())
 		tok = token.New(token.LookupTokenType(ch), ch)
+	case '"':
+		literal := l.readString()
+		tok = token.New(token.STRING, literal)
 	default:
 		// read identifier
 		if isLetter(ch) {
@@ -90,14 +94,14 @@ func (l *lexer) peekNextNextChar() byte {
 }
 
 // readChar reads a single char at the current offset and move the ptr forward by 1
-func (l *lexer) readChar() string {
+func (l *lexer) readChar() byte {
 	if !l.hasNext() {
-		return ""
+		return 0
 	}
 
 	l.position++
 
-	return l.buf[l.position-1 : l.position]
+	return l.buf[l.position-1]
 }
 
 // isLetter check whether a character is allow be to in an identifier
@@ -123,6 +127,21 @@ func (l *lexer) readWord() string {
 	}
 
 	return l.buf[startPos:l.position]
+}
+
+// readString reads a string enclosed by ""
+func (l *lexer) readString() string {
+	l.position++
+	startPos := l.position
+
+	for {
+		ch := l.readChar()
+		if ch == 0 || ch == '"' {
+			break
+		}
+	}
+
+	return l.buf[startPos : l.position-1]
 }
 
 // isLetter check whether a character is an digit

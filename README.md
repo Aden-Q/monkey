@@ -132,6 +132,7 @@ Simple if condition with an else branch:
 + [ ] feat: func multiple return values
 + [ ] refactor: evalExpressions (int, error)
 + [ ] feat: parallel assignment
++ [ ] feat: escaping characters and error when " mismatches
 
 ## References
 
