@@ -100,7 +100,6 @@ Simple if condition with an else branch:
 + [ ] docs: a diagram for the full REPL loop including the AST used
 + [ ] check whether we need the token field in AST
 + [ ] test: increase test coverage to at least 80%
-+ [ ] chore: dockerize it and publish an image to Docker Hub
 + [ ] feat: return can only be used in functions, do not allow plain return in REPL
 + [ ] feat: if expression with multiple branches
 + [ ] feat: check peek token type in parseExpression
@@ -135,6 +134,7 @@ Simple if condition with an else branch:
 + [ ] feat: add a print builtin function
 + [ ] feat: add quit(), exit() builtin functions to exit elegantly
 + [ ] feat: add a static/dynamic type system
++ [ ] ci: build and publish as a pkg on Docker Hub
 
 ## References
 
