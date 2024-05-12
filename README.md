@@ -131,6 +131,7 @@ Simple if condition with an else branch:
 + [ ] feat: pointer/reference semantics
 + [ ] feat: func multiple return values
 + [ ] refactor: evalExpressions (int, error)
++ [ ] feat: parallel assignment
 
 ## References
 
