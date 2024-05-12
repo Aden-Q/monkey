@@ -62,7 +62,7 @@ Simple if condition with an else branch:
 + Comments start with double slash `//`
 + Conditional statements (`if` and `switch` keywords)
 + Loops (`for`, `range`, and `while` keywords)
-+ First-class functions that allow closures
++ First-class functions and closures
 + Prefix operators (binary expressions)
 + Infix operators (unary expressions)
 + Postfix operators
