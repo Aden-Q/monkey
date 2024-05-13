@@ -285,32 +285,12 @@ func (p *parser) parseString() (ast.Expression, error) {
 }
 
 func (p *parser) parseArrayExpression() (ast.Expression, error) {
-	elements := []ast.Expression{}
-
-	for !p.peekTokenTypeIs(token.RBRACKET) && !p.peekTokenTypeIs(token.EOF) {
-		p.nextToken()
-		element, err := p.parseExpression(token.LOWEST)
-		if err != nil {
-			return nil, err
-		}
-
-		elements = append(elements, element)
-
-		if p.peekTokenTypeIs(token.COMMA) {
-			p.nextToken()
-		}
+	elements, err := p.parseExpressionList(token.RBRACKET)
+	if err != nil {
+		return nil, err
 	}
 
-	if !p.peekTokenTypeIs(token.RBRACKET) {
-		return nil, ErrUnexpectedTokenType
-	}
-
-	// move forward so that p.curToken points to the ] token
-	p.nextToken()
-
-	return ast.NewArrayExpression(
-		elements...,
-	), nil
+	return ast.NewArrayExpression(elements...), nil
 }
 
 func (p *parser) parseGroupedExpression() (ast.Expression, error) {
@@ -499,7 +479,7 @@ func (p *parser) parseInfixExpression(leftOperand ast.Expression) (ast.Expressio
 }
 
 func (p *parser) parseCallExpression(leftOperand ast.Expression) (ast.Expression, error) {
-	args, err := p.parseCallArguments()
+	args, err := p.parseExpressionList(token.RPAREN)
 	if err != nil {
 		return nil, err
 	}
@@ -507,10 +487,10 @@ func (p *parser) parseCallExpression(leftOperand ast.Expression) (ast.Expression
 	return ast.NewCallExpression(leftOperand, args), nil
 }
 
-func (p *parser) parseCallArguments() ([]ast.Expression, error) {
-	args := []ast.Expression{}
+func (p *parser) parseExpressionList(endTokenType token.TokenType) ([]ast.Expression, error) {
+	expressions := []ast.Expression{}
 
-	for !p.peekTokenTypeIs(token.RPAREN) && !p.peekTokenTypeIs(token.EOF) {
+	for !p.peekTokenTypeIs(endTokenType) && !p.peekTokenTypeIs(token.EOF) {
 		p.nextToken()
 
 		exp, err := p.parseExpression(token.LOWEST)
@@ -518,21 +498,21 @@ func (p *parser) parseCallArguments() ([]ast.Expression, error) {
 			return nil, err
 		}
 
-		args = append(args, exp)
+		expressions = append(expressions, exp)
 
 		if p.peekTokenTypeIs(token.COMMA) {
 			p.nextToken()
 		}
 	}
 
-	if !p.peekTokenTypeIs(token.RPAREN) {
+	if !p.peekTokenTypeIs(endTokenType) {
 		return nil, ErrUnexpectedTokenType
 	}
 
 	// move forward so that p.curToken points to the ) token
 	p.nextToken()
 
-	return args, nil
+	return expressions, nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state
