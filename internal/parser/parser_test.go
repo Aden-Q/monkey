@@ -100,6 +100,22 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			It("array expressions", func() {
+				text = `
+				[1, 2 * 2, 3 + 3];
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewArrayExpression(ast.NewIntegerExpression("1", 1), ast.NewInfixExpression("*", ast.NewIntegerExpression("2", 2), ast.NewIntegerExpression("2", 2)), ast.NewInfixExpression("+", ast.NewIntegerExpression("3", 3), ast.NewIntegerExpression("3", 3)))),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 			It("if expressions", func() {
 				text = `
 				if (x < y) { x; };

@@ -53,6 +53,8 @@ func New(l lexer.Lexer) Parser {
 	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
 	// handler for string expression
 	p.registerPrefixParseFn(token.STRING, p.parseString)
+	// handler for list expression
+	p.registerPrefixParseFn(token.LBRACKET, p.parseArrayExpression)
 	// handler for grouped expression
 	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
 	// handler for if expression
@@ -280,6 +282,35 @@ func (p *parser) parseBoolean() (ast.Expression, error) {
 
 func (p *parser) parseString() (ast.Expression, error) {
 	return ast.NewStringExpression(p.curToken.Literal), nil
+}
+
+func (p *parser) parseArrayExpression() (ast.Expression, error) {
+	elements := []ast.Expression{}
+
+	for !p.peekTokenTypeIs(token.RBRACKET) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+		element, err := p.parseExpression(token.LOWEST)
+		if err != nil {
+			return nil, err
+		}
+
+		elements = append(elements, element)
+
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RBRACKET) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ] token
+	p.nextToken()
+
+	return ast.NewArrayExpression(
+		elements...,
+	), nil
 }
 
 func (p *parser) parseGroupedExpression() (ast.Expression, error) {
