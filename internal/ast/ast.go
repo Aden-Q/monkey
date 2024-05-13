@@ -13,6 +13,7 @@ var _ Expression = (*IntegerExpression)(nil)
 var _ Expression = (*BooleanExpression)(nil)
 var _ Expression = (*StringExpression)(nil)
 var _ Expression = (*ArrayExpression)(nil)
+var _ Expression = (*IndexExpression)(nil)
 var _ Expression = (*IfExpression)(nil)
 var _ Expression = (*FuncExpression)(nil)
 var _ Expression = (*CallExpression)(nil)
@@ -216,11 +217,46 @@ func (ae *ArrayExpression) String() string {
 	return builder.String()
 }
 
-// NewArrayExpression creates a String node
+// NewArrayExpression creates an ArrayExpression node
 func NewArrayExpression(exps ...Expression) *ArrayExpression {
 	return &ArrayExpression{
 		Token:    token.New(token.LBRACKET, "["),
 		Elements: exps,
+	}
+}
+
+// IndexExpression implements the Expression interface
+type IndexExpression struct {
+	// the [ token
+	Token token.Token
+	Left  Expression
+	Index Expression
+}
+
+func (ie *IndexExpression) expressionNode() {}
+
+func (ie *IndexExpression) TokenLiteral() string {
+	return ie.Token.Literal
+}
+
+func (ie *IndexExpression) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString("(")
+	builder.WriteString(ie.Left.String())
+	builder.WriteString("[")
+	builder.WriteString(ie.Index.String())
+	builder.WriteString("])")
+
+	return builder.String()
+}
+
+// NewIndexExpression creates an IndexExpression node
+func NewIndexExpression(left, index Expression) *IndexExpression {
+	return &IndexExpression{
+		Token: token.New(token.LBRACKET, "["),
+		Left:  left,
+		Index: index,
 	}
 }
 

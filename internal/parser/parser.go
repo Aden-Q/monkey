@@ -79,6 +79,8 @@ func New(l lexer.Lexer) Parser {
 	p.registerInfixParseFn(token.NOT_EQ, p.parseInfixExpression)
 	// handler for call expression
 	p.registerInfixParseFn(token.LPAREN, p.parseCallExpression)
+	// handler for index expression
+	p.registerInfixParseFn(token.LBRACKET, p.parseIndexExpression)
 
 	return p
 }
@@ -513,6 +515,25 @@ func (p *parser) parseExpressionList(endTokenType token.TokenType) ([]ast.Expres
 	p.nextToken()
 
 	return expressions, nil
+}
+
+func (p *parser) parseIndexExpression(leftOperand ast.Expression) (ast.Expression, error) {
+	// move forward to make p.curToekn points to the index expression
+	p.nextToken()
+
+	index, err := p.parseExpression(token.LOWEST)
+	if err != nil {
+		return nil, err
+	}
+
+	if !p.peekTokenTypeIs(token.RBRACKET) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ] token
+	p.nextToken()
+
+	return ast.NewIndexExpression(leftOperand, index), nil
 }
 
 // nextToken uses the lexer to read the next token and mutate the parser's state

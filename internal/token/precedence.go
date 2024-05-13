@@ -9,6 +9,7 @@ const (
 	PRODUCT     // *
 	PREFIX      // -x or !x
 	CALL        // fn(x) { return x + 1; } (1);
+	INDEX       // array[index]
 )
 
 // token type to precedence maping
@@ -26,6 +27,7 @@ var (
 		ASTERISK: PRODUCT,
 		BANG:     PREFIX,
 		LPAREN:   CALL,
+		LBRACKET: INDEX,
 	}
 )
 

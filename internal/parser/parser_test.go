@@ -116,6 +116,22 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			It("index expressions", func() {
+				text = `
+				myArray[1+1];
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewIndexExpression(ast.NewIdentifierExpression("myArray"), ast.NewInfixExpression("+", ast.NewIntegerExpression("1", 1), ast.NewIntegerExpression("1", 1)))),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 			It("if expressions", func() {
 				text = `
 				if (x < y) { x; };
@@ -294,6 +310,7 @@ var _ = Describe("Parser", func() {
 					`!(true == false);`,
 					`a + add(b * c) +d;`,
 					`add(a + b + c * d / f + g);`,
+					`a * [1, 2, 3, 4][b * c] * d;`,
 				}
 				expectedStrings := []string{
 					`((-a) * b)`,
@@ -310,6 +327,7 @@ var _ = Describe("Parser", func() {
 					`(!(true == false))`,
 					`((a + add((b * c))) + d)`,
 					`add((((a + b) + ((c * d) / f)) + g))`,
+					`((a * ([1, 2, 3, 4][(b * c)])) * d)`,
 				}
 				expectedErrors := []error{}
 
