@@ -12,6 +12,7 @@ var _ Expression = (*IdentifierExpression)(nil)
 var _ Expression = (*IntegerExpression)(nil)
 var _ Expression = (*BooleanExpression)(nil)
 var _ Expression = (*StringExpression)(nil)
+var _ Expression = (*ArrayExpression)(nil)
 var _ Expression = (*IfExpression)(nil)
 var _ Expression = (*FuncExpression)(nil)
 var _ Expression = (*CallExpression)(nil)
@@ -184,6 +185,42 @@ func NewStringExpression(literal string) *StringExpression {
 	return &StringExpression{
 		Token: token.New(token.STRING, literal),
 		Value: literal,
+	}
+}
+
+// ArrayExpression implements the Expression interface
+type ArrayExpression struct {
+	// the [ token
+	Token    token.Token
+	Elements []Expression
+}
+
+func (ae *ArrayExpression) expressionNode() {}
+
+func (ae *ArrayExpression) TokenLiteral() string {
+	return ae.Token.Literal
+}
+
+func (ae *ArrayExpression) String() string {
+	builder := strings.Builder{}
+
+	elements := []string{}
+	for _, el := range ae.Elements {
+		elements = append(elements, el.String())
+	}
+
+	builder.WriteString("[")
+	builder.WriteString(strings.Join(elements, ", "))
+	builder.WriteString("]")
+
+	return builder.String()
+}
+
+// NewArrayExpression creates a String node
+func NewArrayExpression(exps ...Expression) *ArrayExpression {
+	return &ArrayExpression{
+		Token:    token.New(token.LBRACKET, "["),
+		Elements: exps,
 	}
 }
 
