@@ -95,13 +95,11 @@ Simple if condition with an else branch:
 + [ ] feat: add bitwise operators ^, |, &
 + [ ] refactor: unary operators, binary operators, ternary operators
 + [ ] feat: use Cobra to enable multiple modes when launching the REPL
-+ [ ] feat: use quit(), exit(), or Ctrl-D to exit elegantly
 + [ ] feat: support for concurrency primitives such as Mutex, RWMutex, atomic
 + [ ] feat: support for comments
 + [ ] docs: a diagram for the full REPL loop including the AST used
 + [ ] check whether we need the token field in AST
 + [ ] test: increase test coverage to at least 80%
-+ [ ] chore: dockerize it and publish an image to Docker Hub
 + [ ] feat: return can only be used in functions, do not allow plain return in REPL
 + [ ] feat: if expression with multiple branches
 + [ ] feat: check peek token type in parseExpression
@@ -117,7 +115,6 @@ Simple if condition with an else branch:
 + [ ] feat: edge cases for those operators
 + [ ] feat: integer division operator and float division operator
 + [ ] feat: reference integer literal as constant, simulate some static memory space for literals of integer, strings, etc.
-+ [ ] feat: immutable types
 + [ ] feat: integer overflow problem
 + [ ] feat: command history and navigate in REPL using left, right, up, bottom
 + [ ] feat: configuration as env vars, default + direnv
@@ -126,13 +123,18 @@ Simple if condition with an else branch:
 + [ ] feat: lexing, parsing, evaluation of nil expression statement
 + [ ] fix: slow startup issue
 + [ ] fix: do not allow plain return in REPL outside of a function, report an error instead
-+ [ ] docs: a section for all control structures
++ [ ] docs: add a section for all control structures
 + [ ] feat: semantics of scope
 + [ ] feat: pointer/reference semantics
 + [ ] feat: func multiple return values
 + [ ] refactor: evalExpressions (int, error)
 + [ ] feat: parallel assignment
 + [ ] feat: escaping characters and error when " mismatches
++ [ ] perf: add immutable constants to the envvironment to reduce memory allocation
++ [ ] feat: add a print builtin function
++ [ ] feat: add quit(), exit() builtin functions to exit elegantly
++ [ ] feat: add a static/dynamic type system
++ [ ] ci: build and publish as a pkg on Docker Hub
 
 ## References
 
