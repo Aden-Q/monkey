@@ -11,6 +11,7 @@ import (
 var _ Object = (*Integer)(nil)
 var _ Object = (*Boolean)(nil)
 var _ Object = (*String)(nil)
+var _ Object = (*Array)(nil)
 var _ Object = (*Nil)(nil)
 var _ Object = (*ReturnValue)(nil)
 var _ Object = (*Error)(nil)
@@ -23,6 +24,7 @@ var (
 	INTEGER_OBJ      = ObjectType("INTEGER")
 	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
 	STRING_OBJ       = ObjectType("STRING")
+	ARRAY_OBJ        = ObjectType("ARRAY")
 	NIL_OBJ          = ObjectType("NIL")
 	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
 	ERROR_OBJ        = ObjectType("ERROR")
@@ -123,6 +125,39 @@ func (s *String) Inspect() string {
 
 func (s *String) IsTruthy() bool {
 	return len(s.Value) > 0
+}
+
+type Array struct {
+	Elements []Object
+}
+
+func NewArray(elements ...Object) *Array {
+	return &Array{
+		Elements: elements,
+	}
+}
+
+func (a *Array) Type() ObjectType {
+	return STRING_OBJ
+}
+
+func (a *Array) Inspect() string {
+	builder := strings.Builder{}
+
+	elements := []string{}
+	for _, element := range a.Elements {
+		elements = append(elements, element.Inspect())
+	}
+
+	builder.WriteString("[")
+	builder.WriteString(strings.Join(elements, ", "))
+	builder.WriteString("]")
+
+	return builder.String()
+}
+
+func (a *Array) IsTruthy() bool {
+	return len(a.Elements) > 0
 }
 
 // Nil represents the absence of any value
