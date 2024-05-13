@@ -55,6 +55,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return booleanConv(node.Value), nil
 	case *ast.StringExpression:
 		return object.NewString(node.Value), nil
+	case *ast.ArrayExpression:
+		return e.evalArrayExpression(node)
 	case *ast.IfExpression:
 		return e.evalIfExpression(node)
 	case *ast.FuncExpression:
@@ -122,6 +124,21 @@ func (e *evaluator) evalIdentifierExpression(ie *ast.IdentifierExpression) (obje
 	}
 
 	return object.NIL, ErrIdentifierNotFound
+}
+
+func (e *evaluator) evalArrayExpression(ae *ast.ArrayExpression) (object.Object, error) {
+	elements := make([]object.Object, 0, len(ae.Elements))
+
+	for _, exp := range ae.Elements {
+		val, err := e.Eval(exp)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		elements = append(elements, val)
+	}
+
+	return object.NewArray(elements...), nil
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {

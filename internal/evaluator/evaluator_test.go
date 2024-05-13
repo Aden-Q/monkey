@@ -594,6 +594,25 @@ var _ = Describe("Evaluator", func() {
 			})
 		})
 
+		Context("array object", func() {
+			It("array expression", func() {
+				text = `
+				[1, 2 * 2, true];
+				`
+				expectedObject := object.NewArray(object.NewInteger(1), object.NewInteger(4), object.NewBoolean(true))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
+
 		Context("if conditionals", func() {
 			It("if condition is truthy", func() {
 				text = `
