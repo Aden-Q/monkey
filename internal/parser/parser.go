@@ -53,9 +53,11 @@ func New(l lexer.Lexer) Parser {
 	p.registerPrefixParseFn(token.FALSE, p.parseBoolean)
 	// handler for string expression
 	p.registerPrefixParseFn(token.STRING, p.parseString)
-	// handler for list expression
+	// handler for array expression
 	p.registerPrefixParseFn(token.LBRACKET, p.parseArrayExpression)
-	// handler for grouped expression
+	// handler for hash expression
+	p.registerPrefixParseFn(token.LBRACE, p.parseHashExpression)
+	// handler for grouped expression, enclosed by ()
 	p.registerPrefixParseFn(token.LPAREN, p.parseGroupedExpression)
 	// handler for if expression
 	p.registerPrefixParseFn(token.IF, p.parseIfExpression)
@@ -293,6 +295,49 @@ func (p *parser) parseArrayExpression() (ast.Expression, error) {
 	}
 
 	return ast.NewArrayExpression(elements...), nil
+}
+
+func (p *parser) parseHashExpression() (ast.Expression, error) {
+	items := map[ast.Expression]ast.Expression{}
+
+	for !p.peekTokenTypeIs(token.RBRACE) && !p.peekTokenTypeIs(token.EOF) {
+		p.nextToken()
+
+		// parse key expression
+		key, err := p.parseExpression(token.LOWEST)
+		if err != nil {
+			return nil, err
+		}
+
+		if !p.peekTokenTypeIs(token.COLON) {
+			return nil, ErrUnexpectedTokenType
+		}
+
+		// move forward to make p.curToken point to the : token
+		p.nextToken()
+		p.nextToken()
+
+		// parse value expression
+		value, err := p.parseExpression(token.LOWEST)
+		if err != nil {
+			return nil, err
+		}
+
+		items[key] = value
+
+		if p.peekTokenTypeIs(token.COMMA) {
+			p.nextToken()
+		}
+	}
+
+	if !p.peekTokenTypeIs(token.RBRACE) {
+		return nil, ErrUnexpectedTokenType
+	}
+
+	// move forward so that p.curToken points to the ) token
+	p.nextToken()
+
+	return ast.NewHashExpression(items), nil
 }
 
 func (p *parser) parseGroupedExpression() (ast.Expression, error) {

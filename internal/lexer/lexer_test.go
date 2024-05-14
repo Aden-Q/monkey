@@ -75,8 +75,8 @@ var _ = Describe("Lexer", func() {
 
 		Context("code snippet", func() {
 			It("can parse complex text", func() {
-				text =
-					`let five = 5;
+				text = `
+					let five = 5;
 					let ten = 10;
 
 					let add = fn(x, y) {
@@ -100,6 +100,7 @@ var _ = Describe("Lexer", func() {
 					"foo";
 					"foo bar";
 					[1, 2];
+					{"foo": "bar"};
 					`
 				expectedTokens := []token.Token{
 					{
@@ -442,6 +443,30 @@ var _ = Describe("Lexer", func() {
 					{
 						Type:    token.RBRACKET,
 						Literal: "]",
+					},
+					{
+						Type:    token.SEMICOLON,
+						Literal: ";",
+					},
+					{
+						Type:    token.LBRACE,
+						Literal: "{",
+					},
+					{
+						Type:    token.STRING,
+						Literal: "foo",
+					},
+					{
+						Type:    token.COLON,
+						Literal: ":",
+					},
+					{
+						Type:    token.STRING,
+						Literal: "bar",
+					},
+					{
+						Type:    token.RBRACE,
+						Literal: "}",
 					},
 					{
 						Type:    token.SEMICOLON,

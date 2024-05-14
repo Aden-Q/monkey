@@ -57,6 +57,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NewString(node.Value), nil
 	case *ast.ArrayExpression:
 		return e.evalArrayExpression(node)
+	case *ast.HashExpression:
+		return e.evalHashExpression(node)
 	case *ast.IndexExpression:
 		return e.evalIndexExpression(node)
 	case *ast.IfExpression:
@@ -143,6 +145,32 @@ func (e *evaluator) evalArrayExpression(ae *ast.ArrayExpression) (object.Object,
 	return object.NewArray(elements...), nil
 }
 
+func (e *evaluator) evalHashExpression(he *ast.HashExpression) (object.Object, error) {
+	items := make(map[object.HashKey]object.Object)
+
+	for keyNode, valueNode := range he.Items {
+		key, err := e.Eval(keyNode)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		value, err := e.Eval(valueNode)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		// a key must be hashable in order to be used as a key in a hash object
+		hashKey, ok := key.(object.Hashable)
+		if !ok {
+			return object.NIL, ErrUnhashableType
+		}
+
+		items[hashKey.HashKey()] = value
+	}
+
+	return object.NewHash(items), nil
+}
+
 func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object, error) {
 	left, err := e.Eval(ae.Left)
 	if err != nil {
@@ -154,7 +182,8 @@ func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object,
 		return object.NIL, err
 	}
 
-	if left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ {
+	switch {
+	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		array := left.(*object.Array)
 		idx := index.(*object.Integer).Value
 		maxIdx := int64(len(array.Elements) - 1)
@@ -164,9 +193,23 @@ func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object,
 		}
 
 		return array.Elements[idx], nil
-	}
+	case left.Type() == object.HASH_OBJ:
+		hash := left.(*object.Hash)
 
-	return object.NIL, ErrUnexpectedObjectType
+		// a key must be hashable in order to be used as a key in a hash object
+		hashKey, ok := index.(object.Hashable)
+		if !ok {
+			return object.NIL, ErrUnhashableType
+		}
+
+		if val, ok := hash.Items[hashKey.HashKey()]; ok {
+			return val, nil
+		}
+
+		return object.NIL, ErrKeyNotFound
+	default:
+		return object.NIL, ErrUnexpectedObjectType
+	}
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {

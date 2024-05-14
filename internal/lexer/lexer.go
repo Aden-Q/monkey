@@ -57,7 +57,7 @@ func (l *lexer) NextToken() token.Token {
 	case '+', '-', '*', '/':
 		fallthrough
 	// delimiters
-	case ',', ';', '(', ')', '{', '}', '[', ']':
+	case ',', ';', ':', '(', ')', '{', '}', '[', ']':
 		ch := bytesconv.ByteToString(l.readChar())
 		tok = token.New(token.LookupTokenType(ch), ch)
 	case '"':

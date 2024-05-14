@@ -138,7 +138,7 @@ Simple if condition with an else branch:
 + [ ] feat: dot as an operator (similar to infix index expression)
 + [ ] feat: mutable array implementation for efficient push/pop
 + [ ] feat: map-reduce as an example
-+ [ ] feat: iterator
++ [ ] feat: iterator, range operator
 
 ## References
 

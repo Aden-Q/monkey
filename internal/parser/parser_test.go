@@ -116,6 +116,47 @@ var _ = Describe("Parser", func() {
 				Expect(errs).To(Equal(expectedErrors))
 			})
 
+			It("hash expressions", func() {
+				text = `
+				{
+					"foo": 5, 
+					"bar": "hi",
+					"cs": true,
+				};
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewHashExpression(map[ast.Expression]ast.Expression{
+							ast.NewStringExpression("foo"): ast.NewIntegerExpression("5", 5),
+							ast.NewStringExpression("bar"): ast.NewStringExpression("hi"),
+							ast.NewStringExpression("cs"):  ast.NewBooleanExpression(true),
+						}),
+						),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(len(program.Statements)).To(Equal(len(expectedProgram.Statements)))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
+			It("empty hash expressions", func() {
+				text = `
+				{};
+				`
+				expectedProgram := &ast.Program{
+					Statements: []ast.Statement{
+						ast.NewExpressionStatement(ast.NewHashExpression(map[ast.Expression]ast.Expression{})),
+					},
+				}
+				expectedErrors := []error{}
+
+				program, errs = p.ParseProgram(text)
+				Expect(program).To(Equal(expectedProgram))
+				Expect(errs).To(Equal(expectedErrors))
+			})
+
 			It("index expressions", func() {
 				text = `
 				myArray[1+1];

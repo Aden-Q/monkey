@@ -13,6 +13,7 @@ var _ Expression = (*IntegerExpression)(nil)
 var _ Expression = (*BooleanExpression)(nil)
 var _ Expression = (*StringExpression)(nil)
 var _ Expression = (*ArrayExpression)(nil)
+var _ Expression = (*HashExpression)(nil)
 var _ Expression = (*IndexExpression)(nil)
 var _ Expression = (*IfExpression)(nil)
 var _ Expression = (*FuncExpression)(nil)
@@ -222,6 +223,42 @@ func NewArrayExpression(exps ...Expression) *ArrayExpression {
 	return &ArrayExpression{
 		Token:    token.New(token.LBRACKET, "["),
 		Elements: exps,
+	}
+}
+
+// HashExpression implements the Expression interface
+type HashExpression struct {
+	// the { token
+	Token token.Token
+	Items map[Expression]Expression
+}
+
+func (he *HashExpression) expressionNode() {}
+
+func (he *HashExpression) TokenLiteral() string {
+	return he.Token.Literal
+}
+
+func (he *HashExpression) String() string {
+	builder := strings.Builder{}
+
+	pairs := []string{}
+	for key, value := range he.Items {
+		pairs = append(pairs, key.String()+": "+value.String())
+	}
+
+	builder.WriteString("{")
+	builder.WriteString(strings.Join(pairs, ", "))
+	builder.WriteString("}")
+
+	return builder.String()
+}
+
+// NewHashExpression creates an ArrayExpression node
+func NewHashExpression(items map[Expression]Expression) *HashExpression {
+	return &HashExpression{
+		Token: token.New(token.LBRACE, "{"),
+		Items: items,
 	}
 }
 
