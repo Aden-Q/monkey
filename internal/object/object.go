@@ -48,6 +48,8 @@ var BuiltinFuncs = map[string]BuiltinFunc{
 		switch arg := args[0].(type) {
 		case *String:
 			return NewInteger(int64(len(arg.Value))), nil
+		case *Array:
+			return NewInteger(int64(len(arg.Elements))), nil
 		default:
 			return NIL, ErrUnsupportedArgumentType
 		}
