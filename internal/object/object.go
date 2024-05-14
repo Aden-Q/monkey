@@ -10,8 +10,11 @@ import (
 
 // interface compliance check
 var _ Object = (*Integer)(nil)
+var _ Hashable = (*Integer)(nil)
 var _ Object = (*Boolean)(nil)
+var _ Hashable = (*Boolean)(nil)
 var _ Object = (*String)(nil)
+var _ Hashable = (*String)(nil)
 var _ Object = (*Array)(nil)
 var _ Object = (*Hash)(nil)
 var _ Object = (*Nil)(nil)
@@ -63,6 +66,10 @@ type Object interface {
 	Type() ObjectType
 	Inspect() string
 	IsTruthy() bool
+}
+
+type Hashable interface {
+	HashKey() HashKey
 }
 
 type HashKey struct {
