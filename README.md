@@ -1,4 +1,4 @@
-# [WIP] Monkey
+# Monkey
 
 Monkey is an interpreted language written in Go. *This project is still under development.*
 
@@ -6,13 +6,16 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 + `direnv`
 + `just` (not necessary)
-+ Go 1.21+
++ Built with Go 1.22
 + ginkgo (if you want to run local unit tests)
 + golangci-lint (if you want to do local lint)
++ docker (if you want to use docker to run it)
 
 ## Usage
 
-Open your shell, then REPL ready for you:
+### Local Build and Run
+
+Open your shell, then REPL is ready for you:
 
 ```bash
 ➜  ~ just run
@@ -29,6 +32,47 @@ Open your shell, then REPL ready for you:
            '-----'
 Hello xxx! This is the Monkey programming language!
 >>> 
+```
+
+### Docker
+
+```bash
+➜  ~ docker pull zecheng/monkey:latest
+➜  ~ docker run -it --rm --name monkey zecheng/monkey
+            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+Hello xxx! This is the Monkey programming language!
+>>> 
+```
+
+### Binary Installation
+
+Assuming you have `$GOPATH` appended to your `$PATH` env var:
+
+```bash
+➜  ~ go install github.com/aden-q/monkey@latest
+➜  ~ monkey
+            __,__
+   .--.  .-"     "-.  .--.
+  / .. \/  .-. .-.  \/ .. \
+ | |  '|  /   Y   \  |'  | |
+ | \   \  \ 0 | 0 /  /   / |
+  \ '- ,\.-"""""""-./, -' /
+   ''-' /_   ^ ^   _\ '-''
+       |  \._   _./  |
+       \   \ '~' /   /
+        '._ '-=-' _.'
+           '-----'
+Hello xxx! This is the Monkey programming language!
 ```
 
 ## Demo
@@ -134,7 +178,7 @@ Simple if condition with an else branch:
 + [ ] feat: add a print builtin function
 + [ ] feat: add quit(), exit() builtin functions to exit elegantly
 + [ ] feat: add a static/dynamic type system
-+ [ ] ci: build and publish as a pkg on Docker Hub
++ [x] ci: build and publish as a pkg on Docker Hub
 + [ ] feat: dot as an operator (similar to infix index expression)
 + [ ] feat: mutable array implementation for efficient push/pop
 + [ ] feat: map-reduce as an example
