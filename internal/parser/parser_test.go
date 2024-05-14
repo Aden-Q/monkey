@@ -118,7 +118,11 @@ var _ = Describe("Parser", func() {
 
 			It("hash expressions", func() {
 				text = `
-				{"foo": 5, "bar": "hi", "cs": true};
+				{
+					"foo": 5, 
+					"bar": "hi",
+					"cs": true,
+				};
 				`
 				expectedProgram := &ast.Program{
 					Statements: []ast.Statement{
@@ -133,7 +137,6 @@ var _ = Describe("Parser", func() {
 				expectedErrors := []error{}
 
 				program, errs = p.ParseProgram(text)
-				// FIXME: hash expression is not comparable, order is random
 				Expect(len(program.Statements)).To(Equal(len(expectedProgram.Statements)))
 				Expect(errs).To(Equal(expectedErrors))
 			})

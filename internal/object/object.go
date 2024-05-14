@@ -73,9 +73,9 @@ type Hashable interface {
 }
 
 type HashKey struct {
-	Type   ObjectType
-	Object Object
-	Value  uint64
+	Type          ObjectType
+	ObjectLiteral string
+	Value         uint64
 }
 
 // Integer
@@ -103,9 +103,9 @@ func (i *Integer) IsTruthy() bool {
 
 func (i *Integer) HashKey() HashKey {
 	return HashKey{
-		Type:   i.Type(),
-		Object: i,
-		Value:  uint64(i.Value),
+		Type:          i.Type(),
+		ObjectLiteral: i.Inspect(),
+		Value:         uint64(i.Value),
 	}
 }
 
@@ -139,9 +139,9 @@ func (b *Boolean) HashKey() HashKey {
 	}
 
 	return HashKey{
-		Type:   b.Type(),
-		Object: b,
-		Value:  val,
+		Type:          b.Type(),
+		ObjectLiteral: b.Inspect(),
+		Value:         val,
 	}
 }
 
@@ -173,9 +173,9 @@ func (s *String) HashKey() HashKey {
 	hash.Write([]byte(s.Value))
 
 	return HashKey{
-		Type:   s.Type(),
-		Object: s,
-		Value:  hash.Sum64(),
+		Type:          s.Type(),
+		ObjectLiteral: s.Inspect(),
+		Value:         hash.Sum64(),
 	}
 }
 
@@ -233,7 +233,7 @@ func (h *Hash) Inspect() string {
 
 	items := []string{}
 	for key, value := range h.Items {
-		items = append(items, key.Object.Inspect()+": "+value.Inspect())
+		items = append(items, key.ObjectLiteral+": "+value.Inspect())
 	}
 
 	builder.WriteString("{")

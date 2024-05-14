@@ -12,4 +12,5 @@ var (
 	ErrIdentifierNotFound     = errors.New("identifier not found")
 	ErrNotAFunction           = errors.New("not a function")
 	ErrIndexOutOfRange        = errors.New("index out of range")
+	ErrUnhashableType         = errors.New("unhashable type")
 )

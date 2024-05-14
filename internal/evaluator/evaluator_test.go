@@ -683,6 +683,41 @@ var _ = Describe("Evaluator", func() {
 			})
 		})
 
+		Context("hash object", func() {
+			It("hash expression", func() {
+				text = `
+				{
+					"foo": 5,
+					"bar": 10 * 2,
+					"foobar": true,
+					1: "hello",
+					true: "world",
+				};
+				`
+				expectedObject := object.NewHash(map[object.HashKey]object.Object{
+					object.NewString("foo").HashKey():    object.NewInteger(5),
+					object.NewString("bar").HashKey():    object.NewInteger(20),
+					object.NewString("foobar").HashKey(): object.TRUE,
+					object.NewInteger(1).HashKey():       object.NewString("hello"),
+					object.TRUE.HashKey():                object.NewString("world"),
+				})
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(len(obj.(*object.Hash).Items)).To(Equal(len(expectedObject.Items)))
+
+				for key, value := range expectedObject.Items {
+					Expect(obj.(*object.Hash).Items[key]).To(Equal(value))
+				}
+			})
+		})
+
 		Context("if conditionals", func() {
 			It("if condition is truthy", func() {
 				text = `

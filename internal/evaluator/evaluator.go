@@ -57,6 +57,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NewString(node.Value), nil
 	case *ast.ArrayExpression:
 		return e.evalArrayExpression(node)
+	case *ast.HashExpression:
+		return e.evalHashExpression(node)
 	case *ast.IndexExpression:
 		return e.evalIndexExpression(node)
 	case *ast.IfExpression:
@@ -141,6 +143,32 @@ func (e *evaluator) evalArrayExpression(ae *ast.ArrayExpression) (object.Object,
 	}
 
 	return object.NewArray(elements...), nil
+}
+
+func (e *evaluator) evalHashExpression(he *ast.HashExpression) (object.Object, error) {
+	items := make(map[object.HashKey]object.Object)
+
+	for keyNode, valueNode := range he.Items {
+		key, err := e.Eval(keyNode)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		value, err := e.Eval(valueNode)
+		if err != nil {
+			return object.NIL, err
+		}
+
+		// a key must be hashable in order to be used as a key in a hash object
+		hashKey, ok := key.(object.Hashable)
+		if !ok {
+			return object.NIL, ErrUnhashableType
+		}
+
+		items[hashKey.HashKey()] = value
+	}
+
+	return object.NewHash(items), nil
 }
 
 func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object, error) {
