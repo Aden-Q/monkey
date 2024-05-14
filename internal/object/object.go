@@ -1,6 +1,7 @@
 package object
 
 import (
+	"hash/fnv"
 	"strconv"
 	"strings"
 
@@ -12,6 +13,7 @@ var _ Object = (*Integer)(nil)
 var _ Object = (*Boolean)(nil)
 var _ Object = (*String)(nil)
 var _ Object = (*Array)(nil)
+var _ Object = (*Hash)(nil)
 var _ Object = (*Nil)(nil)
 var _ Object = (*ReturnValue)(nil)
 var _ Object = (*Error)(nil)
@@ -25,6 +27,7 @@ var (
 	BOOLEAN_OBJ      = ObjectType("BOOLEAN")
 	STRING_OBJ       = ObjectType("STRING")
 	ARRAY_OBJ        = ObjectType("ARRAY")
+	HASH_OBJ         = ObjectType("HASH")
 	NIL_OBJ          = ObjectType("NIL")
 	RETURN_VALUE_OBJ = ObjectType("RETURN_VALUE")
 	ERROR_OBJ        = ObjectType("ERROR")
@@ -62,6 +65,12 @@ type Object interface {
 	IsTruthy() bool
 }
 
+type HashKey struct {
+	Type   ObjectType
+	Object Object
+	Value  uint64
+}
+
 // Integer
 type Integer struct {
 	Value int64
@@ -85,6 +94,15 @@ func (i *Integer) IsTruthy() bool {
 	return i.Value != 0
 }
 
+func (i *Integer) HashKey() HashKey {
+	return HashKey{
+		Type:   i.Type(),
+		Object: i,
+		Value:  uint64(i.Value),
+	}
+}
+
+// the boolean object
 type Boolean struct {
 	Value bool
 }
@@ -107,6 +125,20 @@ func (b *Boolean) IsTruthy() bool {
 	return b.Value
 }
 
+func (b *Boolean) HashKey() HashKey {
+	var val uint64 = 0
+	if b.Value {
+		val = 1
+	}
+
+	return HashKey{
+		Type:   b.Type(),
+		Object: b,
+		Value:  val,
+	}
+}
+
+// the string object
 type String struct {
 	Value string
 }
@@ -129,6 +161,18 @@ func (s *String) IsTruthy() bool {
 	return len(s.Value) > 0
 }
 
+func (s *String) HashKey() HashKey {
+	hash := fnv.New64a()
+	hash.Write([]byte(s.Value))
+
+	return HashKey{
+		Type:   s.Type(),
+		Object: s,
+		Value:  hash.Sum64(),
+	}
+}
+
+// the array object
 type Array struct {
 	Elements []Object
 }
@@ -160,6 +204,40 @@ func (a *Array) Inspect() string {
 
 func (a *Array) IsTruthy() bool {
 	return len(a.Elements) > 0
+}
+
+// the hash object
+type Hash struct {
+	Items map[HashKey]Object
+}
+
+func NewHash(items map[HashKey]Object) *Hash {
+	return &Hash{
+		Items: items,
+	}
+}
+
+func (h *Hash) Type() ObjectType {
+	return HASH_OBJ
+}
+
+func (h *Hash) Inspect() string {
+	builder := strings.Builder{}
+
+	items := []string{}
+	for key, value := range h.Items {
+		items = append(items, key.Object.Inspect()+": "+value.Inspect())
+	}
+
+	builder.WriteString("{")
+	builder.WriteString(strings.Join(items, ", "))
+	builder.WriteString("}")
+
+	return builder.String()
+}
+
+func (h *Hash) IsTruthy() bool {
+	return len(h.Items) > 0
 }
 
 // Nil represents the absence of any value

@@ -107,4 +107,36 @@ var _ = Describe("Object", func() {
 			Expect(obj.IsTruthy()).To(Equal(true))
 		})
 	})
+
+	Describe("Hash", func() {
+		It("false hash object", func() {
+			items := map[object.HashKey]object.Object{}
+
+			expectedHashObj := &object.Hash{
+				Items: items,
+			}
+			obj := object.NewHash(items)
+
+			Expect(obj).To(Equal(expectedHashObj))
+			Expect(obj.Inspect()).To(Equal("{}"))
+			Expect(obj.Type()).To(Equal(object.HASH_OBJ))
+			Expect(obj.IsTruthy()).To(Equal(false))
+		})
+
+		It("truthy hash object", func() {
+			items := map[object.HashKey]object.Object{
+				object.NewString("key").HashKey(): object.TRUE,
+			}
+
+			expectedHashObj := &object.Hash{
+				Items: items,
+			}
+			obj := object.NewHash(items)
+
+			Expect(obj).To(Equal(expectedHashObj))
+			Expect(obj.Inspect()).To(Equal("{key: true}"))
+			Expect(obj.Type()).To(Equal(object.HASH_OBJ))
+			Expect(obj.IsTruthy()).To(Equal(true))
+		})
+	})
 })
