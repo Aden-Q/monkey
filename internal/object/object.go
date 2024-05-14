@@ -138,7 +138,7 @@ func NewArray(elements ...Object) *Array {
 }
 
 func (a *Array) Type() ObjectType {
-	return STRING_OBJ
+	return ARRAY_OBJ
 }
 
 func (a *Array) Inspect() string {

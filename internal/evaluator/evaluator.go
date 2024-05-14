@@ -57,6 +57,8 @@ func (e *evaluator) Eval(node ast.Node) (object.Object, error) {
 		return object.NewString(node.Value), nil
 	case *ast.ArrayExpression:
 		return e.evalArrayExpression(node)
+	case *ast.IndexExpression:
+		return e.evalIndexExpression(node)
 	case *ast.IfExpression:
 		return e.evalIfExpression(node)
 	case *ast.FuncExpression:
@@ -139,6 +141,32 @@ func (e *evaluator) evalArrayExpression(ae *ast.ArrayExpression) (object.Object,
 	}
 
 	return object.NewArray(elements...), nil
+}
+
+func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object, error) {
+	left, err := e.Eval(ae.Left)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	index, err := e.Eval(ae.Index)
+	if err != nil {
+		return object.NIL, err
+	}
+
+	if left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ {
+		array := left.(*object.Array)
+		idx := index.(*object.Integer).Value
+		maxIdx := int64(len(array.Elements) - 1)
+
+		if idx < 0 || idx > maxIdx {
+			return object.NIL, ErrIndexOutOfRange
+		}
+
+		return array.Elements[idx], nil
+	}
+
+	return object.NIL, ErrUnexpectedObjectType
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {

@@ -611,6 +611,76 @@ var _ = Describe("Evaluator", func() {
 				Expect(err).To(BeNil())
 				Expect(obj).To(Equal(expectedObject))
 			})
+
+			It("index expression", func() {
+				text = `
+				[1, 2 * 2, true][0];
+				`
+				expectedObject := object.NewInteger(1)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(BeNil())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			// It("index expression", func() {
+			// 	text = `
+			// 	[1, 2 * 2, true][2];
+			// 	`
+			// 	expectedObject := object.NewBoolean(true)
+			// 	expectedErrors := []error{}
+
+			// 	// parse the program
+			// 	program, errs = p.ParseProgram(text)
+			// 	Expect(errs).To(Equal(expectedErrors))
+
+			// 	// evaluate the AST tree
+			// 	obj, err := e.Eval(program)
+			// 	Expect(err).To(BeNil())
+			// 	Expect(obj).To(Equal(expectedObject))
+			// })
+
+			// It("index expression", func() {
+			// 	text = `
+			// 	let a = [1, 2 * 2, true];
+			// 	a[1];
+			// 	`
+			// 	expectedObject := object.NewInteger(4)
+			// 	expectedErrors := []error{}
+
+			// 	// parse the program
+			// 	program, errs = p.ParseProgram(text)
+			// 	Expect(errs).To(Equal(expectedErrors))
+
+			// 	// evaluate the AST tree
+			// 	obj, err := e.Eval(program)
+			// 	Expect(err).To(BeNil())
+			// 	Expect(obj).To(Equal(expectedObject))
+			// })
+
+			// It("index expression", func() {
+			// 	text = `
+			// 	let a = [1, 2 * 2, true];
+			// 	a[3];
+			// 	`
+			// 	expectedObject := object.NIL
+			// 	expectedErrors := []error{}
+
+			// 	// parse the program
+			// 	program, errs = p.ParseProgram(text)
+			// 	Expect(errs).To(Equal(expectedErrors))
+
+			// 	// evaluate the AST tree
+			// 	obj, err := e.Eval(program)
+			// 	Expect(err).To(BeNil())
+			// 	Expect(obj).To(Equal(expectedObject))
+			// })
 		})
 
 		Context("if conditionals", func() {
