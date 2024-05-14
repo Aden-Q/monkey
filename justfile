@@ -14,6 +14,14 @@
 @build:
   go build -gcflags='-m=2' .
 
+# docker build
+@docker-build:
+  docker build -t monkey .
+
+# docker run
+@docker-run:
+  docker run -it --rm --name monkey monkey
+
 # run the Monkey language interpreter in interactive mode
 @run:
   go run main.go

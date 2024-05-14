@@ -12,7 +12,9 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Usage
 
-Open your shell, then REPL ready for you:
+### Local Build and Run
+
+Open your shell, then REPL is ready for you:
 
 ```bash
 ➜  ~ just run
