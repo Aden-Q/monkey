@@ -1,4 +1,4 @@
-# [WIP] Monkey
+# Monkey
 
 Monkey is an interpreted language written in Go. *This project is still under development.*
 
