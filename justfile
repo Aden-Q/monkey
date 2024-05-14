@@ -20,7 +20,7 @@
 
 # docker run
 @docker-run:
-  docker run -it --rm --name monkey monkey
+  docker run -it --rm --name monkey zecheng/monkey
 
 # run the Monkey language interpreter in interactive mode
 @run:
