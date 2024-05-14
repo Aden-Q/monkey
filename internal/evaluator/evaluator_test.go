@@ -716,6 +716,42 @@ var _ = Describe("Evaluator", func() {
 					Expect(obj.(*object.Hash).Items[key]).To(Equal(value))
 				}
 			})
+
+			It("index expression", func() {
+				text = `
+				let a = {"foo": 5 + 5};
+				a["foo"];
+				`
+				expectedObject := object.NewInteger(10)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("index expression, key not found", func() {
+				text = `
+				let a = {"foo": 5};
+				a["bar"];
+				`
+				expectedObject := object.NIL
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
 		})
 
 		Context("if conditionals", func() {

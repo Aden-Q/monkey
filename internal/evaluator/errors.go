@@ -13,4 +13,5 @@ var (
 	ErrNotAFunction           = errors.New("not a function")
 	ErrIndexOutOfRange        = errors.New("index out of range")
 	ErrUnhashableType         = errors.New("unhashable type")
+	ErrKeyNotFound            = errors.New("key not found")
 )

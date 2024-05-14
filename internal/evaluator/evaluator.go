@@ -182,7 +182,8 @@ func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object,
 		return object.NIL, err
 	}
 
-	if left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ {
+	switch {
+	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		array := left.(*object.Array)
 		idx := index.(*object.Integer).Value
 		maxIdx := int64(len(array.Elements) - 1)
@@ -192,9 +193,23 @@ func (e *evaluator) evalIndexExpression(ae *ast.IndexExpression) (object.Object,
 		}
 
 		return array.Elements[idx], nil
-	}
+	case left.Type() == object.HASH_OBJ:
+		hash := left.(*object.Hash)
 
-	return object.NIL, ErrUnexpectedObjectType
+		// a key must be hashable in order to be used as a key in a hash object
+		hashKey, ok := index.(object.Hashable)
+		if !ok {
+			return object.NIL, ErrUnhashableType
+		}
+
+		if val, ok := hash.Items[hashKey.HashKey()]; ok {
+			return val, nil
+		}
+
+		return object.NIL, ErrKeyNotFound
+	default:
+		return object.NIL, ErrUnexpectedObjectType
+	}
 }
 
 func (e *evaluator) evalIfExpression(ie *ast.IfExpression) (object.Object, error) {
