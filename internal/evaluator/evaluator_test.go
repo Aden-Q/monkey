@@ -41,7 +41,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -58,7 +58,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -75,7 +75,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -92,7 +92,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -109,7 +109,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -126,7 +126,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -143,7 +143,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
@@ -162,7 +162,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -179,7 +179,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -196,7 +196,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -213,7 +213,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -230,7 +230,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -247,7 +247,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -264,7 +264,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -281,7 +281,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -298,7 +298,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -315,7 +315,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -332,7 +332,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -349,7 +349,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -366,7 +366,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -383,7 +383,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -400,7 +400,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -417,7 +417,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -434,7 +434,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -451,7 +451,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -468,7 +468,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -485,7 +485,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -502,7 +502,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -519,7 +519,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -536,7 +536,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -553,7 +553,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
@@ -572,7 +572,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -589,7 +589,96 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+		})
+
+		Context("array object", func() {
+			It("array expression", func() {
+				text = `
+				[1, 2 * 2, true];
+				`
+				expectedObject := object.NewArray(object.NewInteger(1), object.NewInteger(4), object.NewBoolean(true))
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("index expression", func() {
+				text = `
+				[1, 2 * 2, true][0];
+				`
+				expectedObject := object.NewInteger(1)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("index expression", func() {
+				text = `
+				[1, 2 * 2, true][2];
+				`
+				expectedObject := object.NewBoolean(true)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("index expression", func() {
+				text = `
+				let a = [1, 2 * 2, true];
+				a[1];
+				`
+				expectedObject := object.NewInteger(4)
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(obj).To(Equal(expectedObject))
+			})
+
+			It("index expression, index out of range", func() {
+				text = `
+				let a = [1, 2 * 2, true];
+				a[3];
+				`
+				expectedObject := object.NIL
+				expectedErrors := []error{}
+
+				// parse the program
+				program, errs = p.ParseProgram(text)
+				Expect(errs).To(Equal(expectedErrors))
+
+				// evaluate the AST tree
+				obj, err := e.Eval(program)
+				Expect(err).To(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
@@ -610,7 +699,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -629,7 +718,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -648,7 +737,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -667,7 +756,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 		})
@@ -686,7 +775,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -707,7 +796,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -728,7 +817,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -753,7 +842,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -774,7 +863,7 @@ var _ = Describe("Evaluator", func() {
 
 				// evaluate the AST tree
 				obj, err := e.Eval(program)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(obj).To(Equal(expectedObject))
 			})
 
@@ -986,6 +1075,23 @@ var _ = Describe("Evaluator", func() {
 					// evaluate the AST tree
 					obj, err := e.Eval(program)
 					Expect(err).To(HaveOccurred())
+					Expect(obj).To(Equal(expectedObject))
+				})
+
+				It("length of an array", func() {
+					text = `
+						 len([1,2,true]);
+						`
+					expectedObject := object.NewInteger(3)
+					expectedParseErrors := []error{}
+
+					// parse the program
+					program, errs = p.ParseProgram(text)
+					Expect(errs).To(Equal(expectedParseErrors))
+
+					// evaluate the AST tree
+					obj, err := e.Eval(program)
+					Expect(err).ToNot(HaveOccurred())
 					Expect(obj).To(Equal(expectedObject))
 				})
 			})

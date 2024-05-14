@@ -135,6 +135,10 @@ Simple if condition with an else branch:
 + [ ] feat: add quit(), exit() builtin functions to exit elegantly
 + [ ] feat: add a static/dynamic type system
 + [ ] ci: build and publish as a pkg on Docker Hub
++ [ ] feat: dot as an operator (similar to infix index expression)
++ [ ] feat: mutable array implementation for efficient push/pop
++ [ ] feat: map-reduce as an example
++ [ ] feat: iterator
 
 ## References
 

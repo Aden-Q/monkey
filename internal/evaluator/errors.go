@@ -11,4 +11,5 @@ var (
 	ErrUnexpectedOperatorType = errors.New("unexpected operator type")
 	ErrIdentifierNotFound     = errors.New("identifier not found")
 	ErrNotAFunction           = errors.New("not a function")
+	ErrIndexOutOfRange        = errors.New("index out of range")
 )

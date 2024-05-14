@@ -29,10 +29,12 @@ const (
 	COMMA     = ","
 	SEMICOLON = ";"
 
-	LPAREN = "("
-	RPAREN = ")"
-	LBRACE = "{"
-	RBRACE = "}"
+	LPAREN   = "("
+	RPAREN   = ")"
+	LBRACE   = "{"
+	RBRACE   = "}"
+	LBRACKET = "["
+	RBRACKET = "]"
 
 	// keywords
 	FUNC   = "FUNC"
@@ -76,6 +78,8 @@ var delimeterTable = map[string]TokenType{
 	")": RPAREN,
 	"{": LBRACE,
 	"}": RBRACE,
+	"[": LBRACKET,
+	"]": RBRACKET,
 }
 
 type TokenType string
