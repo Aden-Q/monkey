@@ -137,6 +137,8 @@ Simple if condition with an else branch:
 + [ ] ci: build and publish as a pkg on Docker Hub
 + [ ] feat: dot as an operator (similar to infix index expression)
 + [ ] feat: mutable array implementation for efficient push/pop
++ [ ] feat: map-reduce as an example
++ [ ] feat: iterator
 
 ## References
 
