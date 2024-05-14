@@ -28,13 +28,13 @@ const (
 	// delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
-
-	LPAREN   = "("
-	RPAREN   = ")"
-	LBRACE   = "{"
-	RBRACE   = "}"
-	LBRACKET = "["
-	RBRACKET = "]"
+	COLON     = ":"
+	LPAREN    = "("
+	RPAREN    = ")"
+	LBRACE    = "{"
+	RBRACE    = "}"
+	LBRACKET  = "["
+	RBRACKET  = "]"
 
 	// keywords
 	FUNC   = "FUNC"
@@ -74,6 +74,7 @@ var operatorTable = map[string]TokenType{
 var delimeterTable = map[string]TokenType{
 	",": COMMA,
 	";": SEMICOLON,
+	":": COLON,
 	"(": LPAREN,
 	")": RPAREN,
 	"{": LBRACE,
