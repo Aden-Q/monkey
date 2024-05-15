@@ -212,12 +212,13 @@ alice
 + [ ] feat: map-reduce as an example
 + [ ] feat: iterator, range operator
 + [ ] feat: bytecode, VM, and JIT compilation
++ [ ] feat: make array mutable, array should support re-assignment, extending, pop, etc.
 
 ## References
 
-+ *Writing An Interpreter In Go, Thorsten Ball*
-+ *Top Down Operator Precedence, Vaughan Pratt*
-+ *The Structure and Interpretation of Computer Programs (SICP), Harold Abelson*
++ *Writing An Interpreter In Go* by Thorsten Ball
++ *Top Down Operator Precedence* by Vaughan Pratt
++ *The Structure and Interpretation of Computer Programs (SICP)* by Harold Abelson
 
 ## License
 
