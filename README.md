@@ -77,7 +77,7 @@ Hello xxx! This is the Monkey programming language!
 
 ## Demo
 
-For more examples and language details. Please check the blog post [here]().
+For more examples and language details. Please check the blog post [here](https://aden-q.github.io/monkey-an-interpreted-language-written-in-go/).
 
 ### Built-in functions
 
