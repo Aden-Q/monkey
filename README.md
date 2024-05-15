@@ -1,17 +1,17 @@
 # Monkey
 
-Monkey is an interpreted language written in Go. *This project is still under development.*
+Monkey is an interpreted language written in Go. *This project is actively under development.*
 
-## Dependencies
+## Requirements
 
-+ `direnv`
-+ `just` (not necessary)
-+ Built with Go 1.22
-+ ginkgo (if you want to run local unit tests)
-+ golangci-lint (if you want to do local lint)
-+ docker (if you want to use docker to run it)
++ Built with Go 1.22 (though you don't need go installation if you have docker)
++ [direnv](https://direnv.net/)
++ [just](https://just.systems/)
++ [ginkgo](https://onsi.github.io/ginkgo/) (if you want to run local unit tests)
++ [golangci-lint](https://golangci-lint.run/) (if you want to do local lint)
++ [docker](https://www.docker.com/) (if you want to run it in the docker way)
 
-## Usage
+## Usages
 
 ### Local build and run
 
