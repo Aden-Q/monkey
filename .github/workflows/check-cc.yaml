@@ -1,8 +1,7 @@
 name: Check for conventional commit compliance
 
 on:
-  pull_request:
-    types: [opened, ready_for_review, edited]
+  push:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
