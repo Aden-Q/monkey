@@ -13,7 +13,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Usage
 
-### Local Build and Run
+### Local build and run
 
 Open your shell, then REPL is ready for you:
 
@@ -54,7 +54,7 @@ Hello xxx! This is the Monkey programming language!
 >>> 
 ```
 
-### Binary Installation
+### Binary installation
 
 Assuming you have `$GOPATH` appended to your `$PATH` env var:
 
@@ -77,6 +77,17 @@ Hello xxx! This is the Monkey programming language!
 
 ## Demo
 
+For more examples and language details. Please check the blog post [here]().
+
+### Built-in functions
+
+```bash
+>>> print("Hello, world!");
+Hello, world!
+>>> len("Hello, world!");
+13
+```
+
 ### Functions
 
 Anonymous function and function binding:
@@ -89,18 +100,35 @@ Anonymous function and function binding:
 10
 ```
 
-### Conditionals
+### Control structures
 
-Simple if condition with an else branch:
+#### If
 
 ```bash
 >>> if (10 > 5) { 5; } else { 10; };
 5
 ```
 
+### Arrays
+
+```bash
+>>> let arr = [1, 2, 3, 4, 5];
+>>> arr[0];
+1
+```
+
+### Hashes
+
+```bash
+>>> let person = {"name": "alice", "age": 21};  
+>>> person["name"];
+alice
+```
+
 ## Conventions and Features
 
 + Programs can run in REPL or as scripts
++ Primitive data types: `int`, `boolean`, `string`
 + Identifiers consist of alphabet letters or underscore
 + Statements are explicitly end by seminlon `;`
 + Comments start with double slash `//`
@@ -120,8 +148,8 @@ Simple if condition with an else branch:
 + Lexer
 + Abstract Syntax Tree (AST)
 + Pratt parser based on context-free grammars and the Backus-Naur-Form
-+ Tree-walking interpreter (evaluator), future: bytecode, VM, and JIT compilation
-+ An object system
++ Tree-walking interpreter/evaluator
++ Object system
 
 ## TODOs
 
@@ -183,6 +211,7 @@ Simple if condition with an else branch:
 + [ ] feat: mutable array implementation for efficient push/pop
 + [ ] feat: map-reduce as an example
 + [ ] feat: iterator, range operator
++ [ ] feat: bytecode, VM, and JIT compilation
 
 ## References
 
