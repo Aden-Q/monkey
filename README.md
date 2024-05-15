@@ -77,7 +77,18 @@ Hello xxx! This is the Monkey programming language!
 
 ## Demo
 
-### Functions
+For more examples and language details. Please check the blog post [here]().
+
+### Built-in Functions
+
+```bash
+>>> print("Hello, world!");
+Hello, world!
+>>> len("Hello, world!");
+13
+```
+
+### Function
 
 Anonymous function and function binding:
 
@@ -89,18 +100,33 @@ Anonymous function and function binding:
 10
 ```
 
-### Conditionals
-
-Simple if condition with an else branch:
+### Conditional
 
 ```bash
 >>> if (10 > 5) { 5; } else { 10; };
 5
 ```
 
+### Array
+
+```bash
+>>> let arr = [1, 2, 3, 4, 5];
+>>> arr[0];
+1
+```
+
+### Hash
+
+```bash
+>>> let person = {"name": "alice", "age": 21};  
+>>> person["name"];
+alice
+```
+
 ## Conventions and Features
 
 + Programs can run in REPL or as scripts
++ Primitive data types: `int`, `boolean`, `string`
 + Identifiers consist of alphabet letters or underscore
 + Statements are explicitly end by seminlon `;`
 + Comments start with double slash `//`
@@ -120,8 +146,8 @@ Simple if condition with an else branch:
 + Lexer
 + Abstract Syntax Tree (AST)
 + Pratt parser based on context-free grammars and the Backus-Naur-Form
-+ Tree-walking interpreter (evaluator), future: bytecode, VM, and JIT compilation
-+ An object system
++ Tree-walking interpreter/evaluator
++ Object system
 
 ## TODOs
 
@@ -183,6 +209,7 @@ Simple if condition with an else branch:
 + [ ] feat: mutable array implementation for efficient push/pop
 + [ ] feat: map-reduce as an example
 + [ ] feat: iterator, range operator
++ [ ] feat: bytecode, VM, and JIT compilation
 
 ## References
 
