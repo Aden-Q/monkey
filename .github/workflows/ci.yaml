@@ -1,9 +1,11 @@
-name: Lint, build, test
+name: Lint, build, test, push
 
 on:
   push:
     branches:
       - main
+    tags:
+      - v*
   pull_request:
     branches:
       - main
@@ -12,19 +14,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  IMAGE_NAME: monkey
+
 jobs:
-  ci:
-    name: lint-build-test
+  lint-test:
+    name: Lint and test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
-    - name: set up Go
+    - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version: '1.21'
 
-    - name: install dependencies
+    - name: Install dependencies
       run: go get ./...
 
     - name: golangci-lint
@@ -32,10 +37,35 @@ jobs:
       with:
         version: v1.54
 
-    - name: build
-      run: go build -race -v ./...
-
-    - name: test
+    - name: Test
       run: |
         go install github.com/onsi/ginkgo/v2/ginkgo
         ginkgo run -r -race -cover
+
+  build-push:
+    name: Build-push
+    needs: lint-test
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+      
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+      - name: Push image
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
