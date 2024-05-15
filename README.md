@@ -37,8 +37,8 @@ Hello xxx! This is the Monkey programming language!
 ### Docker
 
 ```bash
-➜  ~ docker pull zecheng/monkey:latest
-➜  ~ docker run -it --rm --name monkey zecheng/monkey
+➜  ~ docker pull ghcr.io/aden-q/monkey
+➜  ~ docker run -it --rm --name monkey ghcr.io/aden-q/monkey
             __,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \
