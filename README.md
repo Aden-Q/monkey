@@ -13,7 +13,7 @@ Monkey is an interpreted language written in Go. *This project is still under de
 
 ## Usage
 
-### Local Build and Run
+### Local build and run
 
 Open your shell, then REPL is ready for you:
 
@@ -54,7 +54,7 @@ Hello xxx! This is the Monkey programming language!
 >>> 
 ```
 
-### Binary Installation
+### Binary installation
 
 Assuming you have `$GOPATH` appended to your `$PATH` env var:
 
@@ -79,7 +79,7 @@ Hello xxx! This is the Monkey programming language!
 
 For more examples and language details. Please check the blog post [here]().
 
-### Built-in Functions
+### Built-in functions
 
 ```bash
 >>> print("Hello, world!");
@@ -88,7 +88,7 @@ Hello, world!
 13
 ```
 
-### Function
+### Functions
 
 Anonymous function and function binding:
 
@@ -100,14 +100,16 @@ Anonymous function and function binding:
 10
 ```
 
-### Conditional
+### Control structures
+
+#### If
 
 ```bash
 >>> if (10 > 5) { 5; } else { 10; };
 5
 ```
 
-### Array
+### Arrays
 
 ```bash
 >>> let arr = [1, 2, 3, 4, 5];
@@ -115,7 +117,7 @@ Anonymous function and function binding:
 1
 ```
 
-### Hash
+### Hashes
 
 ```bash
 >>> let person = {"name": "alice", "age": 21};  
