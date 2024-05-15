@@ -77,7 +77,7 @@ Hello xxx! This is the Monkey programming language!
 
 ## Demo
 
-For more examples and language details. Please check the blog post [here]().
+For more examples and language details. Please check the blog post [here](https://aden-q.github.io/monkey-an-interpreted-language-written-in-go/).
 
 ### Built-in functions
 
@@ -212,12 +212,13 @@ alice
 + [ ] feat: map-reduce as an example
 + [ ] feat: iterator, range operator
 + [ ] feat: bytecode, VM, and JIT compilation
++ [ ] feat: make array mutable, array should support re-assignment, extending, pop, etc.
 
 ## References
 
-+ *Writing An Interpreter In Go, Thorsten Ball*
-+ *Top Down Operator Precedence, Vaughan Pratt*
-+ *The Structure and Interpretation of Computer Programs (SICP), Harold Abelson*
++ *Writing An Interpreter In Go* by Thorsten Ball
++ *Top Down Operator Precedence* by Vaughan Pratt
++ *The Structure and Interpretation of Computer Programs (SICP)* by Harold Abelson
 
 ## License
 
